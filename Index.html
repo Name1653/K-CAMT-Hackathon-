@@ -3,660 +3,1320 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GreenLoop — Sustainable Local Marketplace</title>
 
 <style>
-:root {
-    --green: #16a36b;
-    --green2: #0d7c52;
-    --mint: #eafff5;
-    --ink: #10241b;
-    --muted: #6b7d74;
-    --bg: #f5f8f6;
-    --card: #ffffff;
-    --line: #e5ece8;
-    --yellow: #ffd95a;
-    --red: #ff6b6b;
-    --blue: #407de8;
-    --shadow: 0 12px 35px rgba(16,36,27,.08);
+:root{
+    --green:#16a36b;
+    --green2:#0d7c52;
+    --mint:#eafff5;
+    --ink:#10241b;
+    --muted:#6b7d74;
+    --bg:#f5f8f6;
+    --card:#fff;
+    --line:#e5ece8;
+    --yellow:#ffd95a;
+    --red:#ff6b6b;
+    --blue:#407de8;
+    --shadow:0 12px 35px rgba(16,36,27,.08);
 }
 
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+
+html{
+    scroll-behavior:smooth;
 }
 
-html {
-    scroll-behavior: smooth;
+body{
+    margin:0;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--bg);
 }
 
-body {
-    margin: 0;
-    font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    background: var(--bg);
-    color: var(--ink);
+button,input,select,textarea{
+    font:inherit;
 }
 
-button,
-input,
-select {
-    font: inherit;
+button{
+    cursor:pointer;
+    border:0;
 }
 
-button {
-    cursor: pointer;
-    border: 0;
-}
-
-button:disabled {
-    cursor: not-allowed;
-    opacity: .65;
+button:disabled{
+    cursor:not-allowed;
+    opacity:.65;
 }
 
 /* =========================================================
-   NAVIGATION
+   NAV
 ========================================================= */
 
-.nav {
-    height: 72px;
-    background: #fff;
-    border-bottom: 1px solid var(--line);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 5%;
-
-    position: sticky;
-    top: 0;
-    z-index: 100;
+.nav{
+    height:72px;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 5%;
+    position:sticky;
+    top:0;
+    z-index:100;
 }
 
-.logo {
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--green2);
-
-    display: flex;
-    align-items: center;
-    gap: 9px;
-
-    white-space: nowrap;
+.logo{
+    font-size:22px;
+    font-weight:900;
+    color:var(--green2);
+    display:flex;
+    align-items:center;
+    gap:9px;
+    white-space:nowrap;
 }
 
-.logo span {
-    background: var(--green);
-    color: white;
-
-    width: 34px;
-    height: 34px;
-
-    border-radius: 11px;
-
-    display: grid;
-    place-items: center;
+.logo span{
+    background:var(--green);
+    color:#fff;
+    width:34px;
+    height:34px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
 }
 
-.navlinks {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.navlinks{
+    display:flex;
+    gap:7px;
+    align-items:center;
 }
 
-.navlinks button {
-    background: none;
-    color: #53665e;
-
-    font-weight: 700;
-
-    padding: 10px 12px;
-    border-radius: 10px;
+.navlinks button{
+    background:none;
+    color:#53665e;
+    font-weight:700;
+    padding:10px 11px;
+    border-radius:10px;
 }
 
 .navlinks button:hover,
-.navlinks button.active {
-    color: var(--green2);
-    background: var(--mint);
+.navlinks button.active{
+    color:var(--green2);
+    background:var(--mint);
 }
 
-.actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.credits {
-    background: var(--mint);
-    color: var(--green2);
-
-    padding: 9px 13px;
-
-    border-radius: 999px;
-
-    font-weight: 850;
+.credits{
+    background:var(--mint);
+    color:var(--green2);
+    padding:9px 13px;
+    border-radius:999px;
+    font-weight:850;
 }
 
-.lang {
-    border: 1px solid var(--line);
-    background: #fff;
-
-    border-radius: 10px;
-
-    padding: 8px 10px;
+.lang{
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:10px;
+    padding:8px 10px;
 }
 
 /* =========================================================
-   PAGE SYSTEM
+   PAGE
 ========================================================= */
 
-.page {
-    display: none;
-
-    min-height: calc(100vh - 72px);
-
-    animation: fadeIn .25s ease;
+.page{
+    display:none;
+    min-height:calc(100vh - 72px);
+    animation:fadeIn .25s ease;
 }
 
-.page.active {
-    display: block;
+.page.active{
+    display:block;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(8px);
     }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
 }
 
-.container {
-    max-width: 1280px;
-    margin: auto;
-    padding: 32px 5% 70px;
+.container{
+    max-width:1280px;
+    margin:auto;
+    padding:32px 5% 70px;
 }
 
 /* =========================================================
    COMMON
 ========================================================= */
 
-.sectionHead {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-
-    margin: 15px 0 18px;
+.sectionHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    margin:25px 0 18px;
 }
 
-.sectionHead h2 {
-    margin: 0;
-    font-size: 26px;
+.sectionHead h2{
+    margin:0;
+    font-size:25px;
 }
 
-.sectionHead p {
-    margin: 5px 0 0;
-
-    color: var(--muted);
+.sectionHead p{
+    margin:5px 0 0;
+    color:var(--muted);
 }
 
-.viewall {
-    background: none;
-    color: var(--green2);
-    font-weight: 850;
+.viewall{
+    background:none;
+    color:var(--green2);
+    font-weight:850;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
 }
 
-.card {
-    background: var(--card);
-
-    border: 1px solid var(--line);
-
-    border-radius: 20px;
-
-    overflow: hidden;
-
-    box-shadow: var(--shadow);
-
-    transition: .2s;
+.card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:.2s;
 }
 
-.card:hover {
-    transform: translateY(-3px);
+.card:hover{
+    transform:translateY(-3px);
 }
 
-.pic {
-    height: 160px;
-
-    display: grid;
-    place-items: center;
-
-    font-size: 65px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #dff8eb,
-            #f7fff9
-        );
-
-    position: relative;
+.pic{
+    height:160px;
+    display:grid;
+    place-items:center;
+    font-size:65px;
+    background:linear-gradient(135deg,#dff8eb,#f7fff9);
+    position:relative;
 }
 
-.tag {
-    position: absolute;
-
-    left: 12px;
-    top: 12px;
-
-    background: #fff;
-
-    padding: 6px 9px;
-
-    border-radius: 999px;
-
-    font-size: 12px;
-
-    font-weight: 900;
-
-    color: var(--green2);
+.tag{
+    position:absolute;
+    left:12px;
+    top:12px;
+    background:#fff;
+    padding:6px 9px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:850;
+    color:var(--green2);
 }
 
-.cardbody {
-    padding: 16px;
+.cardbody{
+    padding:16px;
 }
 
-.cardbody h3 {
-    margin: 0 0 7px;
-    font-size: 17px;
+.cardbody h3{
+    margin:0 0 7px;
+    font-size:17px;
 }
 
-.muted {
-    color: var(--muted);
-    font-size: 13px;
+.muted{
+    color:var(--muted);
+    font-size:13px;
 }
 
-.price {
-    margin-top: 12px;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.price{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
-.price strong {
-    font-size: 21px;
+.price strong{
+    font-size:20px;
 }
 
-.old {
-    text-decoration: line-through;
-    color: #9ba9a3;
+.old{
+    text-decoration:line-through;
+    color:#9ba9a3;
 }
 
-.discount {
-    color: #e04d4d;
-
-    font-size: 12px;
-    font-weight: 900;
-
-    background: #fff0f0;
-
-    padding: 5px 7px;
-
-    border-radius: 7px;
+.discount{
+    color:#e04d4d;
+    font-size:12px;
+    font-weight:800;
+    background:#fff0f0;
+    padding:5px 7px;
+    border-radius:7px;
 }
 
-.row {
-    display: flex;
-
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 10px;
-
-    margin-top: 13px;
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-top:13px;
 }
 
-.primary {
-    background: var(--green);
-    color: white;
-
-    padding: 10px 13px;
-
-    border-radius: 10px;
-
-    font-weight: 800;
+.primary{
+    background:var(--green);
+    color:#fff;
+    padding:10px 13px;
+    border-radius:10px;
+    font-weight:800;
 }
 
-.primary:hover {
-    background: var(--green2);
+.primary:hover{
+    background:var(--green2);
 }
 
-.secondary {
-    background: var(--mint);
-    color: var(--green2);
+.secondary{
+    background:var(--mint);
+    color:var(--green2);
+    padding:10px 13px;
+    border-radius:10px;
+    font-weight:800;
+}
 
-    padding: 10px 13px;
+/* =========================================================
+   PAGE HEADER
+========================================================= */
 
-    border-radius: 10px;
+.pageHeader{
+    background:linear-gradient(135deg,#0d7c52,#18ad70);
+    color:#fff;
+    border-radius:25px;
+    padding:30px;
+    margin-bottom:25px;
+}
 
-    font-weight: 800;
+.pageHeader h1{
+    margin:0;
+    font-size:36px;
+}
+
+.pageHeader p{
+    margin:8px 0 0;
+    opacity:.92;
 }
 
 /* =========================================================
    HOME
 ========================================================= */
 
-.hero {
-    display: grid;
-
-    grid-template-columns: 1.35fr .65fr;
-
-    gap: 24px;
-
-    margin-bottom: 25px;
+.hero{
+    display:grid;
+    grid-template-columns:1.35fr .65fr;
+    gap:24px;
+    margin-bottom:25px;
 }
 
-.heroMain {
-    background:
-        linear-gradient(
-            135deg,
-            #0d7c52,
-            #18ad70
-        );
-
-    border-radius: 28px;
-
-    padding: 42px;
-
-    color: white;
-
-    min-height: 340px;
-
-    position: relative;
-
-    overflow: hidden;
+.heroMain{
+    background:linear-gradient(135deg,#0d7c52,#18ad70);
+    border-radius:28px;
+    padding:42px;
+    color:#fff;
+    min-height:340px;
+    position:relative;
+    overflow:hidden;
 }
 
-.heroMain::after {
-    content: "🌱";
-
-    position: absolute;
-
-    right: 30px;
-    bottom: -25px;
-
-    font-size: 170px;
-
-    opacity: .13;
+.heroMain::after{
+    content:"🌱";
+    position:absolute;
+    right:30px;
+    bottom:-25px;
+    font-size:170px;
+    opacity:.13;
 }
 
-.heroMain h1 {
-    font-size: 48px;
-
-    line-height: 1.03;
-
-    margin: 0 0 15px;
-
-    max-width: 650px;
+.heroMain h1{
+    font-size:48px;
+    line-height:1.03;
+    margin:0 0 15px;
+    max-width:650px;
 }
 
-.heroMain p {
-    font-size: 18px;
-
-    opacity: .9;
-
-    max-width: 560px;
+.heroMain p{
+    font-size:18px;
+    opacity:.9;
+    max-width:560px;
 }
 
-.search {
-    margin-top: 28px;
-
-    background: white;
-
-    border-radius: 15px;
-
-    padding: 5px;
-
-    display: flex;
-
-    max-width: 650px;
+.search{
+    margin-top:28px;
+    background:#fff;
+    border-radius:15px;
+    padding:5px;
+    display:flex;
+    max-width:650px;
 }
 
-.search input {
-    border: 0;
-    outline: 0;
-
-    flex: 1;
-
-    padding: 13px 15px;
-
-    color: var(--ink);
-
-    background: transparent;
+.search input{
+    border:0;
+    outline:0;
+    flex:1;
+    padding:13px 15px;
+    color:var(--ink);
+    background:transparent;
 }
 
-.search button {
-    background: var(--green2);
-
-    color: white;
-
-    padding: 12px 18px;
-
-    border-radius: 11px;
+.search button{
+    background:var(--green2);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:11px;
 }
 
-.wallet {
-    background: #10241b;
-
-    border-radius: 28px;
-
-    padding: 30px;
-
-    color: white;
-
-    box-shadow: var(--shadow);
+.wallet{
+    background:#10241b;
+    border-radius:28px;
+    padding:30px;
+    color:#fff;
+    box-shadow:var(--shadow);
 }
 
-.wallet small {
-    color: #b8cec4;
+.wallet small{
+    color:#b8cec4;
 }
 
-.wallet .big {
-    font-size: 43px;
-
-    font-weight: 900;
-
-    margin: 12px 0;
+.wallet .big{
+    font-size:43px;
+    font-weight:900;
+    margin:12px 0;
 }
 
-.wallet .impact {
-    background: #1a392d;
-
-    padding: 15px;
-
-    border-radius: 16px;
-
-    margin-top: 22px;
+.wallet .impact{
+    background:#1a392d;
+    padding:15px;
+    border-radius:16px;
+    margin-top:22px;
 }
 
-.redeem {
-    margin-top: 16px;
-
-    width: 100%;
-
-    background: var(--yellow);
-
-    color: #1f2b22;
-
-    padding: 13px;
-
-    border-radius: 12px;
-
-    font-weight: 900;
+.redeem{
+    margin-top:16px;
+    width:100%;
+    background:var(--yellow);
+    color:#1f2b22;
+    padding:13px;
+    border-radius:12px;
+    font-weight:850;
 }
 
-.quick {
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 14px;
-
-    margin-bottom: 32px;
+.quick{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:32px;
 }
 
-.quick button {
-    background: #fff;
-
-    border: 1px solid var(--line);
-
-    padding: 18px;
-
-    border-radius: 18px;
-
-    text-align: left;
-
-    box-shadow: var(--shadow);
-
-    transition: .2s;
+.quick button{
+    background:#fff;
+    border:1px solid var(--line);
+    padding:18px;
+    border-radius:18px;
+    text-align:left;
+    box-shadow:var(--shadow);
+    transition:.2s;
 }
 
-.quick button:hover {
-    transform: translateY(-3px);
+.quick button:hover{
+    transform:translateY(-3px);
 }
 
-.quick span {
-    font-size: 25px;
+.quick span{
+    font-size:25px;
 }
 
-.quick b {
-    display: block;
-
-    margin-top: 8px;
+.quick b{
+    display:block;
+    margin-top:8px;
 }
 
-.featurePanel {
-    background: white;
-
-    border: 1px solid var(--line);
-
-    border-radius: 24px;
-
-    padding: 25px;
-
-    box-shadow: var(--shadow);
+.featurePanel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:25px;
+    box-shadow:var(--shadow);
 }
 
-.featureStats {
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 15px;
+.featureStats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
 }
 
-.statBox {
-    background: var(--mint);
-
-    border-radius: 18px;
-
-    padding: 20px;
+.statBox{
+    background:var(--mint);
+    border-radius:18px;
+    padding:20px;
 }
 
-.statBox strong {
-    display: block;
-
-    font-size: 30px;
-
-    color: var(--green2);
+.statBox strong{
+    display:block;
+    font-size:30px;
+    color:var(--green2);
 }
 
-.statBox span {
-    color: var(--muted);
-
-    font-size: 13px;
+.statBox span{
+    color:var(--muted);
+    font-size:13px;
 }
 
 /* =========================================================
-   HERO PAGE HEAD
+   FOOD PAGE
 ========================================================= */
 
-.pageHeader {
-    background:
-        linear-gradient(
-            135deg,
-            #0d7c52,
-            #18ad70
-        );
-
-    color: white;
-
-    border-radius: 25px;
-
-    padding: 30px;
-
-    margin-bottom: 25px;
+.foodHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.pageHeader h1 {
-    margin: 0;
-
-    font-size: 36px;
+.foodCartButton{
+    background:#10241b;
+    color:#fff;
+    padding:12px 17px;
+    border-radius:13px;
+    font-weight:850;
 }
 
-.pageHeader p {
-    margin: 8px 0 0;
+.foodCartButton span{
+    background:var(--green);
+    padding:3px 7px;
+    border-radius:999px;
+    margin-left:5px;
+}
 
-    opacity: .9;
+.foodToolbar{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    margin-bottom:20px;
+    padding-bottom:3px;
+}
+
+.foodCategory{
+    background:#fff;
+    border:1px solid var(--line);
+    color:#52655d;
+    padding:10px 16px;
+    border-radius:999px;
+    white-space:nowrap;
+    font-weight:750;
+}
+
+.foodCategory:hover,
+.foodCategory.active{
+    background:var(--green);
+    color:#fff;
+    border-color:var(--green);
+}
+
+.foodBanner{
+    background:linear-gradient(135deg,#0d7c52,#18ad70);
+    color:#fff;
+    border-radius:23px;
+    padding:25px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    overflow:hidden;
+}
+
+.foodBanner span{
+    background:rgba(255,255,255,.15);
+    padding:6px 9px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:900;
+}
+
+.foodBanner h2{
+    font-size:38px;
+    margin:12px 0 4px;
+}
+
+.foodBanner p{
+    margin:0;
+    opacity:.9;
+}
+
+.foodBannerIcon{
+    font-size:105px;
+    opacity:.3;
+}
+
+.restaurantGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.restaurantCard{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:.2s;
+}
+
+.restaurantCard:hover{
+    transform:translateY(-3px);
+}
+
+.restaurantImage{
+    height:210px;
+    display:grid;
+    place-items:center;
+    font-size:85px;
+    position:relative;
+}
+
+.bakeryImage{
+    background:linear-gradient(135deg,#fff0dc,#fffaf3);
+}
+
+.sushiImage{
+    background:linear-gradient(135deg,#ffe5e5,#fff8f8);
+}
+
+.pizzaImage{
+    background:linear-gradient(135deg,#ffeacb,#fff8ed);
+}
+
+.saladImage{
+    background:linear-gradient(135deg,#ddf8df,#f7fff7);
+}
+
+.restaurantDiscount{
+    position:absolute;
+    left:14px;
+    top:14px;
+    background:#fff;
+    color:#dd4040;
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:900;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.restaurantOpen{
+    position:absolute;
+    right:14px;
+    top:14px;
+    background:#16a36b;
+    color:#fff;
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:900;
+}
+
+.restaurantBody{
+    padding:17px;
+}
+
+.restaurantTop{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.restaurantTop h3{
+    margin:0 0 5px;
+}
+
+.restaurantMeta{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.restaurantEco{
+    background:var(--mint);
+    color:var(--green2);
+    padding:6px 9px;
+    height:max-content;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:900;
+}
+
+.restaurantDescription{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.restaurantDelivery{
+    display:flex;
+    justify-content:space-between;
+    color:#52655d;
+    font-size:12px;
+    margin:12px 0;
+}
+
+.restaurantButton{
+    width:100%;
+    background:var(--green);
+    color:#fff;
+    padding:12px;
+    border-radius:11px;
+    font-weight:850;
+}
+
+.restaurantButton:hover{
+    background:var(--green2);
+}
+
+.greenFoodRewards{
+    margin-top:28px;
+    background:var(--mint);
+    padding:18px 20px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.greenFoodIcon{
+    font-size:35px;
+}
+
+.greenFoodRewards p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:13px;
 }
 
 /* =========================================================
-   RIDE APP
+   FOOD MODALS
 ========================================================= */
 
-.rideApp {
-    display: grid;
-
-    grid-template-columns: 1.5fr .7fr;
-
-    gap: 18px;
-
-    background: white;
-
-    padding: 14px;
-
-    border-radius: 28px;
-
-    border: 1px solid var(--line);
-
-    box-shadow: var(--shadow);
+.foodModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,25,18,.58);
+    z-index:500;
+    padding:20px;
+    overflow-y:auto;
+    align-items:center;
+    justify-content:center;
 }
 
-.rideMap {
-    height: 650px;
+.foodModal.show{
+    display:flex;
+}
 
-    position: relative;
+.foodModalBox{
+    width:min(720px,100%);
+    max-height:92vh;
+    overflow-y:auto;
+    background:#fff;
+    border-radius:25px;
+    padding:25px;
+    box-shadow:0 30px 80px rgba(0,0,0,.2);
+}
 
-    overflow: hidden;
+.checkoutBox{
+    width:min(600px,100%);
+}
 
-    border-radius: 22px;
+.foodModalHeader{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    align-items:flex-start;
+}
 
+.foodModalHeader h2{
+    margin:6px 0 4px;
+}
+
+.foodModalRestaurantIcon{
+    width:54px;
+    height:54px;
+    border-radius:15px;
+    background:var(--mint);
+    display:grid;
+    place-items:center;
+    font-size:28px;
+}
+
+.closeFoodModal{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#edf3f0;
+    font-size:20px;
+}
+
+.menuList{
+    margin-top:20px;
+}
+
+.menuItem{
+    display:grid;
+    grid-template-columns:80px 1fr auto;
+    gap:13px;
+    align-items:center;
+    padding:13px 0;
+    border-bottom:1px solid var(--line);
+}
+
+.menuItemImage{
+    width:80px;
+    height:80px;
+    border-radius:15px;
+    display:grid;
+    place-items:center;
+    font-size:38px;
+    background:var(--mint);
+}
+
+.menuItemInfo h4{
+    margin:0 0 4px;
+}
+
+.menuItemInfo p{
+    margin:0 0 6px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.menuPrice{
+    font-weight:900;
+    color:var(--green2);
+}
+
+.addMenu{
+    background:var(--green);
+    color:#fff;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    font-size:20px;
+    font-weight:900;
+}
+
+.restaurantNote{
+    margin-top:15px;
+    padding:12px;
+    background:var(--mint);
+    color:var(--green2);
+    border-radius:12px;
+    display:flex;
+    gap:8px;
+    font-size:12px;
+}
+
+.checkoutButton{
+    margin-top:15px;
+    width:100%;
+    background:var(--green);
+    color:#fff;
+    padding:14px;
+    border-radius:13px;
+    font-weight:900;
+}
+
+.cartItems{
+    margin:15px 0;
+}
+
+.emptyCart{
+    text-align:center;
+    padding:35px;
+    color:var(--muted);
+}
+
+.cartItem{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+}
+
+.cartItemEmoji{
+    width:45px;
+    height:45px;
+    background:var(--mint);
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:22px;
+}
+
+.cartItemInfo{
+    flex:1;
+}
+
+.cartItemInfo small{
+    display:block;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.qtyControls{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+.qtyControls button{
+    width:28px;
+    height:28px;
+    border-radius:8px;
+    background:#edf3f0;
+}
+
+.deliveryOptions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.deliveryOption{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:13px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    text-align:left;
+}
+
+.deliveryOption.active{
+    border:2px solid var(--green);
+    background:var(--mint);
+}
+
+.deliveryOption small{
+    display:block;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.timeOptions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.timeOption{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:12px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    text-align:left;
+}
+
+.timeOption.active{
+    border:2px solid var(--green);
+    background:var(--mint);
+}
+
+.timeOption small{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    margin-top:2px;
+}
+
+.scheduleArea{
+    display:none;
+    margin-top:10px;
+}
+
+.scheduleArea.show{
+    display:block;
+}
+
+.scheduleArea label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:5px;
+}
+
+.scheduleArea select{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px;
+}
+
+.addressBox{
+    display:grid;
+    grid-template-columns:35px 1fr auto;
+    gap:10px;
+    align-items:center;
+    padding:13px;
+    border:1px solid var(--line);
+    border-radius:14px;
+}
+
+.addressBox small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.addressBox button{
+    background:none;
+    color:var(--green2);
+    font-weight:800;
+}
+
+.paymentOptions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.paymentOption{
+    display:grid;
+    grid-template-columns:35px 1fr 25px;
+    align-items:center;
+    gap:10px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    text-align:left;
+}
+
+.paymentOption.active{
+    border:2px solid var(--green);
+    background:var(--mint);
+}
+
+.paymentOption small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.promoBox{
+    display:flex;
+    gap:8px;
+}
+
+.promoBox input{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:11px;
+    padding:11px;
+    outline:none;
+}
+
+.promoBox button{
+    background:var(--green2);
+    color:#fff;
+    border-radius:11px;
+    padding:0 15px;
+    font-weight:850;
+}
+
+.promoMessage{
+    color:var(--green2);
+    font-size:12px;
+    margin-top:7px;
+}
+
+.groupOrderBox{
+    margin-top:18px;
+    padding:15px;
+    background:#f5f8f6;
+    border-radius:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.groupOrderBox p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.groupOrderBox button{
+    background:var(--green);
+    color:#fff;
+    padding:9px 13px;
+    border-radius:9px;
+    font-weight:800;
+}
+
+.orderNote{
+    width:100%;
+    min-height:80px;
+    resize:none;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px;
+    outline:none;
+}
+
+.priceSummary{
+    margin-top:20px;
+    border-top:1px solid var(--line);
+    padding-top:15px;
+}
+
+.priceSummary > div{
+    display:flex;
+    justify-content:space-between;
+    padding:7px 0;
+    color:#52655d;
+}
+
+.priceSummary .totalRow{
+    margin-top:7px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+    color:var(--ink);
+    font-size:20px;
+}
+
+.discountText{
+    color:#e04d4d !important;
+}
+
+.placeOrderButton{
+    width:100%;
+    background:var(--green);
+    color:#fff;
+    padding:15px;
+    margin-top:14px;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:900;
+}
+
+/* =========================================================
+   FOOD ORDER TRACKING
+========================================================= */
+
+.orderTrackingBox{
+    width:min(600px,100%);
+}
+
+.orderSuccess{
+    text-align:center;
+}
+
+.orderSuccess > div{
+    width:62px;
+    height:62px;
+    margin:auto;
+    border-radius:50%;
+    background:var(--green);
+    color:#fff;
+    display:grid;
+    place-items:center;
+    font-size:30px;
+    font-weight:900;
+}
+
+.orderSuccess h2{
+    margin:12px 0 5px;
+}
+
+.orderSuccess p{
+    color:var(--muted);
+}
+
+.orderMap{
+    height:230px;
+    background:
+        linear-gradient(
+            35deg,
+            transparent 45%,
+            #fff 46%,
+            #fff 52%,
+            transparent 53%
+        ),
+        #dcefe4;
+    border-radius:18px;
+    position:relative;
+    overflow:hidden;
+    margin:20px 0;
+}
+
+.restaurantPin,
+.customerPin,
+.deliveryBike{
+    position:absolute;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#fff;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    z-index:4;
+}
+
+.restaurantPin{
+    left:12%;
+    top:25%;
+}
+
+.deliveryBike{
+    left:45%;
+    top:50%;
+    transition:1s linear;
+}
+
+.customerPin{
+    right:12%;
+    bottom:18%;
+}
+
+.orderRoute{
+    position:absolute;
+    left:15%;
+    top:48%;
+    width:70%;
+    height:5px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            var(--green) 0 10px,
+            transparent 10px 17px
+        );
+    transform:rotate(20deg);
+}
+
+.trackingStatus{
+    display:flex;
+    flex-direction:column;
+}
+
+.trackingStep{
+    display:grid;
+    grid-template-columns:38px 1fr;
+    gap:10px;
+    position:relative;
+    padding-bottom:20px;
+}
+
+.trackingStep:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    left:17px;
+    top:30px;
+    width:2px;
+    height:45px;
+    background:#dce7e2;
+}
+
+.trackingStep span{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#e8efeb;
+    color:#728279;
+    display:grid;
+    place-items:center;
+    font-weight:900;
+}
+
+.trackingStep.active span{
+    background:var(--green);
+    color:#fff;
+}
+
+.trackingStep small{
+    display:block;
+    color:var(--muted);
+    margin-top:4px;
+    font-size:12px;
+}
+
+.driverTrackingCard{
+    background:#f5f8f6;
+    border-radius:15px;
+    padding:13px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.driverTrackingAvatar{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:var(--mint);
+    display:grid;
+    place-items:center;
+    font-size:22px;
+}
+
+.driverTrackingCard > div:nth-child(2){
+    flex:1;
+}
+
+.driverTrackingCard small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.driverTrackingCard button{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#fff;
+}
+
+/* =========================================================
+   GREEN RIDE
+========================================================= */
+
+.rideApp{
+    display:grid;
+    grid-template-columns:1.5fr .7fr;
+    gap:18px;
+    background:#fff;
+    padding:14px;
+    border-radius:28px;
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+}
+
+.rideMap{
+    height:650px;
+    position:relative;
+    overflow:hidden;
+    border-radius:22px;
     background:
         linear-gradient(
             35deg,
@@ -675,13 +1335,10 @@ button:disabled {
         #dcefe4;
 }
 
-.rideMap::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
+.rideMap::before{
+    content:"";
+    position:absolute;
+    inset:0;
     background:
         repeating-linear-gradient(
             90deg,
@@ -692,882 +1349,661 @@ button:disabled {
         );
 }
 
-.mapRoad {
-    position: absolute;
-
-    background: rgba(255,255,255,.85);
-
-    border-radius: 999px;
+.mapRoad{
+    position:absolute;
+    background:rgba(255,255,255,.85);
+    border-radius:999px;
 }
 
-.mapRoad.r1 {
-    width: 120%;
-    height: 28px;
-
-    left: -10%;
-    top: 42%;
-
-    transform: rotate(-20deg);
+.mapRoad.r1{
+    width:120%;
+    height:28px;
+    left:-10%;
+    top:42%;
+    transform:rotate(-20deg);
 }
 
-.mapRoad.r2 {
-    width: 120%;
-    height: 24px;
-
-    left: -10%;
-    top: 65%;
-
-    transform: rotate(28deg);
+.mapRoad.r2{
+    width:120%;
+    height:24px;
+    left:-10%;
+    top:65%;
+    transform:rotate(28deg);
 }
 
-.userLocation {
-    position: absolute;
-
-    left: 30%;
-    top: 65%;
-
-    width: 44px;
-    height: 44px;
-
-    background: #1976ff;
-
-    border: 4px solid #fff;
-
-    border-radius: 50%;
-
-    display: grid;
-    place-items: center;
-
-    z-index: 5;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,.2);
+.userLocation{
+    position:absolute;
+    left:30%;
+    top:65%;
+    width:44px;
+    height:44px;
+    background:#1976ff;
+    border:4px solid #fff;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    z-index:5;
+    box-shadow:0 5px 20px rgba(0,0,0,.2);
 }
 
-.userPulse {
-    position: absolute;
-
-    width: 70px;
-    height: 70px;
-
-    background: rgba(25,118,255,.15);
-
-    border-radius: 50%;
-
-    animation: pulse 2s infinite;
+.userPulse{
+    position:absolute;
+    width:70px;
+    height:70px;
+    background:rgba(25,118,255,.15);
+    border-radius:50%;
+    animation:pulse 2s infinite;
 }
 
-@keyframes pulse {
-
-    0% {
-        transform: scale(.7);
-        opacity: .8;
+@keyframes pulse{
+    0%{
+        transform:scale(.7);
+        opacity:.8;
     }
-
-    100% {
-        transform: scale(1.4);
-        opacity: 0;
+    100%{
+        transform:scale(1.4);
+        opacity:0;
     }
-
 }
 
-.evMarker {
-    position: absolute;
-
-    left: 63%;
-    top: 20%;
-
-    width: 54px;
-    height: 54px;
-
-    background: #10241b;
-
-    border: 4px solid #fff;
-
-    border-radius: 50%;
-
-    display: grid;
-    place-items: center;
-
-    font-size: 24px;
-
-    z-index: 10;
-
-    box-shadow:
-        0 7px 20px rgba(0,0,0,.25);
-
-    transition:
-        left 1s linear,
-        top 1s linear;
+.evMarker{
+    position:absolute;
+    left:63%;
+    top:20%;
+    width:54px;
+    height:54px;
+    background:#10241b;
+    border:4px solid #fff;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:24px;
+    z-index:10;
+    box-shadow:0 7px 20px rgba(0,0,0,.25);
+    transition:left 1s linear,top 1s linear;
 }
 
-.driverArrow {
-    position: absolute;
-
-    top: -18px;
-
-    color: var(--green);
-
-    font-size: 13px;
+.driverArrow{
+    position:absolute;
+    top:-18px;
+    color:var(--green);
+    font-size:13px;
 }
 
-.mapDestination {
-    position: absolute;
-
-    left: 75%;
-    top: 72%;
-
-    width: 42px;
-    height: 42px;
-
-    background: #ff5757;
-
-    color: white;
-
-    border: 4px solid white;
-
-    border-radius: 50%;
-
-    display: grid;
-    place-items: center;
-
-    z-index: 5;
+.mapDestination{
+    position:absolute;
+    left:75%;
+    top:72%;
+    width:42px;
+    height:42px;
+    background:#ff5757;
+    color:#fff;
+    border:4px solid #fff;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    z-index:5;
 }
 
-.mapETA {
-    position: absolute;
-
-    top: 20px;
-    left: 20px;
-
-    background: white;
-
-    padding: 12px 16px;
-
-    border-radius: 14px;
-
-    box-shadow: var(--shadow);
-
-    display: flex;
-    flex-direction: column;
+.mapETA{
+    position:absolute;
+    top:20px;
+    left:20px;
+    background:#fff;
+    padding:12px 16px;
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
 }
 
-.mapETA strong {
-    font-size: 20px;
+.mapETA strong{
+    font-size:20px;
 }
 
-.mapETA span {
-    color: var(--muted);
-
-    font-size: 12px;
+.mapETA span{
+    color:var(--muted);
+    font-size:12px;
 }
 
-.mapControls {
-    position: absolute;
-
-    right: 18px;
-    bottom: 18px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 6px;
+.mapControls{
+    position:absolute;
+    right:18px;
+    bottom:18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
 }
 
-.mapControls button {
-    width: 42px;
-    height: 42px;
-
-    background: white;
-
-    border-radius: 12px;
-
-    font-size: 20px;
-
-    box-shadow: var(--shadow);
+.mapControls button{
+    width:42px;
+    height:42px;
+    background:#fff;
+    border-radius:12px;
+    font-size:20px;
+    box-shadow:var(--shadow);
 }
 
-.ridePanel {
-    padding: 20px;
+.ridePanel{
+    padding:20px;
 }
 
-.driverStatus {
-    background: #f0fff7;
-
-    color: var(--green2);
-
-    padding: 12px;
-
-    border-radius: 12px;
-
-    font-weight: 800;
-
-    margin-bottom: 20px;
+.driverStatus{
+    background:#f0fff7;
+    color:var(--green2);
+    padding:12px;
+    border-radius:12px;
+    font-weight:800;
+    margin-bottom:20px;
 }
 
-.statusDot {
-    display: inline-block;
-
-    width: 9px;
-    height: 9px;
-
-    background: #16a36b;
-
-    border-radius: 50%;
-
-    margin-right: 6px;
-
-    animation: statusPulse 1.2s infinite;
+.statusDot{
+    display:inline-block;
+    width:9px;
+    height:9px;
+    background:#16a36b;
+    border-radius:50%;
+    margin-right:6px;
+    animation:statusPulse 1.2s infinite;
 }
 
-@keyframes statusPulse {
-
-    50% {
-        opacity: .3;
-    }
-
+@keyframes statusPulse{
+    50%{opacity:.3}
 }
 
-.locationInput {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    border: 1px solid var(--line);
-
-    padding: 13px;
-
-    border-radius: 13px;
-
-    background: #fafcfb;
+.locationInput{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid var(--line);
+    padding:13px;
+    border-radius:13px;
+    background:#fafcfb;
 }
 
-.locationInput input {
-    width: 100%;
-
-    border: 0;
-
-    outline: 0;
-
-    background: transparent;
+.locationInput input{
+    width:100%;
+    border:0;
+    outline:0;
+    background:transparent;
 }
 
-.locationLine {
-    height: 20px;
-
-    width: 2px;
-
-    background: #d8e3de;
-
-    margin-left: 20px;
+.locationLine{
+    height:20px;
+    width:2px;
+    background:#d8e3de;
+    margin-left:20px;
 }
 
-.rideTitle {
-    margin-top: 24px;
+.rideTitle{
+    margin-top:24px;
 }
 
-.vehicleOptions {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 8px;
+.vehicleOptions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
-.vehicle {
-    display: grid;
-
-    grid-template-columns:
-        40px
-        1fr
-        auto;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 12px;
-
-    border: 1px solid var(--line);
-
-    border-radius: 14px;
-
-    background: white;
-
-    text-align: left;
-
-    transition: .2s;
+.vehicle{
+    display:grid;
+    grid-template-columns:40px 1fr auto;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:#fff;
+    text-align:left;
+    transition:.2s;
 }
 
 .vehicle:hover,
-.vehicle.active {
-    border: 2px solid var(--green);
-
-    background: var(--mint);
+.vehicle.active{
+    border:2px solid var(--green);
+    background:var(--mint);
 }
 
-.vehicleIcon {
-    font-size: 25px;
+.vehicleIcon{
+    font-size:25px;
 }
 
-.vehicle small {
-    display: block;
-
-    color: var(--muted);
-
-    margin-top: 3px;
+.vehicle small{
+    display:block;
+    color:var(--muted);
+    margin-top:3px;
 }
 
-.rideInfo {
-    margin-top: 18px;
-
-    padding: 15px;
-
-    background: #f5f8f6;
-
-    border-radius: 15px;
-
-    display: flex;
-
-    justify-content: space-between;
+.rideInfo{
+    margin-top:18px;
+    padding:15px;
+    background:#f5f8f6;
+    border-radius:15px;
+    display:flex;
+    justify-content:space-between;
 }
 
-.rideInfo small {
-    display: block;
-
-    color: var(--muted);
+.rideInfo small{
+    display:block;
+    color:var(--muted);
 }
 
-.rideInfo strong {
-    display: block;
-
-    font-size: 19px;
-
-    margin-top: 3px;
+.rideInfo strong{
+    display:block;
+    font-size:19px;
+    margin-top:3px;
 }
 
-.callRide {
-    width: 100%;
-
-    margin-top: 15px;
-
-    padding: 15px;
-
-    border-radius: 14px;
-
-    background: var(--green);
-
-    color: white;
-
-    font-weight: 900;
-
-    font-size: 16px;
+.callRide{
+    width:100%;
+    margin-top:15px;
+    padding:15px;
+    border-radius:14px;
+    background:var(--green);
+    color:#fff;
+    font-weight:900;
+    font-size:16px;
 }
 
-.callRide:hover {
-    background: var(--green2);
+.callRide:hover{
+    background:var(--green2);
 }
 
-.driverCard {
-    margin-top: 15px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 14px;
-
-    border: 1px solid var(--line);
-
-    border-radius: 15px;
+.driverCard{
+    margin-top:15px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:15px;
 }
 
-.driverAvatar {
-    width: 45px;
-    height: 45px;
-
-    border-radius: 50%;
-
-    background: var(--mint);
-
-    display: grid;
-    place-items: center;
-
-    font-size: 23px;
+.driverAvatar{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:var(--mint);
+    display:grid;
+    place-items:center;
+    font-size:23px;
 }
 
-.driverInfo {
-    flex: 1;
+.driverInfo{
+    flex:1;
 }
 
 .driverInfo span,
-.driverInfo small {
-    display: block;
-
-    color: var(--muted);
-
-    font-size: 12px;
-
-    margin-top: 3px;
+.driverInfo small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
 }
 
-.driverActions {
-    display: flex;
-
-    gap: 5px;
+.driverActions{
+    display:flex;
+    gap:5px;
 }
 
-.driverActions button {
-    width: 35px;
-    height: 35px;
-
-    border-radius: 50%;
-
-    background: var(--mint);
+.driverActions button{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    background:var(--mint);
 }
 
 /* =========================================================
    RECYCLE
 ========================================================= */
 
-.recycleBanner {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 18px;
-
-    margin-bottom: 25px;
+.recycleBanner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-bottom:25px;
 }
 
-.recycleInfo {
-    background: var(--mint);
-
-    border-radius: 22px;
-
-    padding: 25px;
+.recycleInfo{
+    background:var(--mint);
+    border-radius:22px;
+    padding:25px;
 }
 
-.recycleInfo strong {
-    display: block;
-
-    color: var(--green2);
-
-    font-size: 42px;
+.recycleInfo strong{
+    display:block;
+    color:var(--green2);
+    font-size:42px;
 }
 
-.recycleInfo span {
-    color: var(--muted);
+.recycleInfo span{
+    color:var(--muted);
 }
 
-.earnBadge {
-    background: #10241b;
-
-    color: white;
-
-    border-radius: 22px;
-
-    padding: 25px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
+.earnBadge{
+    background:#10241b;
+    color:#fff;
+    border-radius:22px;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
 /* =========================================================
-   USED MARKETPLACE
+   USED
 ========================================================= */
 
-.marketToolbar {
-    background: white;
-
-    padding: 15px;
-
-    border-radius: 17px;
-
-    border: 1px solid var(--line);
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 20px;
+.marketToolbar{
+    background:#fff;
+    padding:15px;
+    border-radius:17px;
+    border:1px solid var(--line);
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
 }
 
-.marketToolbar input {
-    flex: 1;
-
-    border: 1px solid var(--line);
-
-    padding: 11px 14px;
-
-    border-radius: 11px;
-
-    outline: none;
+.marketToolbar input{
+    flex:1;
+    border:1px solid var(--line);
+    padding:11px 14px;
+    border-radius:11px;
+    outline:none;
 }
 
 /* =========================================================
    WALLET
 ========================================================= */
 
-.walletPage {
-    display: grid;
-
-    grid-template-columns:
-        1fr
-        1fr;
-
-    gap: 20px;
+.walletPage{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
 
-.bigWallet {
-    background: #10241b;
-
-    color: white;
-
-    border-radius: 25px;
-
-    padding: 30px;
+.bigWallet{
+    background:#10241b;
+    color:#fff;
+    border-radius:25px;
+    padding:30px;
 }
 
-.bigWallet .number {
-    font-size: 60px;
-
-    font-weight: 950;
-
-    margin: 15px 0;
+.bigWallet .number{
+    font-size:60px;
+    font-weight:950;
+    margin:15px 0;
 }
 
-.walletProgress {
-    background: #1a392d;
-
-    height: 14px;
-
-    border-radius: 999px;
-
-    overflow: hidden;
-
-    margin-top: 20px;
+.walletProgress{
+    background:#1a392d;
+    height:14px;
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:20px;
 }
 
-.walletProgress div {
-    width: 82%;
-
-    height: 100%;
-
-    background: var(--green);
-
-    border-radius: 999px;
+.walletProgress div{
+    width:82%;
+    height:100%;
+    background:var(--green);
+    border-radius:999px;
 }
 
-.rewardPanel {
-    background: white;
-
-    border: 1px solid var(--line);
-
-    border-radius: 25px;
-
-    padding: 25px;
+.rewardPanel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:25px;
+    padding:25px;
 }
 
-.reward {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 15px;
-
-    background: var(--mint);
-
-    border-radius: 15px;
-
-    margin: 10px 0;
+.reward{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:15px;
+    background:var(--mint);
+    border-radius:15px;
+    margin:10px 0;
 }
 
 /* =========================================================
    ACTIVITY
 ========================================================= */
 
-.activity {
-    display: grid;
-
-    grid-template-columns:
-        1fr
-        1fr;
-
-    gap: 16px;
+.activity{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
 }
 
-.panel {
-    background: white;
-
-    border: 1px solid var(--line);
-
-    border-radius: 20px;
-
-    padding: 20px;
+.panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:20px;
 }
 
-.activityItem {
-    display: flex;
-
-    justify-content: space-between;
-
-    padding: 14px 0;
-
-    border-bottom: 1px solid var(--line);
+.activityItem{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
 }
 
-.activityItem:last-child {
-    border: 0;
+.activityItem:last-child{
+    border:0;
 }
 
-.plus {
-    color: var(--green);
-
-    font-weight: 900;
+.plus{
+    color:var(--green);
+    font-weight:900;
 }
 
 /* =========================================================
    FOOTER
 ========================================================= */
 
-.footer {
-    background: #10241b;
-
-    color: #d7e7df;
-
-    padding: 35px 5%;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
+.footer{
+    background:#10241b;
+    color:#d7e7df;
+    padding:35px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.footer b {
-    color: white;
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.modal {
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(10,25,18,.5);
-
-    display: none;
-
-    place-items: center;
-
-    z-index: 200;
-
-    padding: 20px;
-}
-
-.modal.show {
-    display: grid;
-}
-
-.modalbox {
-    background: white;
-
-    width: min(520px,100%);
-
-    border-radius: 24px;
-
-    padding: 25px;
-}
-
-.modalhead {
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 20px;
-}
-
-.close {
-    background: #eef4f1;
-
-    border-radius: 50%;
-
-    width: 34px;
-
-    height: 34px;
-
-    flex-shrink: 0;
+.footer b{
+    color:#fff;
 }
 
 /* =========================================================
    TOAST
 ========================================================= */
 
-.toast {
-    position: fixed;
-
-    right: 22px;
-    bottom: 22px;
-
-    background: #10241b;
-
-    color: white;
-
-    padding: 14px 18px;
-
-    border-radius: 13px;
-
-    box-shadow: var(--shadow);
-
-    transform: translateY(120px);
-
-    transition: .3s;
-
-    z-index: 300;
+.toast{
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    background:#10241b;
+    color:#fff;
+    padding:14px 18px;
+    border-radius:13px;
+    box-shadow:var(--shadow);
+    transform:translateY(120px);
+    transition:.3s;
+    z-index:1000;
 }
 
-.toast.show {
-    transform: translateY(0);
+.toast.show{
+    transform:translateY(0);
 }
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media(max-width:1100px) {
+@media(max-width:1100px){
 
-    .grid {
-        grid-template-columns: repeat(2,1fr);
+    .grid{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .navlinks {
-        gap: 2px;
+    .navlinks{
+        gap:2px;
     }
 
-    .navlinks button {
-        padding: 8px;
-        font-size: 13px;
+    .navlinks button{
+        padding:8px;
+        font-size:13px;
     }
-
 }
 
-@media(max-width:900px) {
+@media(max-width:900px){
 
-    .navlinks {
-        display: none;
+    .navlinks{
+        display:none;
     }
 
-    .hero {
-        grid-template-columns: 1fr;
+    .hero{
+        grid-template-columns:1fr;
     }
 
-    .quick {
-        grid-template-columns: repeat(2,1fr);
+    .quick{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .rideApp {
-        grid-template-columns: 1fr;
+    .rideApp{
+        grid-template-columns:1fr;
     }
 
-    .rideMap {
-        height: 480px;
+    .rideMap{
+        height:480px;
     }
 
-    .walletPage {
-        grid-template-columns: 1fr;
+    .walletPage{
+        grid-template-columns:1fr;
     }
 
-    .recycleBanner {
-        grid-template-columns: 1fr;
+    .recycleBanner{
+        grid-template-columns:1fr;
     }
 
-    .activity {
-        grid-template-columns: 1fr;
+    .activity{
+        grid-template-columns:1fr;
     }
-
 }
 
-@media(max-width:560px) {
+@media(max-width:700px){
 
-    .nav {
-        padding: 0 4%;
+    .restaurantGrid{
+        grid-template-columns:1fr;
     }
 
-    .container {
-        padding-left: 4%;
-        padding-right: 4%;
+    .foodHeader{
+        align-items:flex-start;
+        gap:15px;
     }
 
-    .grid {
-        grid-template-columns: 1fr;
+    .foodBannerIcon{
+        display:none;
     }
 
-    .quick {
-        grid-template-columns: 1fr 1fr;
+    .foodBanner h2{
+        font-size:30px;
     }
 
-    .heroMain {
-        padding: 28px;
+    .timeOptions{
+        grid-template-columns:1fr;
     }
 
-    .heroMain h1 {
-        font-size: 34px;
+    .menuItem{
+        grid-template-columns:65px 1fr auto;
     }
 
-    .wallet .big {
-        font-size: 36px;
+    .menuItemImage{
+        width:65px;
+        height:65px;
     }
 
-    .heroMain p {
-        font-size: 16px;
+    .foodModal{
+        padding:8px;
     }
 
-    .featureStats {
-        grid-template-columns: 1fr;
+    .foodModalBox{
+        border-radius:20px;
+        padding:18px;
+    }
+}
+
+@media(max-width:560px){
+
+    .nav{
+        padding:0 4%;
     }
 
-    .rideMap {
-        height: 400px;
+    .container{
+        padding-left:4%;
+        padding-right:4%;
     }
 
-    .ridePanel {
-        padding: 12px;
+    .grid{
+        grid-template-columns:1fr;
     }
 
-    .walletPage .bigWallet .number {
-        font-size: 45px;
+    .quick{
+        grid-template-columns:1fr 1fr;
     }
 
-    .marketToolbar {
-        flex-direction: column;
+    .heroMain{
+        padding:28px;
     }
 
-    .footer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+    .heroMain h1{
+        font-size:34px;
     }
 
+    .wallet .big{
+        font-size:36px;
+    }
+
+    .heroMain p{
+        font-size:16px;
+    }
+
+    .featureStats{
+        grid-template-columns:1fr;
+    }
+
+    .rideMap{
+        height:400px;
+    }
+
+    .ridePanel{
+        padding:12px;
+    }
+
+    .bigWallet .number{
+        font-size:45px;
+    }
+
+    .marketToolbar{
+        flex-direction:column;
+    }
+
+    .footer{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .cartItem{
+        flex-wrap:wrap;
+    }
 }
 </style>
 </head>
-
 
 <body>
 
@@ -1584,40 +2020,34 @@ button:disabled {
 
     <div class="navlinks">
 
-        <button
-            class="active"
-            data-page="home"
-            onclick="showPage('home',this)">
+        <button class="active"
+                data-page="home"
+                onclick="showPage('home',this)">
             Home
         </button>
 
-        <button
-            data-page="food"
-            onclick="showPage('food',this)">
+        <button data-page="food"
+                onclick="showPage('food',this)">
             Food Deals
         </button>
 
-        <button
-            data-page="recycle"
-            onclick="showPage('recycle',this)">
+        <button data-page="recycle"
+                onclick="showPage('recycle',this)">
             Recycle
         </button>
 
-        <button
-            data-page="transport"
-            onclick="showPage('transport',this)">
+        <button data-page="transport"
+                onclick="showPage('transport',this)">
             Green Ride
         </button>
 
-        <button
-            data-page="used"
-            onclick="showPage('used',this)">
+        <button data-page="used"
+                onclick="showPage('used',this)">
             Used Items
         </button>
 
-        <button
-            data-page="wallet"
-            onclick="showPage('wallet',this)">
+        <button data-page="wallet"
+                onclick="showPage('wallet',this)">
             Carbon Wallet
         </button>
 
@@ -1626,29 +2056,15 @@ button:disabled {
     <div class="actions">
 
         <div class="credits">
-            🌱
-            <span id="navCredits">
-                1,250
-            </span>
+            🌱 <span id="navCredits">1,250</span>
         </div>
 
-        <select
-            class="lang"
-            id="language"
-            onchange="setLanguage(this.value)">
-
-            <option value="en">
-                EN
-            </option>
-
-            <option value="th">
-                TH
-            </option>
-
-            <option value="ko">
-                한국어
-            </option>
-
+        <select class="lang"
+                id="language"
+                onchange="setLanguage(this.value)">
+            <option value="en">EN</option>
+            <option value="th">TH</option>
+            <option value="ko">한국어</option>
         </select>
 
     </div>
@@ -1657,233 +2073,148 @@ button:disabled {
 
 
 <!-- =========================================================
-     HOME PAGE
+     HOME
 ========================================================= -->
 
-<main
-    id="page-home"
-    class="page active">
+<main id="page-home" class="page active">
 
-    <div class="container">
+<div class="container">
 
-        <section class="hero">
+<section class="hero">
 
-            <div class="heroMain">
+    <div class="heroMain">
 
-                <h1>
-                    Turn Everyday Actions Into Rewards.
-                </h1>
+        <h1>
+            Turn Everyday Actions Into Rewards.
+        </h1>
 
-                <p>
-                    Rescue food. Recycle. Ride green.
-                    Reuse. Earn Carbon Credits.
-                </p>
+        <p>
+            Rescue food. Recycle. Ride green.
+            Reuse. Earn Carbon Credits.
+        </p>
 
-                <div class="search">
+        <div class="search">
 
-                    <input
-                        id="searchInput"
-                        placeholder="Search food, recycling stations, transport, or used items...">
+            <input id="searchInput"
+                   placeholder="Search food, recycling stations, transport, or used items...">
 
-                    <button onclick="search()">
-                        Search
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div class="wallet">
-
-                <small>
-                    CARBON WALLET
-                </small>
-
-                <div class="big">
-
-                    🌱
-
-                    <span id="balance">
-                        1,250
-                    </span>
-
-                </div>
-
-                <div class="impact">
-
-                    🌍
-
-                    <b>
-                        32.4 kg
-                    </b>
-
-                    <br>
-
-                    <small>
-                        estimated CO₂ reduction
-                    </small>
-
-                </div>
-
-                <button
-                    class="redeem"
-                    onclick="showPage('wallet')">
-
-                    Redeem Carbon Credits
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- QUICK ACCESS -->
-
-        <section class="quick">
-
-            <button
-                onclick="showPage('food')">
-
-                <span>
-                    🍱
-                </span>
-
-                <b>
-                    Food Deals
-                </b>
-
-                <small class="muted">
-                    Save 70–80%
-                </small>
-
+            <button onclick="search()">
+                Search
             </button>
 
-
-            <button
-                onclick="showPage('recycle')">
-
-                <span>
-                    ♻️
-                </span>
-
-                <b>
-                    Recycle
-                </b>
-
-                <small class="muted">
-                    Earn credits
-                </small>
-
-            </button>
-
-
-            <button
-                onclick="showPage('transport')">
-
-                <span>
-                    🚗
-                </span>
-
-                <b>
-                    Green Ride
-                </b>
-
-                <small class="muted">
-                    Book an EV
-                </small>
-
-            </button>
-
-
-            <button
-                onclick="showPage('used')">
-
-                <span>
-                    📦
-                </span>
-
-                <b>
-                    Used Items
-                </b>
-
-                <small class="muted">
-                    Reuse locally
-                </small>
-
-            </button>
-
-        </section>
-
-
-        <!-- FEATURES -->
-
-        <section class="featurePanel">
-
-            <div class="sectionHead">
-
-                <div>
-
-                    <h2>
-                        🌍 Your GreenLoop Impact
-                    </h2>
-
-                    <p>
-                        Every small action creates measurable impact.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="featureStats">
-
-                <div class="statBox">
-
-                    <strong>
-                        1,250
-                    </strong>
-
-                    <span>
-                        Carbon Credits
-                    </span>
-
-                </div>
-
-
-                <div class="statBox">
-
-                    <strong>
-                        32.4 kg
-                    </strong>
-
-                    <span>
-                        CO₂ reduction
-                    </span>
-
-                </div>
-
-
-                <div class="statBox">
-
-                    <strong>
-                        Top 18%
-                    </strong>
-
-                    <span>
-                        Green users this month
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
+        </div>
 
     </div>
 
+
+    <div class="wallet">
+
+        <small>
+            CARBON WALLET
+        </small>
+
+        <div class="big">
+            🌱 <span id="balance">1,250</span>
+        </div>
+
+        <div class="impact">
+
+            🌍 <b>32.4 kg</b>
+
+            <br>
+
+            <small>
+                estimated CO₂ reduction
+            </small>
+
+        </div>
+
+        <button class="redeem"
+                onclick="showPage('wallet')">
+            Redeem Carbon Credits
+        </button>
+
+    </div>
+
+</section>
+
+
+<section class="quick">
+
+    <button onclick="showPage('food')">
+        <span>🍱</span>
+        <b>Food Deals</b>
+        <small class="muted">
+            Save 70–80%
+        </small>
+    </button>
+
+    <button onclick="showPage('recycle')">
+        <span>♻️</span>
+        <b>Recycle</b>
+        <small class="muted">
+            Earn credits
+        </small>
+    </button>
+
+    <button onclick="showPage('transport')">
+        <span>🚗</span>
+        <b>Green Ride</b>
+        <small class="muted">
+            Book an EV
+        </small>
+    </button>
+
+    <button onclick="showPage('used')">
+        <span>📦</span>
+        <b>Used Items</b>
+        <small class="muted">
+            Reuse locally
+        </small>
+    </button>
+
+</section>
+
+
+<section class="featurePanel">
+
+    <div class="sectionHead">
+
+        <div>
+            <h2>
+                🌍 Your GreenLoop Impact
+            </h2>
+
+            <p>
+                Every small action creates measurable impact.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="featureStats">
+
+        <div class="statBox">
+            <strong>1,250</strong>
+            <span>Carbon Credits</span>
+        </div>
+
+        <div class="statBox">
+            <strong>32.4 kg</strong>
+            <span>CO₂ reduction</span>
+        </div>
+
+        <div class="statBox">
+            <strong>Top 18%</strong>
+            <span>Green users this month</span>
+        </div>
+
+    </div>
+
+</section>
+
+</div>
 </main>
 
 
@@ -1891,1397 +2222,1938 @@ button:disabled {
      FOOD PAGE
 ========================================================= -->
 
-<section
-    id="page-food"
-    class="page">
+<section id="page-food" class="page">
 
-    <div class="container">
+<div class="container">
 
-        <div class="pageHeader">
+<div class="pageHeader foodHeader">
 
-            <h1>
-                🍱 Last-Minute Food Deals
-            </h1>
+    <div>
 
-            <p>
-                Rescue delicious food before it becomes waste.
-                Discounts start from 70%.
-            </p>
+        <h1>
+            🍱 GreenLoop Food
+        </h1>
 
-        </div>
+        <p>
+            Rescue great food before it becomes waste.
+            Save 70–80% and earn Carbon Credits.
+        </p>
+
+    </div>
+
+    <button class="foodCartButton"
+            onclick="openCart()">
+
+        🛒 Cart
+        <span id="cartCount">0</span>
+
+    </button>
+
+</div>
 
 
-        <div class="sectionHead">
+<div class="foodToolbar">
+
+    <button class="foodCategory active">
+        🔥 Near Me
+    </button>
+
+    <button class="foodCategory">
+        🍕 Meals
+    </button>
+
+    <button class="foodCategory">
+        ☕ Drinks
+    </button>
+
+    <button class="foodCategory">
+        🥐 Bakery
+    </button>
+
+    <button class="foodCategory">
+        🥗 Healthy
+    </button>
+
+    <button class="foodCategory">
+        ♻️ Rescue Food
+    </button>
+
+</div>
+
+
+<div class="foodBanner">
+
+    <div>
+
+        <span>
+            🔥 TODAY'S GREEN DEAL
+        </span>
+
+        <h2>
+            Up to 80% OFF
+        </h2>
+
+        <p>
+            Save money and help prevent food waste.
+        </p>
+
+    </div>
+
+    <div class="foodBannerIcon">
+        🍱
+    </div>
+
+</div>
+
+
+<div class="sectionHead">
+
+    <div>
+
+        <h2>
+            Restaurants near you
+        </h2>
+
+        <p>
+            Available for sustainable food rescue delivery
+        </p>
+
+    </div>
+
+    <button class="viewall"
+            onclick="toast('Showing all restaurants')">
+        View all →
+    </button>
+
+</div>
+
+
+<div class="restaurantGrid">
+
+
+<!-- RESTAURANT 1 -->
+
+<article class="restaurantCard">
+
+    <div class="restaurantImage bakeryImage">
+
+        🥐
+
+        <span class="restaurantDiscount">
+            75% OFF
+        </span>
+
+        <span class="restaurantOpen">
+            OPEN
+        </span>
+
+    </div>
+
+    <div class="restaurantBody">
+
+        <div class="restaurantTop">
 
             <div>
 
-                <h2>
-                    🔥 Up to 80% OFF
-                </h2>
+                <h3>
+                    Morning Bake
+                </h3>
 
-                <p>
-                    Limited quantities available.
-                </p>
+                <div class="restaurantMeta">
+                    ⭐ 4.8 · Bakery · 0.8 km
+                </div>
 
+            </div>
+
+            <div class="restaurantEco">
+                🌱 +15
             </div>
 
         </div>
 
-
-        <div class="grid">
-
-            <!-- FOOD 1 -->
-
-            <article class="card">
-
-                <div class="pic">
-
-                    🥐
-
-                    <span class="tag">
-                        75% OFF
-                    </span>
-
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Bakery Surprise Box
-                    </h3>
-
-                    <div class="muted">
-                        🥐 Morning Bake · 0.8 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿45
-                        </strong>
-
-                        <span class="old">
-                            ฿180
-                        </span>
-
-                        <span class="discount">
-                            -75%
-                        </span>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Pickup before 20:30
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="reserve('Bakery Surprise Box',15)">
-
-                            Reserve
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- FOOD 2 -->
-
-            <article class="card">
-
-                <div class="pic">
-
-                    🍣
-
-                    <span class="tag">
-                        70% OFF
-                    </span>
-
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Sushi Rescue Set
-                    </h3>
-
-                    <div class="muted">
-                        Sakana House · 1.2 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿87
-                        </strong>
-
-                        <span class="old">
-                            ฿290
-                        </span>
-
-                        <span class="discount">
-                            -70%
-                        </span>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Pickup before 21:00
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="reserve('Sushi Rescue Set',15)">
-
-                            Reserve
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- FOOD 3 -->
-
-            <article class="card">
-
-                <div class="pic">
-
-                    🍕
-
-                    <span class="tag">
-                        75% OFF
-                    </span>
-
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Pizza End-of-Day
-                    </h3>
-
-                    <div class="muted">
-                        Green Slice · 1.8 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿62
-                        </strong>
-
-                        <span class="old">
-                            ฿250
-                        </span>
-
-                        <span class="discount">
-                            -75%
-                        </span>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Pickup before 22:00
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="reserve('Pizza End-of-Day',15)">
-
-                            Reserve
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- FOOD 4 -->
-
-            <article class="card">
-
-                <div class="pic">
-
-                    🥗
-
-                    <span class="tag">
-                        70% OFF
-                    </span>
-
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Healthy Salad Box
-                    </h3>
-
-                    <div class="muted">
-                        Fresh Corner · 2.1 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿45
-                        </strong>
-
-                        <span class="old">
-                            ฿150
-                        </span>
-
-                        <span class="discount">
-                            -70%
-                        </span>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Pickup before 19:45
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="reserve('Healthy Salad Box',15)">
-
-                            Reserve
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
+        <p class="restaurantDescription">
+            End-of-day bakery boxes with fresh pastries.
+        </p>
+
+        <div class="restaurantDelivery">
+
+            <span>
+                🚴 15–25 min
+            </span>
+
+            <span>
+                ฿10 delivery
+            </span>
 
         </div>
 
+        <button class="restaurantButton"
+                onclick="openRestaurant('bakery')">
+            View menu
+        </button>
+
     </div>
+
+</article>
+
+
+<!-- RESTAURANT 2 -->
+
+<article class="restaurantCard">
+
+    <div class="restaurantImage sushiImage">
+
+        🍣
+
+        <span class="restaurantDiscount">
+            70% OFF
+        </span>
+
+        <span class="restaurantOpen">
+            OPEN
+        </span>
+
+    </div>
+
+    <div class="restaurantBody">
+
+        <div class="restaurantTop">
+
+            <div>
+
+                <h3>
+                    Sakana House
+                </h3>
+
+                <div class="restaurantMeta">
+                    ⭐ 4.7 · Japanese · 1.2 km
+                </div>
+
+            </div>
+
+            <div class="restaurantEco">
+                🌱 +20
+            </div>
+
+        </div>
+
+        <p class="restaurantDescription">
+            Fresh sushi sets available before closing.
+        </p>
+
+        <div class="restaurantDelivery">
+
+            <span>
+                🚴 20–30 min
+            </span>
+
+            <span>
+                ฿15 delivery
+            </span>
+
+        </div>
+
+        <button class="restaurantButton"
+                onclick="openRestaurant('sushi')">
+            View menu
+        </button>
+
+    </div>
+
+</article>
+
+
+<!-- RESTAURANT 3 -->
+
+<article class="restaurantCard">
+
+    <div class="restaurantImage pizzaImage">
+
+        🍕
+
+        <span class="restaurantDiscount">
+            75% OFF
+        </span>
+
+        <span class="restaurantOpen">
+            OPEN
+        </span>
+
+    </div>
+
+    <div class="restaurantBody">
+
+        <div class="restaurantTop">
+
+            <div>
+
+                <h3>
+                    Green Slice
+                </h3>
+
+                <div class="restaurantMeta">
+                    ⭐ 4.9 · Pizza · 1.8 km
+                </div>
+
+            </div>
+
+            <div class="restaurantEco">
+                🌱 +20
+            </div>
+
+        </div>
+
+        <p class="restaurantDescription">
+            End-of-day pizzas at heavily reduced prices.
+        </p>
+
+        <div class="restaurantDelivery">
+
+            <span>
+                🚴 18–28 min
+            </span>
+
+            <span>
+                FREE delivery
+            </span>
+
+        </div>
+
+        <button class="restaurantButton"
+                onclick="openRestaurant('pizza')">
+            View menu
+        </button>
+
+    </div>
+
+</article>
+
+
+<!-- RESTAURANT 4 -->
+
+<article class="restaurantCard">
+
+    <div class="restaurantImage saladImage">
+
+        🥗
+
+        <span class="restaurantDiscount">
+            70% OFF
+        </span>
+
+        <span class="restaurantOpen">
+            OPEN
+        </span>
+
+    </div>
+
+    <div class="restaurantBody">
+
+        <div class="restaurantTop">
+
+            <div>
+
+                <h3>
+                    Fresh Corner
+                </h3>
+
+                <div class="restaurantMeta">
+                    ⭐ 4.6 · Healthy · 2.1 km
+                </div>
+
+            </div>
+
+            <div class="restaurantEco">
+                🌱 +15
+            </div>
+
+        </div>
+
+        <p class="restaurantDescription">
+            Healthy salad boxes rescued before closing.
+        </p>
+
+        <div class="restaurantDelivery">
+
+            <span>
+                🚴 20–35 min
+            </span>
+
+            <span>
+                ฿12 delivery
+            </span>
+
+        </div>
+
+        <button class="restaurantButton"
+                onclick="openRestaurant('salad')">
+            View menu
+        </button>
+
+    </div>
+
+</article>
+
+</div>
+
+
+<div class="greenFoodRewards">
+
+    <div class="greenFoodIcon">
+        🌱
+    </div>
+
+    <div>
+
+        <strong>
+            Every rescue order earns Carbon Credits
+        </strong>
+
+        <p>
+            Reduce food waste and earn +10 to +25 credits.
+        </p>
+
+    </div>
+
+</div>
+
+</div>
 
 </section>
 
 
 <!-- =========================================================
-     RECYCLE PAGE
+     RECYCLE
 ========================================================= -->
 
-<section
-    id="page-recycle"
-    class="page">
+<section id="page-recycle" class="page">
 
-    <div class="container">
+<div class="container">
 
-        <div class="pageHeader">
+<div class="pageHeader">
 
-            <h1>
-                ♻️ Recycling Stations
-            </h1>
+    <h1>
+        ♻️ Recycling Stations
+    </h1>
 
-            <p>
-                Recycle verified materials and earn Carbon Credits.
-            </p>
+    <p>
+        Recycle verified materials and earn Carbon Credits.
+    </p>
 
+</div>
+
+
+<div class="recycleBanner">
+
+    <div class="recycleInfo">
+
+        <strong>
+            +20
+        </strong>
+
+        <span>
+            Average credits per recycling action
+        </span>
+
+    </div>
+
+    <div class="earnBadge">
+
+        <h3>
+            🌱 Green Challenge
+        </h3>
+
+        <p>
+            Recycle 3 times this week
+            and earn an extra 100 credits.
+        </p>
+
+        <button class="primary"
+                onclick="earn(100,'Weekly recycling challenge')">
+            Complete Challenge +100
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="grid">
+
+    <article class="card">
+
+        <div class="pic">
+            ♻️
         </div>
 
+        <div class="cardbody">
 
-        <div class="recycleBanner">
+            <h3>
+                Green Hub Nimman
+            </h3>
 
-            <div class="recycleInfo">
+            <div class="muted">
+                0.9 km · Open until 20:00
+            </div>
 
-                <strong>
+            <div class="row">
+
+                <b>
+                    Plastic · Glass · Paper
+                </b>
+
+                <button class="secondary"
+                        onclick="earn(20,'Recycling at Green Hub')">
                     +20
-                </strong>
-
-                <span>
-                    Average credits per recycling action
-                </span>
-
-            </div>
-
-
-            <div class="earnBadge">
-
-                <h3>
-                    🌱 Green Challenge
-                </h3>
-
-                <p>
-                    Recycle 3 times this week
-                    and earn an extra 100 credits.
-                </p>
-
-                <button
-                    class="primary"
-                    onclick="earn(100,'Weekly recycling challenge')">
-
-                    Complete Challenge +100
-
                 </button>
 
             </div>
 
         </div>
 
-
-        <div class="grid">
-
-            <article class="card">
-
-                <div class="pic">
-                    ♻️
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Green Hub Nimman
-                    </h3>
-
-                    <div class="muted">
-                        0.9 km · Open until 20:00
-                    </div>
-
-                    <div class="row">
-
-                        <b>
-                            Plastic · Glass · Paper
-                        </b>
-
-                        <button
-                            class="secondary"
-                            onclick="earn(20,'Recycling at Green Hub')">
-
-                            +20
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
+    </article>
 
 
-            <article class="card">
+    <article class="card">
 
-                <div class="pic">
-                    🔋
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Eco Drop Station
-                    </h3>
-
-                    <div class="muted">
-                        1.7 km · Open until 18:00
-                    </div>
-
-                    <div class="row">
-
-                        <b>
-                            Battery · E-waste
-                        </b>
-
-                        <button
-                            class="secondary"
-                            onclick="earn(30,'E-waste recycling')">
-
-                            +30
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <article class="card">
-
-                <div class="pic">
-                    🧴
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Zero Waste Point
-                    </h3>
-
-                    <div class="muted">
-                        2.4 km · Open until 21:00
-                    </div>
-
-                    <div class="row">
-
-                        <b>
-                            Plastic · Metal
-                        </b>
-
-                        <button
-                            class="secondary"
-                            onclick="earn(20,'Recycling at Zero Waste Point')">
-
-                            +20
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <article class="card">
-
-                <div class="pic">
-                    🌱
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Community Green Point
-                    </h3>
-
-                    <div class="muted">
-                        3.1 km · Open until 19:00
-                    </div>
-
-                    <div class="row">
-
-                        <b>
-                            All recyclables
-                        </b>
-
-                        <button
-                            class="secondary"
-                            onclick="earn(25,'Community recycling')">
-
-                            +25
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
+        <div class="pic">
+            🔋
         </div>
 
-    </div>
+        <div class="cardbody">
 
-</section>
+            <h3>
+                Eco Drop Station
+            </h3>
 
-
-<!-- =========================================================
-     TRANSPORT PAGE
-========================================================= -->
-
-<section
-    id="page-transport"
-    class="page">
-
-    <div class="container">
-
-        <div class="pageHeader">
-
-            <h1>
-                🚗 Green Ride
-            </h1>
-
-            <p>
-                Book an EV and track your driver live.
-            </p>
-
-        </div>
-
-
-        <div class="rideApp">
-
-            <!-- MAP -->
-
-            <div
-                class="rideMap"
-                id="rideMap">
-
-                <div class="mapRoad r1"></div>
-                <div class="mapRoad r2"></div>
-
-
-                <!-- USER -->
-
-                <div class="userLocation">
-
-                    <div class="userPulse"></div>
-
-                    👤
-
-                </div>
-
-
-                <!-- DRIVER -->
-
-                <div
-                    class="evMarker"
-                    id="evMarker">
-
-                    🚗
-
-                    <span class="driverArrow">
-                        ▲
-                    </span>
-
-                </div>
-
-
-                <!-- DESTINATION -->
-
-                <div class="mapDestination">
-                    📍
-                </div>
-
-
-                <!-- ETA -->
-
-                <div class="mapETA">
-
-                    <strong id="eta">
-                        5 min
-                    </strong>
-
-                    <span>
-                        Driver arriving
-                    </span>
-
-                </div>
-
-
-                <!-- MAP CONTROLS -->
-
-                <div class="mapControls">
-
-                    <button onclick="centerMap()">
-                        ◎
-                    </button>
-
-                    <button onclick="zoomMap()">
-                        +
-                    </button>
-
-                    <button onclick="zoomOutMap()">
-                        −
-                    </button>
-
-                </div>
-
+            <div class="muted">
+                1.7 km · Open until 18:00
             </div>
 
-
-            <!-- BOOKING PANEL -->
-
-            <div class="ridePanel">
-
-                <div
-                    class="driverStatus"
-                    id="driverStatus">
-
-                    <span class="statusDot"></span>
-
-                    Ready to find nearby EV
-
-                </div>
-
-
-                <h3>
-                    Where are you going?
-                </h3>
-
-
-                <div class="locationInput">
-
-                    <span>
-                        🟢
-                    </span>
-
-                    <input
-                        id="pickup"
-                        value="Your current location"
-                        placeholder="Pickup location">
-
-                </div>
-
-
-                <div class="locationLine"></div>
-
-
-                <div class="locationInput">
-
-                    <span>
-                        🔴
-                    </span>
-
-                    <input
-                        id="destination"
-                        value="Chiang Mai University"
-                        placeholder="Enter destination">
-
-                </div>
-
-
-                <h3 class="rideTitle">
-                    Choose your EV
-                </h3>
-
-
-                <div class="vehicleOptions">
-
-                    <!-- EV CAR -->
-
-                    <button
-                        class="vehicle active"
-                        onclick="selectVehicle(this,'EV Car',79,5)">
-
-                        <span class="vehicleIcon">
-                            🚗
-                        </span>
-
-                        <span>
-
-                            <b>
-                                EV Car
-                            </b>
-
-                            <small>
-                                4 seats · 5 min
-                            </small>
-
-                        </span>
-
-                        <strong>
-                            ฿79
-                        </strong>
-
-                    </button>
-
-
-                    <!-- EV TAXI -->
-
-                    <button
-                        class="vehicle"
-                        onclick="selectVehicle(this,'EV Taxi',59,3)">
-
-                        <span class="vehicleIcon">
-                            🚕
-                        </span>
-
-                        <span>
-
-                            <b>
-                                EV Taxi
-                            </b>
-
-                            <small>
-                                4 seats · 3 min
-                            </small>
-
-                        </span>
-
-                        <strong>
-                            ฿59
-                        </strong>
-
-                    </button>
-
-
-                    <!-- EV BIKE -->
-
-                    <button
-                        class="vehicle"
-                        onclick="selectVehicle(this,'EV Bike',39,2)">
-
-                        <span class="vehicleIcon">
-                            🛵
-                        </span>
-
-                        <span>
-
-                            <b>
-                                EV Bike
-                            </b>
-
-                            <small>
-                                1 seat · 2 min
-                            </small>
-
-                        </span>
-
-                        <strong>
-                            ฿39
-                        </strong>
-
-                    </button>
-
-                </div>
-
-
-                <!-- INFO -->
-
-                <div class="rideInfo">
-
-                    <div>
-
-                        <small>
-                            Estimated fare
-                        </small>
-
-                        <strong id="ridePrice">
-                            ฿79
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <small>
-                            CO₂ saved
-                        </small>
-
-                        <strong>
-                            ~1.8 kg
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <!-- CALL -->
-
-                <button
-                    class="callRide"
-                    id="callRideButton"
-                    onclick="callEV()">
-
-                    🚗 Call EV
-
+            <div class="row">
+
+                <b>
+                    Battery · E-waste
+                </b>
+
+                <button class="secondary"
+                        onclick="earn(30,'E-waste recycling')">
+                    +30
                 </button>
 
+            </div>
 
-                <!-- DRIVER -->
+        </div>
 
-                <div class="driverCard">
-
-                    <div class="driverAvatar">
-                        👨🏻‍✈️
-                    </div>
+    </article>
 
 
-                    <div class="driverInfo">
+    <article class="card">
 
-                        <b>
-                            Alex · EV Driver
-                        </b>
+        <div class="pic">
+            🧴
+        </div>
 
-                        <span>
-                            ⭐ 4.9 · Green Driver
-                        </span>
+        <div class="cardbody">
 
-                        <small>
-                            BYD Dolphin · EV-2048
-                        </small>
+            <h3>
+                Zero Waste Point
+            </h3>
 
-                    </div>
+            <div class="muted">
+                2.4 km · Open until 21:00
+            </div>
 
+            <div class="row">
 
-                    <div class="driverActions">
+                <b>
+                    Plastic · Metal
+                </b>
 
-                        <button
-                            onclick="toast('Calling driver...')">
-
-                            📞
-
-                        </button>
-
-                        <button
-                            onclick="toast('Opening driver chat...')">
-
-                            💬
-
-                        </button>
-
-                    </div>
-
-                </div>
+                <button class="secondary"
+                        onclick="earn(20,'Recycling at Zero Waste Point')">
+                    +20
+                </button>
 
             </div>
 
         </div>
 
-    </div>
+    </article>
+
+
+    <article class="card">
+
+        <div class="pic">
+            🌱
+        </div>
+
+        <div class="cardbody">
+
+            <h3>
+                Community Green Point
+            </h3>
+
+            <div class="muted">
+                3.1 km · Open until 19:00
+            </div>
+
+            <div class="row">
+
+                <b>
+                    All recyclables
+                </b>
+
+                <button class="secondary"
+                        onclick="earn(25,'Community recycling')">
+                    +25
+                </button>
+
+            </div>
+
+        </div>
+
+    </article>
+
+</div>
+
+</div>
 
 </section>
 
 
 <!-- =========================================================
-     USED ITEMS PAGE
+     GREEN RIDE
 ========================================================= -->
 
-<section
-    id="page-used"
-    class="page">
+<section id="page-transport" class="page">
 
-    <div class="container">
+<div class="container">
 
-        <div class="pageHeader">
+<div class="pageHeader">
 
-            <h1>
-                📦 Used Marketplace
-            </h1>
+    <h1>
+        🚗 Green Ride
+    </h1>
 
-            <p>
-                Give products a second life in your community.
-            </p>
+    <p>
+        Book an EV and track your driver live.
+    </p>
+
+</div>
+
+
+<div class="rideApp">
+
+<div class="rideMap" id="rideMap">
+
+    <div class="mapRoad r1"></div>
+    <div class="mapRoad r2"></div>
+
+    <div class="userLocation">
+        <div class="userPulse"></div>
+        👤
+    </div>
+
+    <div class="evMarker" id="evMarker">
+
+        🚗
+
+        <span class="driverArrow">
+            ▲
+        </span>
+
+    </div>
+
+    <div class="mapDestination">
+        📍
+    </div>
+
+    <div class="mapETA">
+
+        <strong id="eta">
+            5 min
+        </strong>
+
+        <span>
+            Driver arriving
+        </span>
+
+    </div>
+
+    <div class="mapControls">
+
+        <button onclick="centerMap()">◎</button>
+        <button onclick="zoomMap()">+</button>
+        <button onclick="zoomOutMap()">−</button>
+
+    </div>
+
+</div>
+
+
+<div class="ridePanel">
+
+    <div class="driverStatus"
+         id="driverStatus">
+
+        <span class="statusDot"></span>
+
+        Ready to find nearby EV
+
+    </div>
+
+
+    <h3>
+        Where are you going?
+    </h3>
+
+
+    <div class="locationInput">
+
+        <span>🟢</span>
+
+        <input id="pickup"
+               value="Your current location"
+               placeholder="Pickup location">
+
+    </div>
+
+
+    <div class="locationLine"></div>
+
+
+    <div class="locationInput">
+
+        <span>🔴</span>
+
+        <input id="destination"
+               value="Chiang Mai University"
+               placeholder="Enter destination">
+
+    </div>
+
+
+    <h3 class="rideTitle">
+        Choose your EV
+    </h3>
+
+
+    <div class="vehicleOptions">
+
+        <button class="vehicle active"
+                onclick="selectVehicle(this,'EV Car',79,5)">
+
+            <span class="vehicleIcon">
+                🚗
+            </span>
+
+            <span>
+
+                <b>
+                    EV Car
+                </b>
+
+                <small>
+                    4 seats · 5 min
+                </small>
+
+            </span>
+
+            <strong>
+                ฿79
+            </strong>
+
+        </button>
+
+
+        <button class="vehicle"
+                onclick="selectVehicle(this,'EV Taxi',59,3)">
+
+            <span class="vehicleIcon">
+                🚕
+            </span>
+
+            <span>
+
+                <b>
+                    EV Taxi
+                </b>
+
+                <small>
+                    4 seats · 3 min
+                </small>
+
+            </span>
+
+            <strong>
+                ฿59
+            </strong>
+
+        </button>
+
+
+        <button class="vehicle"
+                onclick="selectVehicle(this,'EV Bike',39,2)">
+
+            <span class="vehicleIcon">
+                🛵
+            </span>
+
+            <span>
+
+                <b>
+                    EV Bike
+                </b>
+
+                <small>
+                    1 seat · 2 min
+                </small>
+
+            </span>
+
+            <strong>
+                ฿39
+            </strong>
+
+        </button>
+
+    </div>
+
+
+    <div class="rideInfo">
+
+        <div>
+
+            <small>
+                Estimated fare
+            </small>
+
+            <strong id="ridePrice">
+                ฿79
+            </strong>
 
         </div>
 
+        <div>
 
-        <div class="marketToolbar">
+            <small>
+                CO₂ saved
+            </small>
 
-            <input
-                id="marketSearch"
-                placeholder="Search used items...">
+            <strong>
+                ~1.8 kg
+            </strong>
 
-            <button
-                class="primary"
-                onclick="marketSearch()">
+        </div>
 
-                Search
+    </div>
 
+
+    <button class="callRide"
+            id="callRideButton"
+            onclick="callEV()">
+
+        🚗 Call EV
+
+    </button>
+
+
+    <div class="driverCard">
+
+        <div class="driverAvatar">
+            👨🏻‍✈️
+        </div>
+
+        <div class="driverInfo">
+
+            <b>
+                Alex · EV Driver
+            </b>
+
+            <span>
+                ⭐ 4.9 · Green Driver
+            </span>
+
+            <small>
+                BYD Dolphin · EV-2048
+            </small>
+
+        </div>
+
+        <div class="driverActions">
+
+            <button onclick="toast('Calling driver...')">
+                📞
+            </button>
+
+            <button onclick="toast('Opening driver chat...')">
+                💬
             </button>
 
         </div>
 
-
-        <div class="grid">
-
-            <!-- HEADPHONES -->
-
-            <article class="card">
-
-                <div class="pic">
-                    🎧
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Wireless Headphones
-                    </h3>
-
-                    <div class="muted">
-                        Good condition · 0.7 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿450
-                        </strong>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Reuse impact +15
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="toast('Seller contact opened')">
-
-                            Contact
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- CHAIR -->
-
-            <article class="card">
-
-                <div class="pic">
-                    🪑
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Wooden Study Chair
-                    </h3>
-
-                    <div class="muted">
-                        Like new · 1.4 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿600
-                        </strong>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Reuse impact +20
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="toast('Seller contact opened')">
-
-                            Contact
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- BOOK -->
-
-            <article class="card">
-
-                <div class="pic">
-                    📚
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        University Textbook Set
-                    </h3>
-
-                    <div class="muted">
-                        Used · 1.9 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿250
-                        </strong>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Reuse impact +15
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="toast('Seller contact opened')">
-
-                            Contact
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- BAG -->
-
-            <article class="card">
-
-                <div class="pic">
-                    🎒
-                </div>
-
-                <div class="cardbody">
-
-                    <h3>
-                        Travel Backpack
-                    </h3>
-
-                    <div class="muted">
-                        Excellent · 2.2 km
-                    </div>
-
-                    <div class="price">
-
-                        <strong>
-                            ฿390
-                        </strong>
-
-                    </div>
-
-                    <div class="row">
-
-                        <small class="muted">
-                            Reuse impact +15
-                        </small>
-
-                        <button
-                            class="primary"
-                            onclick="toast('Seller contact opened')">
-
-                            Contact
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-        </div>
-
     </div>
+
+</div>
+
+</div>
+
+</div>
 
 </section>
 
 
 <!-- =========================================================
-     WALLET PAGE
+     USED MARKETPLACE
 ========================================================= -->
 
-<section
-    id="page-wallet"
-    class="page">
+<section id="page-used" class="page">
 
-    <div class="container">
+<div class="container">
 
-        <div class="pageHeader">
+<div class="pageHeader">
 
-            <h1>
-                🌱 Carbon Wallet
-            </h1>
+    <h1>
+        📦 Used Marketplace
+    </h1>
 
-            <p>
-                Turn your sustainable actions into rewards.
-            </p>
+    <p>
+        Give products a second life in your community.
+    </p>
 
+</div>
+
+
+<div class="marketToolbar">
+
+    <input id="marketSearch"
+           placeholder="Search used items...">
+
+    <button class="primary"
+            onclick="marketSearch()">
+        Search
+    </button>
+
+</div>
+
+
+<div class="grid">
+
+
+<article class="card">
+
+    <div class="pic">
+        🎧
+    </div>
+
+    <div class="cardbody">
+
+        <h3>
+            Wireless Headphones
+        </h3>
+
+        <div class="muted">
+            Good condition · 0.7 km
         </div>
 
-
-        <div class="walletPage">
-
-            <!-- WALLET -->
-
-            <div class="bigWallet">
-
-                <small>
-                    AVAILABLE CARBON CREDITS
-                </small>
-
-                <div class="number">
-
-                    🌱
-
-                    <span id="walletBalance">
-                        1,250
-                    </span>
-
-                </div>
-
-                <div>
-                    Green Score: <b>82 / 100</b>
-                </div>
-
-
-                <div class="walletProgress">
-
-                    <div></div>
-
-                </div>
-
-
-                <p>
-                    You're currently in the top 18%
-                    of green users this month.
-                </p>
-
-            </div>
-
-
-            <!-- REWARDS -->
-
-            <div class="rewardPanel">
-
-                <h2>
-                    🎁 Redeem Rewards
-                </h2>
-
-                <p class="muted">
-                    Use Carbon Credits for sustainable rewards.
-                </p>
-
-
-                <div class="reward">
-
-                    <span>
-                        ฿50 Food Discount
-                    </span>
-
-                    <b>
-                        500
-                    </b>
-
-                    <button
-                        class="primary"
-                        onclick="redeem(500,'฿50 food discount')">
-
-                        Redeem
-
-                    </button>
-
-                </div>
-
-
-                <div class="reward">
-
-                    <span>
-                        🚲 Free Green Ride
-                    </span>
-
-                    <b>
-                        800
-                    </b>
-
-                    <button
-                        class="primary"
-                        onclick="redeem(800,'Free green ride')">
-
-                        Redeem
-
-                    </button>
-
-                </div>
-
-
-                <div class="reward">
-
-                    <span>
-                        🍱 ฿100 Food Voucher
-                    </span>
-
-                    <b>
-                        1,000
-                    </b>
-
-                    <button
-                        class="primary"
-                        onclick="redeem(1000,'฿100 food voucher')">
-
-                        Redeem
-
-                    </button>
-
-                </div>
-
-            </div>
-
+        <div class="price">
+            <strong>฿450</strong>
         </div>
 
+        <div class="row">
 
-        <!-- ACTIVITY -->
+            <small class="muted">
+                Reuse impact +15
+            </small>
 
-        <div class="sectionHead">
-
-            <div>
-
-                <h2>
-                    🌱 Sustainability Activity
-                </h2>
-
-                <p>
-                    Track your impact and rewards.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="activity">
-
-            <div class="panel">
-
-                <h3>
-                    Recent Carbon Credits
-                </h3>
-
-                <div id="activityList">
-
-                    <div class="activityItem">
-
-                        <span>
-                            ♻️ Recycling plastic
-                        </span>
-
-                        <span class="plus">
-                            +20
-                        </span>
-
-                    </div>
-
-
-                    <div class="activityItem">
-
-                        <span>
-                            🚗 Green transportation
-                        </span>
-
-                        <span class="plus">
-                            +15
-                        </span>
-
-                    </div>
-
-
-                    <div class="activityItem">
-
-                        <span>
-                            🍱 Food rescue
-                        </span>
-
-                        <span class="plus">
-                            +35
-                        </span>
-
-                    </div>
-
-
-                    <div class="activityItem">
-
-                        <span>
-                            🎁 Food discount
-                        </span>
-
-                        <span style="color:#d45b5b">
-                            −50
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <h3>
-                    🌍 Green Score
-                </h3>
-
-                <div
-                    style="
-                        font-size:48px;
-                        font-weight:900;
-                        color:var(--green);
-                        margin:15px 0;
-                    ">
-
-                    82
-
-                    <span
-                        style="
-                            font-size:18px;
-                            color:var(--muted);
-                        ">
-
-                        /100
-
-                    </span>
-
-                </div>
-
-
-                <div
-                    style="
-                        height:12px;
-                        background:#e8efeb;
-                        border-radius:20px;
-                        overflow:hidden;
-                    ">
-
-                    <div
-                        style="
-                            width:82%;
-                            height:100%;
-                            background:var(--green);
-                            border-radius:20px;
-                        ">
-                    </div>
-
-                </div>
-
-
-                <p class="muted">
-                    You're in the top 18%
-                    of green users this month.
-                </p>
-
-
-                <button
-                    class="secondary"
-                    onclick="earn(100,'Weekly green challenge')">
-
-                    Complete weekly challenge +100
-
-                </button>
-
-            </div>
+            <button class="primary"
+                    onclick="toast('Seller contact opened')">
+                Contact
+            </button>
 
         </div>
 
     </div>
 
+</article>
+
+
+<article class="card">
+
+    <div class="pic">
+        🪑
+    </div>
+
+    <div class="cardbody">
+
+        <h3>
+            Wooden Study Chair
+        </h3>
+
+        <div class="muted">
+            Like new · 1.4 km
+        </div>
+
+        <div class="price">
+            <strong>฿600</strong>
+        </div>
+
+        <div class="row">
+
+            <small class="muted">
+                Reuse impact +20
+            </small>
+
+            <button class="primary"
+                    onclick="toast('Seller contact opened')">
+                Contact
+            </button>
+
+        </div>
+
+    </div>
+
+</article>
+
+
+<article class="card">
+
+    <div class="pic">
+        📚
+    </div>
+
+    <div class="cardbody">
+
+        <h3>
+            University Textbook Set
+        </h3>
+
+        <div class="muted">
+            Used · 1.9 km
+        </div>
+
+        <div class="price">
+            <strong>฿250</strong>
+        </div>
+
+        <div class="row">
+
+            <small class="muted">
+                Reuse impact +15
+            </small>
+
+            <button class="primary"
+                    onclick="toast('Seller contact opened')">
+                Contact
+            </button>
+
+        </div>
+
+    </div>
+
+</article>
+
+
+<article class="card">
+
+    <div class="pic">
+        🎒
+    </div>
+
+    <div class="cardbody">
+
+        <h3>
+            Travel Backpack
+        </h3>
+
+        <div class="muted">
+            Excellent · 2.2 km
+        </div>
+
+        <div class="price">
+            <strong>฿390</strong>
+        </div>
+
+        <div class="row">
+
+            <small class="muted">
+                Reuse impact +15
+            </small>
+
+            <button class="primary"
+                    onclick="toast('Seller contact opened')">
+                Contact
+            </button>
+
+        </div>
+
+    </div>
+
+</article>
+
+</div>
+
+</div>
+
 </section>
+
+
+<!-- =========================================================
+     WALLET
+========================================================= -->
+
+<section id="page-wallet" class="page">
+
+<div class="container">
+
+<div class="pageHeader">
+
+    <h1>
+        🌱 Carbon Wallet
+    </h1>
+
+    <p>
+        Turn your sustainable actions into rewards.
+    </p>
+
+</div>
+
+
+<div class="walletPage">
+
+
+<div class="bigWallet">
+
+    <small>
+        AVAILABLE CARBON CREDITS
+    </small>
+
+    <div class="number">
+
+        🌱 <span id="walletBalance">
+            1,250
+        </span>
+
+    </div>
+
+    <div>
+        Green Score: <b>82 / 100</b>
+    </div>
+
+    <div class="walletProgress">
+        <div></div>
+    </div>
+
+    <p>
+        You're currently in the top 18%
+        of green users this month.
+    </p>
+
+</div>
+
+
+<div class="rewardPanel">
+
+    <h2>
+        🎁 Redeem Rewards
+    </h2>
+
+    <p class="muted">
+        Use Carbon Credits for sustainable rewards.
+    </p>
+
+
+    <div class="reward">
+
+        <span>
+            ฿50 Food Discount
+        </span>
+
+        <b>
+            500
+        </b>
+
+        <button class="primary"
+                onclick="redeem(500,'฿50 food discount')">
+            Redeem
+        </button>
+
+    </div>
+
+
+    <div class="reward">
+
+        <span>
+            🚲 Free Green Ride
+        </span>
+
+        <b>
+            800
+        </b>
+
+        <button class="primary"
+                onclick="redeem(800,'Free green ride')">
+            Redeem
+        </button>
+
+    </div>
+
+
+    <div class="reward">
+
+        <span>
+            🍱 ฿100 Food Voucher
+        </span>
+
+        <b>
+            1,000
+        </b>
+
+        <button class="primary"
+                onclick="redeem(1000,'฿100 food voucher')">
+            Redeem
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div class="sectionHead">
+
+    <div>
+
+        <h2>
+            🌱 Sustainability Activity
+        </h2>
+
+        <p>
+            Track your impact and rewards.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="activity">
+
+<div class="panel">
+
+    <h3>
+        Recent Carbon Credits
+    </h3>
+
+    <div id="activityList">
+
+        <div class="activityItem">
+            <span>♻️ Recycling plastic</span>
+            <span class="plus">+20</span>
+        </div>
+
+        <div class="activityItem">
+            <span>🚗 Green transportation</span>
+            <span class="plus">+15</span>
+        </div>
+
+        <div class="activityItem">
+            <span>🍱 Food rescue</span>
+            <span class="plus">+35</span>
+        </div>
+
+        <div class="activityItem">
+            <span>🎁 Food discount</span>
+            <span style="color:#d45b5b">−50</span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="panel">
+
+    <h3>
+        🌍 Green Score
+    </h3>
+
+    <div style="
+        font-size:48px;
+        font-weight:900;
+        color:var(--green);
+        margin:15px 0;
+    ">
+        82
+        <span style="
+            font-size:18px;
+            color:var(--muted);
+        ">
+            /100
+        </span>
+    </div>
+
+    <div style="
+        height:12px;
+        background:#e8efeb;
+        border-radius:20px;
+        overflow:hidden;
+    ">
+
+        <div style="
+            width:82%;
+            height:100%;
+            background:var(--green);
+            border-radius:20px;
+        "></div>
+
+    </div>
+
+    <p class="muted">
+        You're in the top 18%
+        of green users this month.
+    </p>
+
+    <button class="secondary"
+            onclick="earn(100,'Weekly green challenge')">
+
+        Complete weekly challenge +100
+
+    </button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     RESTAURANT MENU MODAL
+========================================================= -->
+
+<div class="foodModal" id="restaurantModal">
+
+<div class="foodModalBox">
+
+<div class="foodModalHeader">
+
+    <div>
+
+        <div class="foodModalRestaurantIcon"
+             id="modalRestaurantIcon">
+            🥐
+        </div>
+
+        <h2 id="modalRestaurantName">
+            Morning Bake
+        </h2>
+
+        <p class="muted"
+           id="modalRestaurantMeta">
+            ⭐ 4.8 · Bakery · 0.8 km
+        </p>
+
+    </div>
+
+    <button class="closeFoodModal"
+            onclick="closeRestaurant()">
+        ×
+    </button>
+
+</div>
+
+
+<div class="menuList" id="menuList"></div>
+
+
+<div class="restaurantNote">
+
+    <span>🌱</span>
+
+    <span>
+        Rescue food prices are discounted
+        to prevent food waste.
+    </span>
+
+</div>
+
+
+<button class="checkoutButton"
+        onclick="openCart()">
+
+    View Cart ·
+    <span id="modalCartTotal">
+        ฿0
+    </span>
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     CART / CHECKOUT MODAL
+========================================================= -->
+
+<div class="foodModal" id="cartModal">
+
+<div class="foodModalBox checkoutBox">
+
+<div class="foodModalHeader">
+
+    <div>
+
+        <h2>
+            🛒 Your Order
+        </h2>
+
+        <p class="muted">
+            Review your items before checkout.
+        </p>
+
+    </div>
+
+    <button class="closeFoodModal"
+            onclick="closeCart()">
+        ×
+    </button>
+
+</div>
+
+
+<div id="cartItems"
+     class="cartItems"></div>
+
+
+<h3>
+    Delivery option
+</h3>
+
+
+<div class="deliveryOptions">
+
+<button class="deliveryOption active"
+        onclick="selectDelivery(this,'standard',25)">
+
+    <div>
+        <b>🚴 Standard</b>
+        <small>
+            25–35 min
+        </small>
+    </div>
+
+    <strong>฿25</strong>
+
+</button>
+
+
+<button class="deliveryOption"
+        onclick="selectDelivery(this,'priority',45)">
+
+    <div>
+        <b>⚡ Priority</b>
+        <small>
+            15–25 min · Faster matching
+        </small>
+    </div>
+
+    <strong>฿45</strong>
+
+</button>
+
+
+<button class="deliveryOption"
+        onclick="selectDelivery(this,'saver',10)">
+
+    <div>
+        <b>🌱 Saver</b>
+        <small>
+            35–50 min · Lowest fee
+        </small>
+    </div>
+
+    <strong>฿10</strong>
+
+</button>
+
+</div>
+
+
+<h3>
+    Delivery time
+</h3>
+
+
+<div class="timeOptions">
+
+<button class="timeOption active"
+        onclick="selectTime(this,'instant')">
+
+    🚀
+
+    <span>
+        <b>Now</b>
+        <small>
+            As soon as possible
+        </small>
+    </span>
+
+</button>
+
+
+<button class="timeOption"
+        onclick="selectTime(this,'schedule')">
+
+    🕒
+
+    <span>
+        <b>Schedule</b>
+        <small>
+            Choose delivery time
+        </small>
+    </span>
+
+</button>
+
+
+<button class="timeOption"
+        onclick="selectTime(this,'pickup')">
+
+    🏪
+
+    <span>
+        <b>Self Pickup</b>
+        <small>
+            Skip delivery fee
+        </small>
+    </span>
+
+</button>
+
+</div>
+
+
+<div id="scheduleArea"
+     class="scheduleArea">
+
+    <label>
+        Choose delivery time
+    </label>
+
+    <select id="scheduleTime">
+
+        <option>
+            Today · 18:30
+        </option>
+
+        <option>
+            Today · 19:00
+        </option>
+
+        <option>
+            Today · 19:30
+        </option>
+
+        <option>
+            Today · 20:00
+        </option>
+
+    </select>
+
+</div>
+
+
+<h3>
+    📍 Delivery address
+</h3>
+
+
+<div class="addressBox">
+
+    <div>🏠</div>
+
+    <div>
+
+        <b>
+            My Current Location
+        </b>
+
+        <small>
+            Chiang Mai University
+            · Suthep, Chiang Mai
+        </small>
+
+    </div>
+
+    <button onclick="toast('Address selector opened')">
+        Change
+    </button>
+
+</div>
+
+
+<h3>
+    💳 Payment
+</h3>
+
+
+<div class="paymentOptions">
+
+<button class="paymentOption active"
+        onclick="selectPayment(this,'GreenPay')">
+
+    <span>💚</span>
+
+    <span>
+
+        <b>
+            GreenPay Wallet
+        </b>
+
+        <small>
+            Balance ฿820
+        </small>
+
+    </span>
+
+    <span>✓</span>
+
+</button>
+
+
+<button class="paymentOption"
+        onclick="selectPayment(this,'Card')">
+
+    <span>💳</span>
+
+    <span>
+
+        <b>
+            Visa •••• 4242
+        </b>
+
+        <small>
+            Debit / Credit Card
+        </small>
+
+    </span>
+
+    <span></span>
+
+</button>
+
+
+<button class="paymentOption"
+        onclick="selectPayment(this,'Cash')">
+
+    <span>💵</span>
+
+    <span>
+
+        <b>
+            Cash
+        </b>
+
+        <small>
+            Pay driver on delivery
+        </small>
+
+    </span>
+
+    <span></span>
+
+</button>
+
+</div>
+
+
+<h3>
+    🏷️ Promo
+</h3>
+
+
+<div class="promoBox">
+
+    <input id="promoInput"
+           placeholder="Enter promo code">
+
+    <button onclick="applyPromo()">
+        Apply
+    </button>
+
+</div>
+
+
+<div id="promoMessage"
+     class="promoMessage">
+</div>
+
+
+<div class="groupOrderBox">
+
+    <div>
+
+        <b>
+            👥 Group Order
+        </b>
+
+        <p>
+            Invite friends to add their own food.
+        </p>
+
+    </div>
+
+    <button onclick="startGroupOrder()">
+        Start
+    </button>
+
+</div>
+
+
+<h3>
+    📝 Note for restaurant
+</h3>
+
+
+<textarea
+    id="orderNote"
+    class="orderNote"
+    placeholder="Example: No onions, less spicy..."></textarea>
+
+
+<div class="priceSummary">
+
+    <div>
+        <span>Food</span>
+        <strong id="checkoutSubtotal">
+            ฿0
+        </strong>
+    </div>
+
+    <div>
+        <span>Delivery</span>
+        <strong id="checkoutDelivery">
+            ฿25
+        </strong>
+    </div>
+
+    <div>
+        <span>Discount</span>
+        <strong class="discountText"
+                id="checkoutDiscount">
+            -฿0
+        </strong>
+    </div>
+
+    <div class="totalRow">
+        <b>Total</b>
+        <strong id="checkoutTotal">
+            ฿0
+        </strong>
+    </div>
+
+</div>
+
+
+<button class="placeOrderButton"
+        onclick="placeFoodOrder()">
+
+    Place Order ·
+    <span id="placeOrderTotal">
+        ฿0
+    </span>
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     ORDER TRACKING MODAL
+========================================================= -->
+
+<div class="foodModal"
+     id="orderModal">
+
+<div class="foodModalBox orderTrackingBox">
+
+<button class="closeFoodModal"
+        onclick="closeOrderTracking()">
+    ×
+</button>
+
+
+<div class="orderSuccess">
+
+    <div>✓</div>
+
+    <h2>
+        Order confirmed!
+    </h2>
+
+    <p>
+        Your GreenLoop order is being prepared.
+    </p>
+
+</div>
+
+
+<div class="orderMap">
+
+    <div class="orderRoute"></div>
+
+    <div class="restaurantPin">
+        🏪
+    </div>
+
+    <div class="deliveryBike"
+         id="deliveryBike">
+        🛵
+    </div>
+
+    <div class="customerPin">
+        📍
+    </div>
+
+</div>
+
+
+<div class="trackingStatus">
+
+<div class="trackingStep active"
+     id="tracking1">
+
+    <span>✓</span>
+
+    <div>
+
+        <b>
+            Order confirmed
+        </b>
+
+        <small>
+            Restaurant received your order
+        </small>
+
+    </div>
+
+</div>
+
+
+<div class="trackingStep"
+     id="tracking2">
+
+    <span>2</span>
+
+    <div>
+
+        <b>
+            Preparing
+        </b>
+
+        <small>
+            Restaurant is preparing your food
+        </small>
+
+    </div>
+
+</div>
+
+
+<div class="trackingStep"
+     id="tracking3">
+
+    <span>3</span>
+
+    <div>
+
+        <b>
+            Driver picked up
+        </b>
+
+        <small>
+            Your food is on the way
+        </small>
+
+    </div>
+
+</div>
+
+
+<div class="trackingStep"
+     id="tracking4">
+
+    <span>4</span>
+
+    <div>
+
+        <b>
+            Arriving
+        </b>
+
+        <small>
+            Your order is almost there
+        </small>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div class="driverTrackingCard">
+
+    <div class="driverTrackingAvatar">
+        👨🏻‍✈️
+    </div>
+
+    <div>
+
+        <b>
+            Alex
+        </b>
+
+        <small>
+            ⭐ 4.9 · Green Delivery Partner
+        </small>
+
+    </div>
+
+    <button onclick="toast('Calling delivery partner...')">
+        📞
+    </button>
+
+</div>
+
+
+<button class="secondary"
+        style="width:100%;margin-top:15px;"
+        onclick="toast('Opening order help center')">
+
+    Need help?
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
+<div class="toast" id="toast"></div>
 
 
 <!-- =========================================================
@@ -3290,40 +4162,26 @@ button:disabled {
 
 <footer class="footer">
 
-    <div>
+<div>
 
-        <b>
-            🌱 GreenLoop
-        </b>
+    <b>
+        🌱 GreenLoop
+    </b>
 
-        <br>
+    <br>
 
-        <small>
-            Every sustainable action has value.
-        </small>
+    <small>
+        Every sustainable action has value.
+    </small>
 
-    </div>
+</div>
 
-    <div>
-        EN · TH · 한국어
-    </div>
+<div>
+    EN · TH · 한국어
+</div>
 
 </footer>
 
-
-<!-- =========================================================
-     TOAST
-========================================================= -->
-
-<div
-    class="toast"
-    id="toast">
-</div>
-
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
 
 <script>
 
@@ -3335,67 +4193,61 @@ let balance = 1250;
 
 let selectedVehicle = "EV Car";
 let selectedPrice = 79;
-
 let trackingInterval = null;
+
+
+/* =========================================================
+   FOOD ORDER VARIABLES
+========================================================= */
+
+let foodCart = [];
+let currentRestaurant = "bakery";
+
+let deliveryType = "standard";
+let deliveryFee = 25;
+
+let orderTime = "instant";
+let paymentMethod = "GreenPay";
+let promoDiscount = 0;
 
 
 /* =========================================================
    PAGE NAVIGATION
 ========================================================= */
 
-function showPage(page, button = null) {
+function showPage(page,button=null){
 
-    document
-        .querySelectorAll(".page")
-        .forEach(p => {
+    document.querySelectorAll(".page")
+        .forEach(p=>p.classList.remove("active"));
 
-            p.classList.remove("active");
+    const target=document.getElementById("page-"+page);
 
-        });
-
-
-    const target =
-        document.getElementById(
-            "page-" + page
-        );
-
-    if (!target) return;
+    if(!target)return;
 
     target.classList.add("active");
 
+    document.querySelectorAll(".navlinks button")
+        .forEach(b=>b.classList.remove("active"));
 
-    document
-        .querySelectorAll(".navlinks button")
-        .forEach(b => {
-
-            b.classList.remove("active");
-
-        });
-
-
-    if (button) {
+    if(button){
 
         button.classList.add("active");
 
-    } else {
+    }else{
 
-        const navButton =
-            document.querySelector(
-                `.navlinks button[data-page="${page}"]`
-            );
+        const navButton=document.querySelector(
+            `.navlinks button[data-page="${page}"]`
+        );
 
-        if (navButton) {
+        if(navButton){
             navButton.classList.add("active");
         }
-
     }
 
-
     window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+        top:0,
+        behavior:"smooth"
     });
-
 }
 
 
@@ -3403,20 +4255,16 @@ function showPage(page, button = null) {
    BALANCE
 ========================================================= */
 
-function updateBalance() {
+function updateBalance(){
 
     document.getElementById("balance")
-        .textContent =
-        balance.toLocaleString();
+        .textContent=balance.toLocaleString();
 
     document.getElementById("navCredits")
-        .textContent =
-        balance.toLocaleString();
+        .textContent=balance.toLocaleString();
 
     document.getElementById("walletBalance")
-        .textContent =
-        balance.toLocaleString();
-
+        .textContent=balance.toLocaleString();
 }
 
 
@@ -3424,47 +4272,28 @@ function updateBalance() {
    EARN
 ========================================================= */
 
-function earn(amount, reason) {
+function earn(amount,reason){
 
-    balance += amount;
+    balance+=amount;
 
     updateBalance();
 
+    const list=document.getElementById("activityList");
 
-    const list =
-        document.getElementById(
-            "activityList"
-        );
+    const item=document.createElement("div");
 
-    const item =
-        document.createElement("div");
+    item.className="activityItem";
 
-    item.className =
-        "activityItem";
-
-
-    item.innerHTML = `
-
-        <span>
-            🌱 ${reason}
-        </span>
-
-        <span class="plus">
-            +${amount}
-        </span>
-
+    item.innerHTML=`
+        <span>🌱 ${reason}</span>
+        <span class="plus">+${amount}</span>
     `;
 
-
-    if (list) {
+    if(list){
         list.prepend(item);
     }
 
-
-    toast(
-        `+${amount} Carbon Credits earned!`
-    );
-
+    toast(`+${amount} Carbon Credits earned!`);
 }
 
 
@@ -3472,81 +4301,35 @@ function earn(amount, reason) {
    REDEEM
 ========================================================= */
 
-function redeem(cost, reward) {
+function redeem(cost,reward){
 
-    if (balance < cost) {
+    if(balance<cost){
 
-        toast(
-            "Not enough Carbon Credits"
-        );
+        toast("Not enough Carbon Credits");
 
         return;
-
     }
 
-
-    balance -= cost;
+    balance-=cost;
 
     updateBalance();
 
+    const list=document.getElementById("activityList");
 
-    const list =
-        document.getElementById(
-            "activityList"
-        );
+    const item=document.createElement("div");
 
+    item.className="activityItem";
 
-    const item =
-        document.createElement("div");
-
-    item.className =
-        "activityItem";
-
-
-    item.innerHTML = `
-
-        <span>
-            🎁 ${reward}
-        </span>
-
-        <span
-            style="color:#d45b5b">
-
-            −${cost}
-
-        </span>
-
+    item.innerHTML=`
+        <span>🎁 ${reward}</span>
+        <span style="color:#d45b5b">−${cost}</span>
     `;
 
-
-    if (list) {
+    if(list){
         list.prepend(item);
     }
 
-
-    toast(
-        `${reward} redeemed successfully!`
-    );
-
-}
-
-
-/* =========================================================
-   FOOD RESERVATION
-========================================================= */
-
-function reserve(name, credits) {
-
-    earn(
-        credits,
-        "Food rescue: " + name
-    );
-
-
-    toast(
-        "Reserved! Pickup details added."
-    );
-
+    toast(`${reward} redeemed successfully!`);
 }
 
 
@@ -3554,127 +4337,94 @@ function reserve(name, credits) {
    SEARCH
 ========================================================= */
 
-function search() {
+function search(){
 
-    const q =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim();
+    const input=document.getElementById("searchInput");
 
+    const q=input.value.trim();
 
-    if (!q) {
+    if(!q){
 
-        toast(
-            "Try searching for food, recycling, rides, or used items."
-        );
+        toast("Try searching for food, recycling, rides, or used items.");
 
         return;
-
     }
 
+    const lower=q.toLowerCase();
 
-    const lower =
-        q.toLowerCase();
-
-
-    if (
-        lower.includes("food") ||
-        lower.includes("pizza") ||
-        lower.includes("sushi") ||
+    if(
+        lower.includes("food")||
+        lower.includes("pizza")||
+        lower.includes("sushi")||
         lower.includes("bakery")
-    ) {
+    ){
 
         showPage("food");
 
-        toast(
-            `Showing food results for "${q}"`
-        );
+        toast(`Showing food results for "${q}"`);
 
         return;
-
     }
 
-
-    if (
-        lower.includes("recycle") ||
-        lower.includes("plastic") ||
+    if(
+        lower.includes("recycle")||
+        lower.includes("plastic")||
         lower.includes("battery")
-    ) {
+    ){
 
         showPage("recycle");
 
-        toast(
-            `Showing recycling results for "${q}"`
-        );
+        toast(`Showing recycling results for "${q}"`);
 
         return;
-
     }
 
-
-    if (
-        lower.includes("ev") ||
-        lower.includes("ride") ||
-        lower.includes("transport") ||
+    if(
+        lower.includes("ev")||
+        lower.includes("ride")||
+        lower.includes("transport")||
         lower.includes("car")
-    ) {
+    ){
 
         showPage("transport");
 
-        toast(
-            `Opening Green Ride for "${q}"`
-        );
+        toast(`Opening Green Ride for "${q}"`);
 
         return;
-
     }
 
-
-    if (
-        lower.includes("used") ||
-        lower.includes("chair") ||
-        lower.includes("book") ||
+    if(
+        lower.includes("used")||
+        lower.includes("chair")||
+        lower.includes("book")||
         lower.includes("headphone")
-    ) {
+    ){
 
         showPage("used");
 
-        toast(
-            `Showing marketplace results for "${q}"`
-        );
+        toast(`Showing marketplace results for "${q}"`);
 
         return;
-
     }
 
-
-    toast(
-        `Searching GreenLoop for "${q}"...`
-    );
-
+    toast(`Searching GreenLoop for "${q}"...`);
 }
 
 
 /* =========================================================
-   MARKET SEARCH
+   USED MARKET SEARCH
 ========================================================= */
 
-function marketSearch() {
+function marketSearch(){
 
-    const q =
-        document
-            .getElementById("marketSearch")
-            .value
-            .trim();
-
+    const q=document.getElementById("marketSearch")
+        .value.trim();
 
     toast(
         q
-            ? `Searching marketplace for "${q}"...`
-            : "Enter an item to search."
+        ? `Searching marketplace for "${q}"...`
+        : "Enter an item to search."
     );
-
 }
 
 
@@ -3682,41 +4432,21 @@ function marketSearch() {
    VEHICLE SELECT
 ========================================================= */
 
-function selectVehicle(
-    button,
-    vehicle,
-    price,
-    eta
-) {
+function selectVehicle(button,vehicle,price,eta){
 
-    document
-        .querySelectorAll(".vehicle")
-        .forEach(v =>
-            v.classList.remove("active")
-        );
-
+    document.querySelectorAll(".vehicle")
+        .forEach(v=>v.classList.remove("active"));
 
     button.classList.add("active");
 
+    selectedVehicle=vehicle;
+    selectedPrice=price;
 
-    selectedVehicle =
-        vehicle;
+    document.getElementById("ridePrice")
+        .textContent="฿"+price;
 
-    selectedPrice =
-        price;
-
-
-    document
-        .getElementById("ridePrice")
-        .textContent =
-        "฿" + price;
-
-
-    document
-        .getElementById("eta")
-        .textContent =
-        eta + " min";
-
+    document.getElementById("eta")
+        .textContent=eta+" min";
 }
 
 
@@ -3724,266 +4454,815 @@ function selectVehicle(
    CALL EV
 ========================================================= */
 
-function callEV() {
+function callEV(){
 
-    const destination =
-        document
-            .getElementById("destination")
-            .value
-            .trim();
+    const destination=document.getElementById("destination")
+        .value.trim();
 
+    if(!destination){
 
-    if (!destination) {
-
-        toast(
-            "Please enter your destination."
-        );
+        toast("Please enter your destination.");
 
         return;
-
     }
 
+    const status=document.getElementById("driverStatus");
 
-    const status =
-        document.getElementById(
-            "driverStatus"
-        );
+    const button=document.getElementById("callRideButton");
 
-
-    const button =
-        document.getElementById(
-            "callRideButton"
-        );
-
-
-    status.innerHTML = `
-
+    status.innerHTML=`
         <span class="statusDot"></span>
-
         Finding nearby EV driver...
-
     `;
 
+    button.disabled=true;
+    button.textContent="🔎 Finding driver...";
 
-    button.disabled = true;
+    setTimeout(()=>{
 
-    button.textContent =
-        "🔎 Finding driver...";
-
-
-    setTimeout(() => {
-
-        status.innerHTML = `
-
+        status.innerHTML=`
             <span class="statusDot"></span>
-
             Driver found · Arriving in 5 min
-
         `;
 
+        button.textContent="🚗 Driver is on the way";
 
-        button.textContent =
-            "🚗 Driver is on the way";
-
-
-        toast(
-            "EV driver found!"
-        );
-
+        toast("EV driver found!");
 
         startEVTracking();
 
-    }, 1800);
-
+    },1800);
 }
 
 
 /* =========================================================
-   LIVE EV TRACKING
+   EV LIVE TRACKING PROTOTYPE
 ========================================================= */
 
-function startEVTracking() {
+function startEVTracking(){
 
-    const car =
-        document.getElementById(
-            "evMarker"
+    const car=document.getElementById("evMarker");
+    const eta=document.getElementById("eta");
+    const status=document.getElementById("driverStatus");
+
+    let progress=0;
+
+    clearInterval(trackingInterval);
+
+    trackingInterval=setInterval(()=>{
+
+        progress+=5;
+
+        const startX=63;
+        const startY=20;
+
+        const endX=30;
+        const endY=65;
+
+        const x=startX+((endX-startX)*progress/100);
+        const y=startY+((endY-startY)*progress/100);
+
+        car.style.left=x+"%";
+        car.style.top=y+"%";
+
+        const remaining=Math.max(
+            1,
+            Math.ceil(5-progress/20)
         );
 
+        eta.textContent=remaining+" min";
 
-    const eta =
-        document.getElementById(
-            "eta"
-        );
+        if(progress>=100){
 
+            clearInterval(trackingInterval);
 
-    const status =
-        document.getElementById(
-            "driverStatus"
-        );
+            status.innerHTML=`
+                <span class="statusDot"></span>
+                Driver arrived
+            `;
 
+            eta.textContent="Arrived";
 
-    let progress = 0;
+            toast("🚗 Your EV has arrived!");
 
+            const button=document.getElementById("callRideButton");
 
-    clearInterval(
-        trackingInterval
-    );
+            button.textContent="🚗 Start Ride";
 
+            button.disabled=false;
 
-    trackingInterval =
-        setInterval(() => {
+            button.onclick=()=>{
 
-            progress += 5;
+                earn(15,"Green EV ride");
 
+                toast("Enjoy your green ride! 🌱");
+            };
+        }
 
-            const startX = 63;
-            const startY = 20;
-
-            const endX = 30;
-            const endY = 65;
-
-
-            const x =
-                startX +
-                (
-                    (endX - startX)
-                    * progress
-                    / 100
-                );
+    },1000);
+}
 
 
-            const y =
-                startY +
-                (
-                    (endY - startY)
-                    * progress
-                    / 100
-                );
+/* =========================================================
+   MAP
+========================================================= */
+
+function centerMap(){
+    toast("Map centered on your location.");
+}
+
+function zoomMap(){
+    toast("Zooming in...");
+}
+
+function zoomOutMap(){
+    toast("Zooming out...");
+}
 
 
-            car.style.left =
-                x + "%";
+/* =========================================================
+   FOOD RESTAURANT DATA
+========================================================= */
 
+const restaurantData={
 
-            car.style.top =
-                y + "%";
+    bakery:{
+        name:"Morning Bake",
+        icon:"🥐",
+        meta:"⭐ 4.8 · Bakery · 0.8 km",
 
+        items:[
 
-            const remaining =
-                Math.max(
-                    1,
-                    Math.ceil(
-                        5 -
-                        progress / 20
-                    )
-                );
+            {
+                id:"bakery-box",
+                name:"Bakery Surprise Box",
+                description:"Croissants, pastries & bread",
+                price:45,
+                emoji:"🥐",
+                credits:15
+            },
 
+            {
+                id:"croissant",
+                name:"Chocolate Croissant",
+                description:"Fresh bakery rescue item",
+                price:25,
+                emoji:"🥐",
+                credits:8
+            },
 
-            eta.textContent =
-                remaining +
-                " min";
-
-
-            if (progress >= 100) {
-
-                clearInterval(
-                    trackingInterval
-                );
-
-
-                status.innerHTML = `
-
-                    <span class="statusDot"></span>
-
-                    Driver arrived
-
-                `;
-
-
-                eta.textContent =
-                    "Arrived";
-
-
-                toast(
-                    "🚗 Your EV has arrived!"
-                );
-
-
-                const button =
-                    document.getElementById(
-                        "callRideButton"
-                    );
-
-
-                button.textContent =
-                    "🚗 Start Ride";
-
-
-                button.disabled =
-                    false;
-
-
-                button.onclick =
-                    () => {
-
-                        earn(
-                            15,
-                            "Green EV ride"
-                        );
-
-
-                        toast(
-                            "Enjoy your green ride! 🌱"
-                        );
-
-                    };
-
+            {
+                id:"bread",
+                name:"Mixed Bread Bundle",
+                description:"Assorted fresh bread",
+                price:35,
+                emoji:"🍞",
+                credits:10
             }
 
-        }, 1000);
+        ]
+    },
 
+    sushi:{
+        name:"Sakana House",
+        icon:"🍣",
+        meta:"⭐ 4.7 · Japanese · 1.2 km",
+
+        items:[
+
+            {
+                id:"sushi-box",
+                name:"Sushi Rescue Set",
+                description:"8-piece mixed sushi",
+                price:87,
+                emoji:"🍣",
+                credits:15
+            },
+
+            {
+                id:"salmon",
+                name:"Salmon Sushi Set",
+                description:"Fresh salmon sushi",
+                price:99,
+                emoji:"🍣",
+                credits:18
+            },
+
+            {
+                id:"maki",
+                name:"Maki Rescue Box",
+                description:"Assorted maki rolls",
+                price:65,
+                emoji:"🍱",
+                credits:12
+            }
+
+        ]
+    },
+
+    pizza:{
+        name:"Green Slice",
+        icon:"🍕",
+        meta:"⭐ 4.9 · Pizza · 1.8 km",
+
+        items:[
+
+            {
+                id:"pizza",
+                name:"Pizza End-of-Day",
+                description:"Freshly baked pizza",
+                price:62,
+                emoji:"🍕",
+                credits:15
+            },
+
+            {
+                id:"margherita",
+                name:"Margherita Pizza",
+                description:"Tomato, mozzarella & basil",
+                price:75,
+                emoji:"🍕",
+                credits:18
+            },
+
+            {
+                id:"slice",
+                name:"Pizza Slice Rescue",
+                description:"Single rescue slice",
+                price:29,
+                emoji:"🍕",
+                credits:8
+            }
+
+        ]
+    },
+
+    salad:{
+        name:"Fresh Corner",
+        icon:"🥗",
+        meta:"⭐ 4.6 · Healthy · 2.1 km",
+
+        items:[
+
+            {
+                id:"salad",
+                name:"Healthy Salad Box",
+                description:"Fresh vegetables & dressing",
+                price:45,
+                emoji:"🥗",
+                credits:15
+            },
+
+            {
+                id:"wrap",
+                name:"Chicken Green Wrap",
+                description:"Chicken, vegetables & wrap",
+                price:49,
+                emoji:"🌯",
+                credits:12
+            },
+
+            {
+                id:"fruit",
+                name:"Fruit Rescue Cup",
+                description:"Fresh seasonal fruits",
+                price:35,
+                emoji:"🍉",
+                credits:10
+            }
+
+        ]
+    }
+};
+
+
+/* =========================================================
+   OPEN RESTAURANT
+========================================================= */
+
+function openRestaurant(id){
+
+    currentRestaurant=id;
+
+    const restaurant=restaurantData[id];
+
+    document.getElementById("modalRestaurantName")
+        .textContent=restaurant.name;
+
+    document.getElementById("modalRestaurantIcon")
+        .textContent=restaurant.icon;
+
+    document.getElementById("modalRestaurantMeta")
+        .textContent=restaurant.meta;
+
+    const menu=document.getElementById("menuList");
+
+    menu.innerHTML="";
+
+    restaurant.items.forEach(item=>{
+
+        const div=document.createElement("div");
+
+        div.className="menuItem";
+
+        div.innerHTML=`
+
+            <div class="menuItemImage">
+                ${item.emoji}
+            </div>
+
+            <div class="menuItemInfo">
+
+                <h4>
+                    ${item.name}
+                </h4>
+
+                <p>
+                    ${item.description}
+                </p>
+
+                <span class="menuPrice">
+                    ฿${item.price}
+                    · 🌱 +${item.credits}
+                </span>
+
+            </div>
+
+            <button class="addMenu"
+                    onclick="addToCart('${item.id}')">
+                +
+            </button>
+        `;
+
+        menu.appendChild(div);
+    });
+
+    document.getElementById("restaurantModal")
+        .classList.add("show");
+}
+
+
+function closeRestaurant(){
+
+    document.getElementById("restaurantModal")
+        .classList.remove("show");
 }
 
 
 /* =========================================================
-   MAP CONTROLS
+   CART
 ========================================================= */
 
-function centerMap() {
+function addToCart(itemId){
 
-    toast(
-        "Map centered on your location."
+    const restaurant=restaurantData[currentRestaurant];
+
+    const item=restaurant.items.find(
+        x=>x.id===itemId
     );
 
+    if(!item)return;
+
+    const existing=foodCart.find(
+        x=>x.id===itemId
+    );
+
+    if(existing){
+
+        existing.qty++;
+
+    }else{
+
+        foodCart.push({
+            ...item,
+            restaurant:restaurant.name,
+            qty:1
+        });
+
+    }
+
+    updateCartUI();
+
+    toast(`${item.name} added to cart`);
 }
 
-function zoomMap() {
 
-    toast(
-        "Zooming in..."
+function changeCartQty(itemId,amount){
+
+    const item=foodCart.find(
+        x=>x.id===itemId
     );
 
+    if(!item)return;
+
+    item.qty+=amount;
+
+    if(item.qty<=0){
+
+        foodCart=foodCart.filter(
+            x=>x.id!==itemId
+        );
+    }
+
+    updateCartUI();
 }
 
-function zoomOutMap() {
 
-    toast(
-        "Zooming out..."
+function getFoodSubtotal(){
+
+    return foodCart.reduce(
+        (sum,item)=>
+            sum+(item.price*item.qty),
+        0
+    );
+}
+
+
+function updateCartUI(){
+
+    const count=foodCart.reduce(
+        (sum,item)=>sum+item.qty,
+        0
     );
 
+    document.getElementById("cartCount")
+        .textContent=count;
+
+    document.getElementById("modalCartTotal")
+        .textContent="฿"+getFoodSubtotal();
+
+    const list=document.getElementById("cartItems");
+
+    if(!foodCart.length){
+
+        list.innerHTML=`
+
+            <div class="emptyCart">
+
+                🛒
+
+                <h3>
+                    Your cart is empty
+                </h3>
+
+                <p>
+                    Add some rescued food first.
+                </p>
+
+            </div>
+        `;
+
+        updateCheckoutTotals();
+
+        return;
+    }
+
+    list.innerHTML="";
+
+    foodCart.forEach(item=>{
+
+        const div=document.createElement("div");
+
+        div.className="cartItem";
+
+        div.innerHTML=`
+
+            <div class="cartItemEmoji">
+                ${item.emoji}
+            </div>
+
+            <div class="cartItemInfo">
+
+                <b>
+                    ${item.name}
+                </b>
+
+                <small>
+                    ฿${item.price}
+                    · 🌱 +${item.credits}
+                </small>
+
+            </div>
+
+            <div class="qtyControls">
+
+                <button onclick="changeCartQty('${item.id}',-1)">
+                    −
+                </button>
+
+                <b>
+                    ${item.qty}
+                </b>
+
+                <button onclick="changeCartQty('${item.id}',1)">
+                    +
+                </button>
+
+            </div>
+
+            <strong>
+                ฿${item.price*item.qty}
+            </strong>
+        `;
+
+        list.appendChild(div);
+    });
+
+    updateCheckoutTotals();
+}
+
+
+function openCart(){
+
+    closeRestaurant();
+
+    updateCartUI();
+
+    document.getElementById("cartModal")
+        .classList.add("show");
+}
+
+
+function closeCart(){
+
+    document.getElementById("cartModal")
+        .classList.remove("show");
 }
 
 
 /* =========================================================
-   LOCATION
+   DELIVERY OPTIONS
 ========================================================= */
 
-function locate() {
+function selectDelivery(button,type,fee){
+
+    document.querySelectorAll(".deliveryOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    deliveryType=type;
+    deliveryFee=fee;
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   DELIVERY TIME
+========================================================= */
+
+function selectTime(button,type){
+
+    document.querySelectorAll(".timeOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    orderTime=type;
+
+    const area=document.getElementById("scheduleArea");
+
+    if(type==="schedule"){
+
+        area.classList.add("show");
+
+    }else{
+
+        area.classList.remove("show");
+    }
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   PAYMENT
+========================================================= */
+
+function selectPayment(button,method){
+
+    document.querySelectorAll(".paymentOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    paymentMethod=method;
+}
+
+
+/* =========================================================
+   PROMO
+========================================================= */
+
+function applyPromo(){
+
+    const code=document.getElementById("promoInput")
+        .value
+        .trim()
+        .toUpperCase();
+
+    if(code==="GREEN70"){
+
+        promoDiscount=Math.round(
+            getFoodSubtotal()*.10
+        );
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "✓ GreenLoop promo applied: 10% extra off";
+
+    }else if(code==="RESCUE100"){
+
+        promoDiscount=30;
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "✓ ฿30 rescue food discount applied";
+
+    }else{
+
+        promoDiscount=0;
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "Invalid promo code";
+    }
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   GROUP ORDER
+========================================================= */
+
+function startGroupOrder(){
 
     toast(
-        "Location found — showing nearby sustainable places."
+        "Group Order created! Share link with friends."
+    );
+}
+
+
+/* =========================================================
+   CHECKOUT TOTAL
+========================================================= */
+
+function updateCheckoutTotals(){
+
+    const subtotal=getFoodSubtotal();
+
+    let fee=deliveryFee;
+
+    if(orderTime==="pickup"){
+        fee=0;
+    }
+
+    const total=Math.max(
+        0,
+        subtotal+fee-promoDiscount
     );
 
+    document.getElementById("checkoutSubtotal")
+        .textContent="฿"+subtotal;
+
+    document.getElementById("checkoutDelivery")
+        .textContent="฿"+fee;
+
+    document.getElementById("checkoutDiscount")
+        .textContent="-฿"+promoDiscount;
+
+    document.getElementById("checkoutTotal")
+        .textContent="฿"+total;
+
+    document.getElementById("placeOrderTotal")
+        .textContent="฿"+total;
+}
+
+
+/* =========================================================
+   PLACE FOOD ORDER
+========================================================= */
+
+function placeFoodOrder(){
+
+    if(!foodCart.length){
+
+        toast("Your cart is empty.");
+
+        return;
+    }
+
+    const total=Math.max(
+        0,
+        getFoodSubtotal()+
+        (orderTime==="pickup"?0:deliveryFee)-
+        promoDiscount
+    );
+
+    closeCart();
+
+    document.getElementById("orderModal")
+        .classList.add("show");
+
+    toast(
+        `Order placed successfully · ฿${total}`
+    );
+
+    startFoodTracking();
+
+    const credits=foodCart.reduce(
+        (sum,item)=>
+            sum+(item.credits*item.qty),
+        0
+    );
+
+    setTimeout(()=>{
+
+        earn(
+            credits,
+            "Food rescue order"
+        );
+
+    },1200);
+
+    foodCart=[];
+    updateCartUI();
+}
+
+
+/* =========================================================
+   FOOD ORDER TRACKING
+========================================================= */
+
+function startFoodTracking(){
+
+    const steps=[
+        "tracking1",
+        "tracking2",
+        "tracking3",
+        "tracking4"
+    ];
+
+    steps.forEach(id=>{
+        document.getElementById(id)
+            .classList.remove("active");
+    });
+
+    document.getElementById("tracking1")
+        .classList.add("active");
+
+    const bike=document.getElementById("deliveryBike");
+
+    bike.style.left="45%";
+    bike.style.top="50%";
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking2")
+            .classList.add("active");
+
+        toast(
+            "🍳 Restaurant is preparing your order"
+        );
+
+    },2500);
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking3")
+            .classList.add("active");
+
+        bike.style.left="65%";
+        bike.style.top="55%";
+
+        toast(
+            "🛵 Driver picked up your order"
+        );
+
+    },5500);
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking4")
+            .classList.add("active");
+
+        bike.style.left="80%";
+        bike.style.top="70%";
+
+        toast(
+            "📍 Your order is arriving"
+        );
+
+    },8500);
+}
+
+
+function closeOrderTracking(){
+
+    document.getElementById("orderModal")
+        .classList.remove("show");
 }
 
 
@@ -3991,35 +5270,21 @@ function locate() {
    TOAST
 ========================================================= */
 
-function toast(message) {
+function toast(message){
 
-    const el =
-        document.getElementById(
-            "toast"
-        );
+    const el=document.getElementById("toast");
 
-
-    el.textContent =
-        message;
-
+    el.textContent=message;
 
     el.classList.add("show");
 
+    clearTimeout(window.greenLoopToast);
 
-    clearTimeout(
-        window.greenLoopToast
-    );
+    window.greenLoopToast=setTimeout(()=>{
 
+        el.classList.remove("show");
 
-    window.greenLoopToast =
-        setTimeout(() => {
-
-            el.classList.remove(
-                "show"
-            );
-
-        }, 2600);
-
+    },2600);
 }
 
 
@@ -4027,58 +5292,43 @@ function toast(message) {
    LANGUAGE
 ========================================================= */
 
-const translations = {
+const translations={
 
-    en: {
-
-        home: "Home",
-        food: "Food Deals",
-        recycle: "Recycle",
-        transport: "Green Ride",
-        used: "Used Items",
-        wallet: "Carbon Wallet"
-
+    en:{
+        home:"Home",
+        food:"Food Deals",
+        recycle:"Recycle",
+        transport:"Green Ride",
+        used:"Used Items",
+        wallet:"Carbon Wallet"
     },
 
-    th: {
-
-        home: "หน้าหลัก",
-        food: "อาหารลดพิเศษ",
-        recycle: "รีไซเคิล",
-        transport: "เรียกรถ EV",
-        used: "ของมือสอง",
-        wallet: "กระเป๋าคาร์บอน"
-
+    th:{
+        home:"หน้าหลัก",
+        food:"อาหารลดพิเศษ",
+        recycle:"รีไซเคิล",
+        transport:"เรียกรถ EV",
+        used:"ของมือสอง",
+        wallet:"กระเป๋าคาร์บอน"
     },
 
-    ko: {
-
-        home: "홈",
-        food: "마감 할인 음식",
-        recycle: "재활용",
-        transport: "친환경 차량",
-        used: "중고 물품",
-        wallet: "카본 지갑"
-
+    ko:{
+        home:"홈",
+        food:"마감 할인 음식",
+        recycle:"재활용",
+        transport:"친환경 차량",
+        used:"중고 물품",
+        wallet:"카본 지갑"
     }
 
 };
 
 
-function setLanguage(lang) {
+function setLanguage(lang){
 
-    const t =
-        translations[lang];
+    const t=translations[lang];
 
-
-    const navButtons =
-        document
-            .querySelectorAll(
-                ".navlinks button"
-            );
-
-
-    const pages = [
+    const pages=[
         "home",
         "food",
         "recycle",
@@ -4087,29 +5337,21 @@ function setLanguage(lang) {
         "wallet"
     ];
 
+    document.querySelectorAll(".navlinks button")
+        .forEach((button,index)=>{
 
-    navButtons.forEach(
-        (button, index) => {
-
-            if (t[pages[index]]) {
-
-                button.textContent =
-                    t[pages[index]];
-
+            if(t[pages[index]]){
+                button.textContent=t[pages[index]];
             }
-
-        }
-    );
-
+        });
 
     toast(
-        lang === "th"
-            ? "เปลี่ยนภาษาเป็นไทยแล้ว"
-            : lang === "ko"
-                ? "한국어로 변경되었습니다"
-                : "Language changed to English"
+        lang==="th"
+        ? "เปลี่ยนภาษาเป็นไทยแล้ว"
+        : lang==="ko"
+        ? "한국어로 변경되었습니다"
+        : "Language changed to English"
     );
-
 }
 
 
