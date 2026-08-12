@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLoop — Sustainable Local Marketplace</title>
+    <style>
+         :root {
+            --green: #16a36b;
+            --green2: #0d7c52;
+            --mint: #eafff5;
+            --ink: #10241b;
+            --muted: #6b7d74;
+            --bg: #f5f8f6;
+            --card: #fff;
+            --line: #e5ece8;
+            --yellow: #ffd95a;
+            --red: #ff6b6b;
+            --shadow: 0 12px 35px rgba(16, 36, 27, .08);
+        }
+        
+        * {
+            box-sizing: border-box
+        }
+        
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+            color: var(--ink);
+            background: var(--bg)
+        }
+        
+        button,
+        input {
+            font: inherit
+        }
+        
+        button {
+            cursor: pointer;
+            border: 0
+        }
+        
+        .nav {
+            height: 72px;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 20
+        }
+        
+        .logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--green2);
+            display: flex;
+            gap: 9px;
+            align-items: center
+        }
+        
+        .logo span {
+            background: var(--green);
+            color: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center
+        }
+        
+        .navlinks {
+            display: flex;
+            gap: 24px
+        }
+        
+        .navlinks button {
+            background: none;
+            color: #53665e;
+            font-weight: 650
+        }
+        
+        .navlinks button:hover,
+        .navlinks .active {
+            color: var(--green2)
+        }
+        
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+        
+        .credits {
+            background: var(--mint);
+            color: var(--green2);
+            padding: 9px 13px;
+            border-radius: 999px;
+            font-weight: 800
+        }
+        
+        .lang {
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 10px;
+            padding: 8px 10px
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: auto;
+            padding: 28px 5% 70px
+        }
+        
+        .hero {
+            display: grid;
+            grid-template-columns: 1.35fr .65fr;
+            gap: 24px;
+            margin-bottom: 26px
+        }
+        
+        .heroMain {
+            background: linear-gradient(135deg, #0d7c52, #18ad70);
+            border-radius: 28px;
+            padding: 42px;
+            color: white;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden
+        }
+        
+        .heroMain:after {
+            content: "🌱";
+            position: absolute;
+            right: 30px;
+            bottom: -25px;
+            font-size: 170px;
+            opacity: .13
+        }
+        
+        .heroMain h1 {
+            font-size: 48px;
+            line-height: 1.03;
+            margin: 0 0 15px;
+            max-width: 650px
+        }
+        
+        .heroMain p {
+            font-size: 18px;
+            opacity: .9;
+            max-width: 560px
+        }
+        
+        .search {
+            margin-top: 28px;
+            background: #fff;
+            border-radius: 15px;
+            padding: 5px;
+            display: flex;
+            max-width: 650px
+        }
+        
+        .search input {
+            border: 0;
+            outline: 0;
+            flex: 1;
+            padding: 13px 15px;
+            color: var(--ink);
+            background: transparent
+        }
+        
+        .search button {
+            background: var(--green2);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 11px
+        }
+        
+        .wallet {
+            background: #10241b;
+            border-radius: 28px;
+            padding: 30px;
+            color: #fff;
+            box-shadow: var(--shadow)
+        }
+        
+        .wallet small {
+            color: #b8cec4
+        }
+        
+        .wallet .big {
+            font-size: 43px;
+            font-weight: 900;
+            margin: 12px 0
+        }
+        
+        .wallet .impact {
+            background: #1a392d;
+            padding: 15px;
+            border-radius: 16px;
+            margin-top: 22px
+        }
+        
+        .redeem {
+            margin-top: 16px;
+            width: 100%;
+            background: var(--yellow);
+            color: #1f2b22;
+            padding: 13px;
+            border-radius: 12px;
+            font-weight: 850
+        }
+        
+        .quick {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin: 0 0 28px
+        }
+        
+        .quick button {
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 18px;
+            border-radius: 18px;
+            text-align: left;
+            box-shadow: var(--shadow)
+        }
+        
+        .quick b {
+            display: block;
+            margin-top: 8px
+        }
+        
+        .quick span {
+            font-size: 25px
+        }
+        
+        .sectionHead {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin: 34px 0 15px
+        }
+        
+        .sectionHead h2 {
+            margin: 0;
+            font-size: 24px
+        }
+        
+        .sectionHead p {
+            margin: 5px 0 0;
+            color: var(--muted)
+        }
+        
+        .viewall {
+            background: none;
+            color: var(--green2);
+            font-weight: 800
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px
+        }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow)
+        }
+        
+        .pic {
+            height: 150px;
+            display: grid;
+            place-items: center;
+            font-size: 65px;
+            background: linear-gradient(135deg, #dff8eb, #f7fff9);
+            position: relative
+        }
+        
+        .tag {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            background: #fff;
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 850;
+            color: var(--green2)
+        }
+        
+        .cardbody {
+            padding: 15px
+        }
+        
+        .cardbody h3 {
+            margin: 0 0 7px;
+            font-size: 17px
+        }
+        
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+        
+        .price {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+        
+        .price strong {
+            font-size: 20px
+        }
+        
+        .old {
+            text-decoration: line-through;
+            color: #9ba9a3
+        }
+        
+        .discount {
+            color: #e04d4d;
+            font-size: 12px;
+            font-weight: 800;
+            background: #fff0f0;
+            padding: 5px 7px;
+            border-radius: 7px
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px
+        }
+        
+        .primary {
+            background: var(--green);
+            color: #fff;
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-weight: 750
+        }
+        
+        .secondary {
+            background: var(--mint);
+            color: var(--green2);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-weight: 750
+        }
+        
+        .map {
+            height: 330px;
+            background: #dff0e7;
+            border-radius: 24px;
+            border: 1px solid #cfe1d7;
+            position: relative;
+            overflow: hidden;
+            background-image: linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, .8) 49%, rgba(255, 255, 255, .8) 51%, transparent 52%), linear-gradient(-20deg, transparent 47%, rgba(255, 255, 255, .65) 48%, rgba(255, 255, 255, .65) 51%, transparent 52%);
+            background-size: 120px 120px, 170px 170px
+        }
+        
+        .map:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 55% 45%, rgba(255, 255, 255, .7), transparent 35%)
+        }
+        
+        .marker {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border-radius: 50% 50% 50% 5px;
+            transform: rotate(-45deg);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 19px;
+            box-shadow: 0 7px 16px rgba(0, 0, 0, .18)
+        }
+        
+        .marker span {
+            transform: rotate(45deg)
+        }
+        
+        .m1 {
+            left: 17%;
+            top: 29%;
+            background: #16a36b
+        }
+        
+        .m2 {
+            left: 57%;
+            top: 24%;
+            background: #e99d22
+        }
+        
+        .m3 {
+            left: 70%;
+            top: 62%;
+            background: #407de8
+        }
+        
+        .m4 {
+            left: 37%;
+            top: 69%;
+            background: #9a5de0
+        }
+        
+        .you {
+            position: absolute;
+            left: 49%;
+            top: 47%;
+            width: 18px;
+            height: 18px;
+            background: #1769e0;
+            border: 4px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 8px rgba(23, 105, 224, .15)
+        }
+        
+        .mapLegend {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            background: #fff;
+            padding: 10px 13px;
+            border-radius: 12px;
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: var(--shadow)
+        }
+        
+        .activity {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+        
+        .panel {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 20px
+        }
+        
+        .activityItem {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line)
+        }
+        
+        .activityItem:last-child {
+            border: 0
+        }
+        
+        .plus {
+            color: var(--green);
+            font-weight: 900
+        }
+        
+        .footer {
+            background: #10241b;
+            color: #d7e7df;
+            padding: 35px 5%;
+            display: flex;
+            justify-content: space-between
+        }
+        
+        .footer b {
+            color: #fff
+        }
+        
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 25, 18, .5);
+            display: none;
+            place-items: center;
+            z-index: 50;
+            padding: 20px
+        }
+        
+        .modal.show {
+            display: grid
+        }
+        
+        .modalbox {
+            background: #fff;
+            width: min(500px, 100%);
+            border-radius: 24px;
+            padding: 25px
+        }
+        
+        .modalhead {
+            display: flex;
+            justify-content: space-between
+        }
+        
+        .close {
+            background: #eef4f1;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px
+        }
+        
+        .reward {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--mint);
+            border-radius: 15px;
+            margin: 10px 0
+        }
+        
+        .toast {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            background: #10241b;
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 13px;
+            box-shadow: var(--shadow);
+            transform: translateY(120px);
+            transition: .3s;
+            z-index: 80
+        }
+        
+        .toast.show {
+            transform: translateY(0)
+        }
+        
+        @media(max-width:900px) {
+            .navlinks {
+                display: none
+            }
+            .hero {
+                grid-template-columns: 1fr
+            }
+            .grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+            .quick {
+                grid-template-columns: repeat(2, 1fr)
+            }
+            .activity {
+                grid-template-columns: 1fr
+            }
+            .heroMain h1 {
+                font-size: 38px
+            }
+        }
+        
+        @media(max-width:560px) {
+            .container {
+                padding-left: 4%;
+                padding-right: 4%
+            }
+            .grid {
+                grid-template-columns: 1fr
+            }
+            .quick {
+                grid-template-columns: 1fr 1fr
+            }
+            .heroMain {
+                padding: 28px
+            }
+            .heroMain h1 {
+                font-size: 34px
+            }
+            .nav {
+                padding: 0 4%
+            }
+            .credits {
+                font-size: 12px
+            }
+            .lang {
+                font-size: 12px
+            }
+            .wallet .big {
+                font-size: 36px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="logo"><span>🌱</span> GreenLoop</div>
+        <div class="navlinks">
+            <button class="active" onclick="scrollToId('home')">Home</button>
+            <button onclick="scrollToId('food')">Food Deals</button>
+            <button onclick="scrollToId('map')">Explore</button>
+            <button onclick="scrollToId('used')">Used Items</button>
+            <button onclick="scrollToId('wallet')">Carbon Wallet</button>
+        </div>
+        <div class="actions">
+            <div class="credits">🌱 <span id="navCredits">1,250</span></div>
+            <select class="lang" id="language" onchange="setLanguage(this.value)">
+      <option value="en">EN</option><option value="th">TH</option><option value="ko">한국어</option>
+    </select>
+        </div>
+    </nav>
+
+    <main class="container" id="home">
+        <section class="hero">
+            <div class="heroMain">
+                <h1 data-i18n="heroTitle">Turn Everyday Actions Into Rewards.</h1>
+                <p data-i18n="heroSub">Rescue food. Recycle. Ride green. Reuse. Earn Carbon Credits.</p>
+                <div class="search"><input id="searchInput" data-placeholder="search" placeholder="Search food, recycling stations, transport, or used items..."><button onclick="search()">Search</button></div>
+            </div>
+            <div class="wallet" id="wallet">
+                <small data-i18n="wallet">CARBON WALLET</small>
+                <div class="big">🌱 <span id="balance">1,250</span></div>
+                <div class="impact">🌍 <b>32.4 kg</b><br><small data-i18n="co2">estimated CO₂ reduction</small></div>
+                <button class="redeem" onclick="openModal()">Redeem Carbon Credits</button>
+            </div>
+        </section>
+
+        <section class="quick">
+            <button onclick="scrollToId('food')"><span>🍱</span><b data-i18n="food">Food Deals</b><small class="muted">Save up to 70%</small></button>
+            <button onclick="scrollToId('recycle')"><span>♻️</span><b data-i18n="recycle">Recycle</b><small class="muted">Earn credits</small></button>
+            <button onclick="scrollToId('transport')"><span>🚲</span><b data-i18n="transport">Green Transport</b><small class="muted">Ride & earn</small></button>
+            <button onclick="scrollToId('used')"><span>📦</span><b data-i18n="used">Used Items</b><small class="muted">Reuse locally</small></button>
+        </section>
+
+        <section id="food">
+            <div class="sectionHead">
+                <div>
+                    <h2 data-i18n="nearFood">🔥 Last-minute food near you</h2>
+                    <p>Rescue great food before it becomes waste.</p>
+                </div><button class="viewall">View all →</button></div>
+            <div class="grid">
+                <article class="card">
+                    <div class="pic">🥐<span class="tag">67% OFF</span></div>
+                    <div class="cardbody">
+                        <h3>Bakery Surprise Box</h3>
+                        <div class="muted">🥐 Morning Bake · 0.8 km</div>
+                        <div class="price"><strong>฿59</strong><span class="old">฿180</span><span class="discount">-67%</span></div>
+                        <div class="row"><small class="muted">Pickup before 20:30</small><button class="primary" onclick="reserve('Bakery Surprise Box',10)">Reserve</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🍣<span class="tag">55% OFF</span></div>
+                    <div class="cardbody">
+                        <h3>Sushi Rescue Set</h3>
+                        <div class="muted">Sakana House · 1.2 km</div>
+                        <div class="price"><strong>฿129</strong><span class="old">฿290</span><span class="discount">-55%</span></div>
+                        <div class="row"><small class="muted">Pickup before 21:00</small><button class="primary" onclick="reserve('Sushi Rescue Set',15)">Reserve</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🍕<span class="tag">60% OFF</span></div>
+                    <div class="cardbody">
+                        <h3>Pizza End-of-Day</h3>
+                        <div class="muted">Green Slice · 1.8 km</div>
+                        <div class="price"><strong>฿99</strong><span class="old">฿250</span><span class="discount">-60%</span></div>
+                        <div class="row"><small class="muted">Pickup before 22:00</small><button class="primary" onclick="reserve('Pizza End-of-Day',12)">Reserve</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🥗<span class="tag">50% OFF</span></div>
+                    <div class="cardbody">
+                        <h3>Healthy Salad Box</h3>
+                        <div class="muted">Fresh Corner · 2.1 km</div>
+                        <div class="price"><strong>฿75</strong><span class="old">฿150</span><span class="discount">-50%</span></div>
+                        <div class="row"><small class="muted">Pickup before 19:45</small><button class="primary" onclick="reserve('Healthy Salad Box',10)">Reserve</button></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="map">
+            <div class="sectionHead">
+                <div>
+                    <h2>📍 Explore nearby</h2>
+                    <p>Find sustainable opportunities around you.</p>
+                </div><button class="viewall" onclick="locate()">Use my location</button></div>
+            <div class="map">
+                <div class="marker m1"><span>🍱</span></div>
+                <div class="marker m2"><span>♻️</span></div>
+                <div class="marker m3"><span>🚲</span></div>
+                <div class="marker m4"><span>📦</span></div>
+                <div class="you"></div>
+                <div class="mapLegend"><span>🍱 Food</span><span>♻️ Recycle</span><span>🚲 Transport</span><span>📦 Used</span></div>
+            </div>
+        </section>
+
+        <section id="recycle">
+            <div class="sectionHead">
+                <div>
+                    <h2>♻️ Recycling stations</h2>
+                    <p>Recycle verified materials and earn Carbon Credits.</p>
+                </div>
+            </div>
+            <div class="grid">
+                <article class="card">
+                    <div class="pic">♻️</div>
+                    <div class="cardbody">
+                        <h3>Green Hub Nimman</h3>
+                        <div class="muted">0.9 km · Open until 20:00</div>
+                        <div class="row"><b>Plastic · Glass · Paper</b><button class="secondary" onclick="earn(20,'Recycling')">Recycle +20</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🔋</div>
+                    <div class="cardbody">
+                        <h3>Eco Drop Station</h3>
+                        <div class="muted">1.7 km · Open until 18:00</div>
+                        <div class="row"><b>Battery · E-waste</b><button class="secondary" onclick="earn(30,'E-waste recycling')">Recycle +30</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🧴</div>
+                    <div class="cardbody">
+                        <h3>Zero Waste Point</h3>
+                        <div class="muted">2.4 km · Open until 21:00</div>
+                        <div class="row"><b>Plastic · Metal</b><button class="secondary" onclick="earn(20,'Recycling')">Recycle +20</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🌱</div>
+                    <div class="cardbody">
+                        <h3>Community Green Point</h3>
+                        <div class="muted">3.1 km · Open until 19:00</div>
+                        <div class="row"><b>All recyclables</b><button class="secondary" onclick="earn(25,'Recycling')">Recycle +25</button></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="transport">
+            <div class="sectionHead">
+                <div>
+                    <h2>🚲 Green transportation</h2>
+                    <p>Choose a low-carbon way to move and earn rewards.</p>
+                </div>
+            </div>
+            <div class="grid">
+                <article class="card">
+                    <div class="pic">🚲</div>
+                    <div class="cardbody">
+                        <h3>E-bike</h3>
+                        <div class="muted">2.4 km · ~8 min</div>
+                        <div class="row"><b>~0.6 kg CO₂ saved</b><button class="secondary" onclick="earn(15,'E-bike ride')">Ride +15</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🚌</div>
+                    <div class="cardbody">
+                        <h3>Electric Shuttle</h3>
+                        <div class="muted">5.8 km · ~18 min</div>
+                        <div class="row"><b>~1.2 kg CO₂ saved</b><button class="secondary" onclick="earn(20,'Electric shuttle')">Ride +20</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🚶</div>
+                    <div class="cardbody">
+                        <h3>Walk Route</h3>
+                        <div class="muted">1.6 km · ~20 min</div>
+                        <div class="row"><b>~0.4 kg CO₂ saved</b><button class="secondary" onclick="earn(10,'Walking')">Walk +10</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🛵</div>
+                    <div class="cardbody">
+                        <h3>Electric Scooter</h3>
+                        <div class="muted">3.2 km · ~10 min</div>
+                        <div class="row"><b>~0.7 kg CO₂ saved</b><button class="secondary" onclick="earn(15,'Electric scooter')">Ride +15</button></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="used">
+            <div class="sectionHead">
+                <div>
+                    <h2>📦 Used items nearby</h2>
+                    <p>Give products a second life in your community.</p>
+                </div><button class="viewall">View marketplace →</button></div>
+            <div class="grid">
+                <article class="card">
+                    <div class="pic">🎧</div>
+                    <div class="cardbody">
+                        <h3>Wireless Headphones</h3>
+                        <div class="muted">Good condition · 0.7 km</div>
+                        <div class="price"><strong>฿450</strong></div>
+                        <div class="row"><small class="muted">Reuse impact +15</small><button class="primary" onclick="toast('Seller contact opened')">Contact</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🪑</div>
+                    <div class="cardbody">
+                        <h3>Wooden Study Chair</h3>
+                        <div class="muted">Like new · 1.4 km</div>
+                        <div class="price"><strong>฿600</strong></div>
+                        <div class="row"><small class="muted">Reuse impact +20</small><button class="primary" onclick="toast('Seller contact opened')">Contact</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">📚</div>
+                    <div class="cardbody">
+                        <h3>University Textbook Set</h3>
+                        <div class="muted">Used · 1.9 km</div>
+                        <div class="price"><strong>฿250</strong></div>
+                        <div class="row"><small class="muted">Reuse impact +15</small><button class="primary" onclick="toast('Seller contact opened')">Contact</button></div>
+                    </div>
+                </article>
+                <article class="card">
+                    <div class="pic">🎒</div>
+                    <div class="cardbody">
+                        <h3>Travel Backpack</h3>
+                        <div class="muted">Excellent · 2.2 km</div>
+                        <div class="price"><strong>฿390</strong></div>
+                        <div class="row"><small class="muted">Reuse impact +15</small><button class="primary" onclick="toast('Seller contact opened')">Contact</button></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="sectionHead">
+                <div>
+                    <h2>🌱 Your sustainability activity</h2>
+                    <p>Keep track of your impact and rewards.</p>
+                </div>
+            </div>
+            <div class="activity">
+                <div class="panel">
+                    <h3>Recent Carbon Credits</h3>
+                    <div id="activityList">
+                        <div class="activityItem"><span>♻️ Recycling plastic</span><span class="plus">+20</span></div>
+                        <div class="activityItem"><span>🚲 Green transportation</span><span class="plus">+15</span></div>
+                        <div class="activityItem"><span>🍱 Food rescue</span><span class="plus">+35</span></div>
+                        <div class="activityItem"><span>🎁 Food discount</span><span style="color:#d45b5b">−50</span></div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>🌍 Green Score</h3>
+                    <div style="font-size:48px;font-weight:900;color:var(--green);margin:15px 0">82<span style="font-size:18px;color:var(--muted)">/100</span></div>
+                    <div style="height:12px;background:#e8efeb;border-radius:20px;overflow:hidden">
+                        <div style="width:82%;height:100%;background:var(--green);border-radius:20px"></div>
+                    </div>
+                    <p class="muted">You're in the top 18% of green users this month.</p>
+                    <button class="secondary" onclick="earn(100,'Weekly green challenge')">Complete weekly challenge +100</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div><b>🌱 GreenLoop</b><br><small>Every sustainable action has value.</small></div>
+        <div>EN · TH · 한국어</div>
+    </footer>
+
+    <div class="modal" id="modal">
+        <div class="modalbox">
+            <div class="modalhead">
+                <div>
+                    <h2>🌱 Redeem Carbon Credits</h2>
+                    <p class="muted">Turn your impact into real-world rewards.</p>
+                </div><button class="close" onclick="closeModal()">×</button></div>
+            <div class="reward"><span>฿50 Food Discount</span><b>500 credits</b><button class="primary" onclick="redeem(500,'฿50 food discount')">Redeem</button></div>
+            <div class="reward"><span>🚲 Free Green Ride</span><b>800 credits</b><button class="primary" onclick="redeem(800,'Free green ride')">Redeem</button></div>
+            <div class="reward"><span>🍱 ฿100 Food Voucher</span><b>1,000 credits</b><button class="primary" onclick="redeem(1000,'฿100 food voucher')">Redeem</button></div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let balance = 1250;
+        const translations = {
+            en: {
+                heroTitle: "Turn Everyday Actions Into Rewards.",
+                heroSub: "Rescue food. Recycle. Ride green. Reuse. Earn Carbon Credits.",
+                wallet: "CARBON WALLET",
+                co2: "estimated CO₂ reduction",
+                food: "Food Deals",
+                recycle: "Recycle",
+                transport: "Green Transport",
+                used: "Used Items",
+                nearFood: "🔥 Last-minute food near you",
+                search: "Search food, recycling stations, transport, or used items..."
+            },
+            th: {
+                heroTitle: "เปลี่ยนทุกการกระทำให้เป็นรางวัล",
+                heroSub: "ช่วยอาหารเหลือทิ้ง รีไซเคิล เดินทางสีเขียว และใช้ของมือสอง เพื่อรับ Carbon Credits",
+                wallet: "กระเป๋า Carbon Credit",
+                co2: "ประมาณการลด CO₂",
+                food: "อาหารลดพิเศษ",
+                recycle: "รีไซเคิล",
+                transport: "การเดินทางสีเขียว",
+                used: "ของมือสอง",
+                nearFood: "🔥 อาหารลดพิเศษใกล้คุณ",
+                search: "ค้นหาอาหาร จุดรีไซเคิล การเดินทาง หรือของมือสอง..."
+            },
+            ko: {
+                heroTitle: "일상의 행동을 보상으로 바꾸세요.",
+                heroSub: "음식 구조, 재활용, 친환경 이동, 재사용으로 Carbon Credits를 받아보세요.",
+                wallet: "카본 지갑",
+                co2: "예상 CO₂ 감축량",
+                food: "마감 할인 음식",
+                recycle: "재활용",
+                transport: "친환경 교통",
+                used: "중고 물품",
+                nearFood: "🔥 주변 마감 할인 음식",
+                search: "음식, 재활용, 교통 또는 중고 물품 검색..."
+            }
+        };
+
+        function setLanguage(lang) {
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                let k = el.dataset.i18n;
+                if (translations[lang][k]) el.textContent = translations[lang][k]
+            });
+            document.querySelectorAll("[data-placeholder]").forEach(el => el.placeholder = translations[lang][el.dataset.placeholder]);
+            toast(lang === "th" ? "เปลี่ยนภาษาเป็นไทยแล้ว" : lang === "ko" ? "한국어로 변경되었습니다" : "Language changed to English");
+        }
+
+        function updateBalance() {
+            document.getElementById("balance").textContent = balance.toLocaleString();
+            document.getElementById("navCredits").textContent = balance.toLocaleString();
+        }
+
+        function earn(amount, reason) {
+            balance += amount;
+            updateBalance();
+            const list = document.getElementById("activityList");
+            const item = document.createElement("div");
+            item.className = "activityItem";
+            item.innerHTML = `<span>🌱 ${reason}</span><span class="plus">+${amount}</span>`;
+            list.prepend(item);
+            toast(`+${amount} Carbon Credits earned!`);
+        }
+
+        function redeem(cost, reward) {
+            if (balance < cost) {
+                toast("Not enough Carbon Credits");
+                return
+            }
+            balance -= cost;
+            updateBalance();
+            closeModal();
+            const list = document.getElementById("activityList");
+            const item = document.createElement("div");
+            item.className = "activityItem";
+            item.innerHTML = `<span>🎁 ${reward}</span><span style="color:#d45b5b">−${cost}</span>`;
+            list.prepend(item);
+            toast(`${reward} redeemed successfully!`);
+        }
+
+        function reserve(name, credits) {
+            earn(credits, "Food rescue: " + name);
+            toast("Reserved! Pickup details added to your account.");
+        }
+
+        function openModal() {
+            document.getElementById("modal").classList.add("show")
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.remove("show")
+        }
+
+        function scrollToId(id) {
+            document.getElementById(id).scrollIntoView({
+                behavior: "smooth"
+            })
+        }
+
+        function locate() {
+            toast("Location found — showing nearby sustainable places.")
+        }
+
+        function search() {
+            const q = document.getElementById("searchInput").value.trim();
+            toast(q ? `Searching nearby for "${q}"...` : "Try searching for food, recycling, rides, or used items.");
+        }
+
+        function toast(msg) {
+            const el = document.getElementById("toast");
+            el.textContent = msg;
+            el.classList.add("show");
+            clearTimeout(window.tt);
+            window.tt = setTimeout(() => el.classList.remove("show"), 2600)
+        }
+        window.onclick = e => {
+            if (e.target.id === "modal") closeModal()
+        }
+    </script>
+</body>
