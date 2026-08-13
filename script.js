@@ -1375,9 +1375,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function checkLoginStatus() {
-    // register.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만 오는 페이지이므로
-    // 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
-    const isRegisterPage = location.pathname.endsWith("register.html");
+    // register.html / register_restaurant.html은 아직 회원가입(역할 선택)이 끝나지 않은
+    // 사용자만 오는 페이지이므로 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
+    const isRegisterPage = location.pathname.endsWith("register.html")
+        || location.pathname.endsWith("register_restaurant.html");
 
     try {
         // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
