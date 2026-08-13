@@ -269,28 +269,34 @@
 
 <div class="foodToolbar">
 
-    <button class="foodCategory active">
-        🔥 Near Me
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'MEAT')">
+        🥩 Meat
     </button>
 
-    <button class="foodCategory">
-        🍕 Meals
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'VEGE')">
+        🥦 Vege
     </button>
 
-    <button class="foodCategory">
-        ☕ Drinks
-    </button>
-
-    <button class="foodCategory">
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'BAKERY')">
         🥐 Bakery
     </button>
 
-    <button class="foodCategory">
-        🥗 Healthy
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'PROCESSED')">
+        🥫 Processed
     </button>
 
-    <button class="foodCategory">
-        ♻️ Rescue Food
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'DRINKS')">
+        ☕ Drinks
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'DEFAULT')">
+        🍽️ All
     </button>
 
 </div>
@@ -321,7 +327,7 @@
 </div>
 
 
-<div class="sectionHead">
+<div class="sectionHead" id="restaurantSectionHead">
 
     <div>
 
@@ -336,14 +342,14 @@
     </div>
 
     <button class="viewall"
-            onclick="toast('Showing all restaurants')">
+            onclick="showAllFoodItems()">
         View all →
     </button>
 
 </div>
 
 
-<div class="restaurantGrid">
+<div class="restaurantGrid" id="restaurantGrid">
 
 
 <!-- RESTAURANT 1 -->
@@ -610,6 +616,30 @@
 </article>
 
 </div>
+
+
+<div class="sectionHead" id="allFoodItemsSectionHead" style="display:none;">
+
+    <div>
+
+        <h2 id="allFoodItemsTitle">
+            All food deals
+        </h2>
+
+        <p id="allFoodItemsSubtitle">
+            Every rescue item from restaurants near you
+        </p>
+
+    </div>
+
+    <button class="viewall"
+            onclick="hideAllFoodItems()">
+        ← Back
+    </button>
+
+</div>
+
+<div class="foodItemGrid" id="allFoodItemsGrid" style="display:none;"></div>
 
 
 <div class="greenFoodRewards">
