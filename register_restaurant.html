@@ -99,31 +99,37 @@
 
             <button class="active"
                     data-page="home"
+                    data-i18n="home"
                     onclick="showPage('home',this)">
                 Home
             </button>
 
             <button data-page="food"
+                    data-i18n="food"
                     onclick="showPage('food',this)">
                 Food Deals
             </button>
 
             <button data-page="recycle"
+                    data-i18n="recycle"
                     onclick="showPage('recycle',this)">
                 Recycle
             </button>
 
             <button data-page="transport"
+                    data-i18n="transport"
                     onclick="showPage('transport',this)">
                 Green Ride
             </button>
 
             <button data-page="used"
+                    data-i18n="used"
                     onclick="showPage('used',this)">
                 Used Items
             </button>
 
             <button data-page="wallet"
+                    data-i18n="wallet"
                     onclick="showPage('wallet',this)">
                 Carbon Wallet
             </button>
@@ -141,7 +147,7 @@
             </div>
             <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
                 <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
-                <button onclick="logout()" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+                <button onclick="logout()" data-i18n="logout" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
                     Logout
                 </button>
             </div>
@@ -162,32 +168,36 @@
     </nav>
 
     <main class="restaurant-register-wrapper">
-        <h2 class="title">파트너 회원가입</h2>
+        <h2 class="title" data-i18n="restaurant_form_title">파트너 회원가입</h2>
 
         <form class="restaurant-form" id="restaurantForm">
             <div class="form-field">
-                <label for="restaurantName">가게명</label>
-                <input type="text" id="restaurantName" name="name" required placeholder="예) 그린루프 식당">
+                <label for="restaurantName" data-i18n="restaurant_form_name_label">가게명</label>
+                <input type="text" id="restaurantName" name="name" required
+                       data-i18n-placeholder="restaurant_form_name_placeholder"
+                       placeholder="예) 그린루프 식당">
             </div>
 
             <div class="form-field">
-                <label for="restaurantLocation">가게 주소</label>
-                <input type="text" id="restaurantLocation" name="location" required placeholder="예) 서울시 강남구 테헤란로 123">
+                <label for="restaurantLocation" data-i18n="restaurant_form_location_label">가게 주소</label>
+                <input type="text" id="restaurantLocation" name="location" required
+                       data-i18n-placeholder="restaurant_form_location_placeholder"
+                       placeholder="예) 서울시 강남구 테헤란로 123">
             </div>
 
             <div class="time-fields">
                 <div class="form-field">
-                    <label for="openTime">영업 시작 시간</label>
+                    <label for="openTime" data-i18n="restaurant_form_open_label">영업 시작 시간</label>
                     <input type="time" id="openTime" name="openTime" required>
                 </div>
 
                 <div class="form-field">
-                    <label for="closeTime">영업 종료 시간</label>
+                    <label for="closeTime" data-i18n="restaurant_form_close_label">영업 종료 시간</label>
                     <input type="time" id="closeTime" name="closeTime" required>
                 </div>
             </div>
 
-            <button type="submit" class="submitButton">가입하기</button>
+            <button type="submit" class="submitButton" data-i18n="restaurant_form_submit">가입하기</button>
         </form>
     </main>
     <script src="script.js"></script>

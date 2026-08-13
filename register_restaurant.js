@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const closeTime = document.getElementById("closeTime").value;
 
             if (!name || !location || !openTime || !closeTime) {
-                alert("모든 항목을 입력해 주세요.");
+                alert(t("restaurant_form_missing_fields"));
                 return;
             }
 
@@ -48,16 +48,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error("가게 정보 캐싱 실패:", cacheError);
                     }
 
-                    alert("파트너 가입이 완료되었습니다.");
+                    alert(t("restaurant_form_success"));
                     window.location.replace("/index.html");
                 } else {
                     const errorText = await response.text();
                     console.error("파트너 가입 실패:", errorText);
-                    alert("가입 처리 중 문제가 발생했습니다.");
+                    alert(t("role_update_failed"));
                 }
             } catch (error) {
                 console.error("통신 에러:", error);
-                alert("서버와 통신할 수 없습니다.");
+                alert(t("network_error"));
             }
         });
     }
