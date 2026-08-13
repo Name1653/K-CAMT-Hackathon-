@@ -1561,6 +1561,18 @@
 </div>
 
 
+<div id="pickupTimeArea"
+     class="scheduleArea">
+
+    <label data-i18n="pickup_time_label">
+        🏪 Pickup time (must be within the restaurant's opening hours)
+    </label>
+
+    <input type="time" id="pickupTimeInput">
+
+</div>
+
+
 <h3 data-i18n="cart_address_title">
     📍 Delivery address
 </h3>
@@ -1763,6 +1775,45 @@
         ฿0
     </span>
 
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================================================
+     PURCHASE THANK YOU MODAL (REAL FOOD PURCHASES — NO DELIVERY)
+========================================================= -->
+
+<div class="foodModal"
+     id="purchaseThanksModal">
+
+<div class="foodModalBox checkoutBox" style="max-width:420px; text-align:center;">
+
+<button class="closeFoodModal"
+        onclick="closePurchaseThanks()">
+    ×
+</button>
+
+<div class="orderSuccess">
+
+    <div>✓</div>
+
+    <h2 data-i18n="purchase_thanks_title">
+        Thank you for your purchase!
+    </h2>
+
+    <p id="purchaseThanksItems"></p>
+
+    <p id="purchaseThanksPickup" style="color:var(--muted); font-size:13px; margin-top:-8px;"></p>
+
+    <p id="purchaseThanksMileage" style="color:var(--green2); font-weight:850; margin-top:10px;"></p>
+
+</div>
+
+<button class="checkoutButton" data-i18n="purchase_thanks_done" onclick="closePurchaseThanks()">
+    Done
 </button>
 
 </div>

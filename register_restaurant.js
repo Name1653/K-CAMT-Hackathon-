@@ -22,7 +22,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Content-Type": "application/json"
                     },
                     credentials: "include",
-                    body: JSON.stringify({ name, location, openTime, closeTime })
+                    body: JSON.stringify({
+                        name,
+                        location,
+                        openTime: openTime + ":00",
+                        closeTime: closeTime + ":00"
+                    })
                 });
 
                 if (response.ok) {
