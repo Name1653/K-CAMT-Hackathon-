@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     // 성공 시 일반 회원 메인 페이지로 이동
-                    window.location.replace("/index.html"); 
+                    window.location.replace("/"); 
                 } else {
                     const errorText = await response.text();
                     console.error("역할 업데이트 실패:", errorText);
@@ -29,12 +29,32 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    // 파트너 회원 클릭 이벤트 (추후 구현 시 사용)
+    // 파트너 회원(가게 사장님) 클릭 이벤트
     const partnerCard = document.getElementById("partnerCard");
     if (partnerCard) {
-        partnerCard.addEventListener("click", () => {
-            console.log("파트너 회원 클릭됨 - API 연동 필요");
-            // window.location.href = "/register/partner"; 등의 처리 추가
+        partnerCard.addEventListener("click", async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/members/role", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include", // 쿠키(세션/JWT)를 포함하여 요청
+                    body: JSON.stringify({ role: "RESTAURANT" })
+                });
+
+                if (response.ok) {
+                    // 성공 시 메인 페이지로 이동 (Food Deals에서 "음식 등록하기" 버튼 노출됨)
+                    window.location.replace("/");
+                } else {
+                    const errorText = await response.text();
+                    console.error("역할 업데이트 실패:", errorText);
+                    alert("가입 처리 중 문제가 발생했습니다.");
+                }
+            } catch (error) {
+                console.error("통신 에러:", error);
+                alert("서버와 통신할 수 없습니다.");
+            }
         });
     }
 });

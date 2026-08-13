@@ -658,12 +658,15 @@ function selectFoodCategory(button,category){
 }
 
 
-function showAllFoodItems(category){
+let liveFoods=[];
+
+async function showAllFoodItems(category){
 
     document.getElementById("restaurantSectionHead").style.display="none";
     document.getElementById("restaurantGrid").style.display="none";
 
     document.getElementById("allFoodItemsSectionHead").style.display="flex";
+    document.getElementById("foodCategoryToolbar").style.display="flex";
 
     const label=foodCategoryLabels[category]||null;
 
@@ -673,77 +676,195 @@ function showAllFoodItems(category){
     document.getElementById("allFoodItemsSubtitle").textContent=
         label&&category!=="DEFAULT"
             ? `Rescue items in the ${label} category`
-            : "Every rescue item from restaurants near you";
+            : "Today's rescue food deals, freshly posted by restaurants";
 
     const grid=document.getElementById("allFoodItemsGrid");
 
     grid.style.display="grid";
-    grid.innerHTML="";
+    grid.innerHTML=`
+        <p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">
+            Loading today's deals...
+        </p>
+    `;
 
-    let hasItems=false;
+    try{
 
-    Object.entries(restaurantData).forEach(([restaurantId,restaurant])=>{
-
-        restaurant.items.forEach(item=>{
-
-            if(category&&category!=="DEFAULT"&&item.category!==category){
-                return;
-            }
-
-            hasItems=true;
-
-            const card=document.createElement("article");
-
-            card.className="foodItemCard";
-
-            card.innerHTML=`
-
-                <div class="foodItemImage">
-                    ${item.emoji}
-                </div>
-
-                <div class="foodItemBody">
-
-                    <h4>
-                        ${item.name}
-                    </h4>
-
-                    <p class="foodItemRestaurant">
-                        ${restaurant.icon} ${restaurant.name}
-                    </p>
-
-                    <p class="foodItemDescription">
-                        ${item.description}
-                    </p>
-
-                    <div class="foodItemFooter">
-
-                        <span class="menuPrice">
-                            ฿${item.price} · 🌱 +${item.credits}
-                        </span>
-
-                        <button class="addMenu"
-                                onclick="addToCartDirect('${restaurantId}','${item.id}')">
-                            +
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-
-            grid.appendChild(card);
+        const res=await fetch("http://localhost:8080/api/foods",{
+            method:"GET",
+            credentials:"include",
         });
-    });
 
-    if(!hasItems){
+        if(!res.ok){
+            throw new Error("음식 목록 조회 실패: "+res.status);
+        }
+
+        liveFoods=await res.json();
+
+    }catch(error){
+
+        console.error("음식 목록 조회 실패:",error);
 
         grid.innerHTML=`
             <p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">
-                No ${label||"matching"} deals right now — check back soon!
+                음식 목록을 불러오지 못했습니다. 백엔드(localhost:8080)가 실행 중인지 확인해 주세요.
+            </p>
+        `;
+
+        return;
+    }
+
+    const items=category&&category!=="DEFAULT"
+        ? liveFoods.filter(food=>food.category===category)
+        : liveFoods;
+
+    grid.innerHTML="";
+
+    items.forEach(food=>{
+
+        const card=document.createElement("article");
+
+        card.className="foodItemCard";
+        card.style.cursor="pointer";
+        card.onclick=()=>openFoodDetail(food.id);
+
+        card.innerHTML=`
+
+            <div class="foodItemImage" style="position:relative;">
+
+                <img src="http://localhost:8080${food.imageUrl}" alt="${food.title}">
+
+                <span class="restaurantDiscount">
+                    ${food.discountRate}% OFF
+                </span>
+
+            </div>
+
+            <div class="foodItemBody">
+
+                <h4>
+                    ${food.title}
+                </h4>
+
+                <p class="foodItemRestaurant">
+                    🏪 Restaurant #${food.restaurantId} · ⏰ Closes ${food.closingTime}
+                </p>
+
+                <p class="foodItemDescription">
+                    ${food.description}
+                </p>
+
+                <div class="foodItemFooter">
+
+                    <span class="menuPrice">
+                        <s style="color:var(--muted); font-weight:600;">฿${food.originalPrice}</s>
+                        ฿${food.discountedPrice}
+                    </span>
+
+                    <button class="addMenu"
+                            onclick="event.stopPropagation(); addLiveFoodToCart(${food.id})">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    if(items.length===0){
+
+        grid.innerHTML=`
+            <p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">
+                오늘 등록된 ${label&&category!=="DEFAULT"?label+" ":""}딜이 아직 없어요 — 곧 만나요!
             </p>
         `;
     }
+}
+
+
+function addLiveFoodToCart(foodId){
+
+    const food=liveFoods.find(f=>f.id===foodId);
+
+    if(!food)return;
+
+    const cartId="live-"+food.id;
+
+    const existing=foodCart.find(x=>x.id===cartId);
+
+    if(existing){
+
+        existing.qty++;
+
+    }else{
+
+        foodCart.push({
+            id:cartId,
+            name:food.title,
+            price:food.discountedPrice,
+            restaurant:"Restaurant #"+food.restaurantId,
+            qty:1
+        });
+    }
+
+    updateCartUI();
+
+    toast(`${food.title} added to cart`);
+}
+
+
+async function openFoodDetail(foodId){
+
+    try{
+
+        const res=await fetch(`http://localhost:8080/api/foods/${foodId}`,{
+            method:"GET",
+            credentials:"include",
+        });
+
+        if(!res.ok){
+            throw new Error("음식 상세 조회 실패: "+res.status);
+        }
+
+        const food=await res.json();
+
+        document.getElementById("foodDetailImage").src="http://localhost:8080"+food.imageUrl;
+        document.getElementById("foodDetailTitle").textContent=food.title;
+        document.getElementById("foodDetailDescription").textContent=food.description;
+        document.getElementById("foodDetailMeta").textContent=
+            `🏪 Restaurant #${food.restaurantId} · ⏰ Closes ${food.closingTime}`;
+        document.getElementById("foodDetailOriginalPrice").textContent="฿"+food.originalPrice;
+        document.getElementById("foodDetailPrice").textContent=
+            `฿${food.discountedPrice} (${food.discountRate}% OFF)`;
+
+        const addButton=document.getElementById("foodDetailAddButton");
+
+        if(food.sold){
+            addButton.textContent="Sold out";
+            addButton.disabled=true;
+            addButton.onclick=null;
+        }else{
+            addButton.textContent="Add to cart";
+            addButton.disabled=false;
+            addButton.onclick=()=>{
+                addLiveFoodToCart(food.id);
+                closeFoodDetail();
+            };
+        }
+
+        document.getElementById("foodDetailModal").classList.add("show");
+
+    }catch(error){
+        console.error("음식 상세 조회 실패:",error);
+        toast("음식 정보를 불러오지 못했습니다.");
+    }
+}
+
+
+function closeFoodDetail(){
+    document.getElementById("foodDetailModal").classList.remove("show");
 }
 
 
@@ -751,20 +872,13 @@ function hideAllFoodItems(){
 
     document.getElementById("allFoodItemsSectionHead").style.display="none";
     document.getElementById("allFoodItemsGrid").style.display="none";
+    document.getElementById("foodCategoryToolbar").style.display="none";
 
     document.getElementById("restaurantSectionHead").style.display="flex";
     document.getElementById("restaurantGrid").style.display="grid";
 
     document.querySelectorAll(".foodCategory")
         .forEach(btn=>btn.classList.remove("active"));
-}
-
-
-function addToCartDirect(restaurantId,itemId){
-
-    currentRestaurant=restaurantId;
-
-    addToCart(itemId);
 }
 
 
@@ -1377,7 +1491,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function checkLoginStatus() {
     // register.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만 오는 페이지이므로
     // 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
-    const isRegisterPage = location.pathname.endsWith("register.html");
+    // 주의: 정적 서버(serve)가 "/register.html" 요청을 "/register"로 리다이렉트하는
+    // clean URL 방식을 쓰기 때문에, 확장자가 없는 경로도 함께 확인해야 한다.
+    // (이걸 빠뜨리면 register 페이지에서 자기 자신으로 리다이렉트를 반복하는 무한 루프가 생김)
+    const isRegisterPage = /(^|\/)register(\.html)?$/.test(location.pathname);
 
     try {
         // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
@@ -1389,7 +1506,13 @@ async function checkLoginStatus() {
         if (response.ok && !isRegisterPage) {
             // 로그인 상태 (HTTP 200 OK)
             const userData = await response.json();
-            
+
+            if (!userData.role || userData.role === "NONE") {
+                // 아직 회원 유형을 선택하지 않은 사용자는 계속 register로 보낸다
+                window.location.replace("/register");
+                return;
+            }
+
             // 로그인 UI 업데이트 (작성해두신 showLoggedInUser 함수 재활용)
             showLoggedInUser(userData);
         } else {
@@ -1438,11 +1561,11 @@ async function handleCredentialResponse(response) {
             // 💡 백엔드에서 보내준 회원 상태에 따라 분기 처리
             if (data.role === "NONE") {
                 // if I login first, I have to register this service
-                window.location.replace("/register.html");
-            } 
+                window.location.replace("/register");
+            }
             else if (data.role === "RESTAURANT" || data.role === "MEMBER") {
-                window.location.replace("/index.html");
-            } 
+                window.location.replace("/");
+            }
             // backend error
             else {
                 console.error("백엔드 에러:", data);
@@ -1484,12 +1607,18 @@ function resolveUserDisplayName(user) {
 }
 
 // 5. 로그인 상태를 상단바 UI에 반영
+let currentUser = null;
+
 function showLoggedInUser(user) {
+    currentUser = user;
+
     document.getElementById("googleLoginLink").style.display = "none";
 
     const info = document.getElementById("userInfo");
     info.style.display = "flex";
     document.getElementById("userName").textContent = resolveUserDisplayName(user);
+
+    applyUserRoleUI();
 }
 
 // 6. 로그아웃
@@ -1503,9 +1632,185 @@ async function logout() {
         console.error("로그아웃 요청 실패:", error);
     } finally {
         sessionStorage.removeItem(USER_DISPLAY_NAME_KEY);
+        currentUser = null;
+
         document.getElementById("userInfo").style.display = "none";
         document.getElementById("googleLoginLink").style.display = "block";
+
+        applyUserRoleUI();
+
         toast("로그아웃되었습니다.");
+    }
+}
+
+// 7. 로그인/역할 상태에 따라 화면 요소 표시 여부 갱신
+// (회원 유형 선택은 register.html/register.js에서 처리됨)
+function applyUserRoleUI() {
+    const registerButton = document.getElementById("registerRestaurantButton");
+    if (!registerButton) return;
+
+    registerButton.style.display =
+        currentUser && currentUser.role === "RESTAURANT" ? "flex" : "none";
+}
+
+// 9. 음식 등록하기 (사장님 전용)
+
+// 가게(restaurantId)는 한 번 등록하면 재로그인 전까지 재사용 —
+// 조회 API가 아직 없어서 memberId별로 localStorage에 캐싱해둠
+let myRestaurant=null;
+
+function loadMyRestaurant(){
+    if(!currentUser) return;
+
+    const cached=localStorage.getItem("greenloop_restaurant_"+currentUser.memberId);
+
+    if(cached){
+        try{
+            myRestaurant=JSON.parse(cached);
+        }catch(_){
+            myRestaurant=null;
+        }
+    }
+}
+
+function openFoodRegisterPage(){
+    loadMyRestaurant();
+    showPage("food-register");
+
+    const hasRestaurant=!!myRestaurant;
+
+    document.getElementById("restaurantSetupForm").style.display=hasRestaurant?"none":"block";
+    document.getElementById("foodRegisterForm").style.display=hasRestaurant?"block":"none";
+
+    if(hasRestaurant){
+        document.getElementById("myRestaurantName").textContent=myRestaurant.name;
+    }
+}
+
+async function submitRestaurantSetup(){
+
+    const name=document.getElementById("restaurantName").value.trim();
+    const location=document.getElementById("restaurantLocation").value.trim();
+    const openTime=document.getElementById("restaurantOpenTime").value;
+    const closeTime=document.getElementById("restaurantCloseTime").value;
+
+    if(!name||!location||!openTime||!closeTime){
+        toast("가게 이름, 위치, 오픈/마감 시간을 모두 입력해 주세요.");
+        return;
+    }
+
+    try{
+        const res=await fetch("http://localhost:8080/api/restaurants",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            credentials:"include",
+            body:JSON.stringify({
+                name,
+                location,
+                openTime:openTime+":00",
+                closeTime:closeTime+":00"
+            }),
+        });
+
+        if(!res.ok){
+            throw new Error("가게 등록 요청 실패: "+res.status);
+        }
+
+        const data=await res.json();
+
+        myRestaurant=data;
+
+        if(currentUser){
+            localStorage.setItem("greenloop_restaurant_"+currentUser.memberId,JSON.stringify(data));
+        }
+
+        toast("가게가 등록되었습니다!");
+
+        document.getElementById("restaurantSetupForm").style.display="none";
+        document.getElementById("foodRegisterForm").style.display="block";
+        document.getElementById("myRestaurantName").textContent=data.name;
+
+    }catch(error){
+        console.error("가게 등록 실패:",error);
+        toast("가게 등록에 실패했습니다. 다시 시도해 주세요.");
+    }
+}
+
+function updateDiscountedPricePreview(){
+
+    const originalPrice=Number(document.getElementById("registerFoodOriginalPrice").value);
+    const discountRate=Number(document.getElementById("registerFoodDiscountRate").value);
+
+    const preview=document.getElementById("discountedPricePreview");
+
+    if(!originalPrice){
+        preview.textContent="";
+        return;
+    }
+
+    const discountedPrice=Math.round(originalPrice*(100-(discountRate||0))/100);
+
+    preview.textContent=`판매가: ฿${discountedPrice}`;
+}
+
+async function submitFoodRegistration(){
+
+    if(!myRestaurant){
+        toast("먼저 가게를 등록해 주세요.");
+        return;
+    }
+
+    const title=document.getElementById("registerFoodTitle").value.trim();
+    const description=document.getElementById("registerFoodDescription").value.trim();
+    const originalPrice=Number(document.getElementById("registerFoodOriginalPrice").value);
+    const discountRate=Number(document.getElementById("registerFoodDiscountRate").value)||0;
+    const category=document.getElementById("registerFoodCategory").value;
+    const imageFile=document.getElementById("registerFoodImage").files[0];
+
+    if(!title||!originalPrice||!imageFile){
+        toast("음식 이름, 정가, 사진을 입력해 주세요.");
+        return;
+    }
+
+    const formData=new FormData();
+
+    formData.append("restaurantId",myRestaurant.id);
+    formData.append("title",title);
+    formData.append("originalPrice",originalPrice);
+    formData.append("discountRate",discountRate);
+    formData.append("description",description);
+    formData.append("category",category);
+    formData.append("image",imageFile);
+
+    try{
+        const res=await fetch("http://localhost:8080/api/foods",{
+            method:"POST",
+            credentials:"include",
+            body:formData,
+        });
+
+        if(!res.ok){
+            const errText=await res.text();
+            throw new Error(errText||("음식 등록 요청 실패: "+res.status));
+        }
+
+        const data=await res.json();
+
+        document.getElementById("registerFoodTitle").value="";
+        document.getElementById("registerFoodDescription").value="";
+        document.getElementById("registerFoodOriginalPrice").value="";
+        document.getElementById("registerFoodDiscountRate").value="";
+        document.getElementById("registerFoodImage").value="";
+        document.getElementById("discountedPricePreview").textContent="";
+
+        toast(`${data.title} 이(가) 등록되었습니다!`);
+
+        showPage("food");
+        showAllFoodItems();
+
+    }catch(error){
+        console.error("음식 등록 실패:",error);
+        toast("음식 등록에 실패했습니다: "+(error.message||"다시 시도해 주세요."));
     }
 }
 
