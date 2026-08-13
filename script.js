@@ -158,7 +158,7 @@ function search(){
 
     if(!q){
 
-        toast("Try searching for food, recycling, rides, or used items.");
+        toast("Try searching for food or rides.");
 
         return;
     }
@@ -180,19 +180,6 @@ function search(){
     }
 
     if(
-        lower.includes("recycle")||
-        lower.includes("plastic")||
-        lower.includes("battery")
-    ){
-
-        showPage("recycle");
-
-        toast(`Showing recycling results for "${q}"`);
-
-        return;
-    }
-
-    if(
         lower.includes("ev")||
         lower.includes("ride")||
         lower.includes("transport")||
@@ -206,38 +193,7 @@ function search(){
         return;
     }
 
-    if(
-        lower.includes("used")||
-        lower.includes("chair")||
-        lower.includes("book")||
-        lower.includes("headphone")
-    ){
-
-        showPage("used");
-
-        toast(`Showing marketplace results for "${q}"`);
-
-        return;
-    }
-
     toast(`Searching GreenLoop for "${q}"...`);
-}
-
-
-/* =========================================================
-   USED MARKET SEARCH
-========================================================= */
-
-function marketSearch(){
-
-    const q=document.getElementById("marketSearch")
-        .value.trim();
-
-    toast(
-        q
-        ? `Searching marketplace for "${q}"...`
-        : "Enter an item to search."
-    );
 }
 
 
@@ -1370,9 +1326,7 @@ const translations={
     en:{
         home:"Home",
         food:"Food Deals",
-        recycle:"Recycle",
         transport:"Green Ride",
-        used:"Used Items",
         wallet:"Carbon Wallet",
         login: "Login / Sign Up"
     },
@@ -1380,9 +1334,7 @@ const translations={
     th:{
         home:"หน้าหลัก",
         food:"อาหารลดพิเศษ",
-        recycle:"รีไซเคิล",
         transport:"เรียกรถ EV",
-        used:"ของมือสอง",
         wallet:"กระเป๋าคาร์บอน",
         login: "เข้าสู่ระบบ / สมัครสมาชิก"
     },
@@ -1390,9 +1342,7 @@ const translations={
     ko:{
         home:"홈",
         food:"마감 할인 음식",
-        recycle:"재활용",
         transport:"친환경 차량",
-        used:"중고 물품",
         wallet:"탄소 지갑",
         login: "로그인 / 회원가입"
     }
@@ -1413,9 +1363,7 @@ function setLanguage(lang){
     const pages=[
         "home",
         "food",
-        "recycle",
         "transport",
-        "used",
         "wallet"
     ];
 
