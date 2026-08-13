@@ -1375,6 +1375,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function checkLoginStatus() {
+    // register.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만 오는 페이지이므로
+    // 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
+    const isRegisterPage = location.pathname.endsWith("register.html");
+
     try {
         // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
         const response = await fetch("http://localhost:8080/api/auth/me", {
@@ -1382,7 +1386,7 @@ async function checkLoginStatus() {
             credentials: "include" // 브라우저에 저장된 쿠키(인증 정보) 전송
         });
 
-        if (response.ok) {
+        if (response.ok && !isRegisterPage) {
             // 로그인 상태 (HTTP 200 OK)
             const userData = await response.json();
             
@@ -1451,13 +1455,41 @@ async function handleCredentialResponse(response) {
     }
 }
 
+// 4-1. 응답 형태가 엔드포인트마다 달라도(예: /api/auth/google 은 name을 주지만
+//      /api/auth/me 는 안 주는 경우) 표시할 이름을 최대한 찾아내고, 한 번 찾은
+//      이름은 세션에 캐싱해서 리다이렉트 이후에도 유지되게 한다.
+const USER_DISPLAY_NAME_KEY = "gl_userDisplayName";
+
+function resolveUserDisplayName(user) {
+    if (!user) return sessionStorage.getItem(USER_DISPLAY_NAME_KEY) || "";
+
+    const source = user.user || user.data || user;
+    const candidate =
+        source.name ||
+        source.nickname ||
+        source.username ||
+        source.given_name ||
+        source.email;
+
+    if (candidate) {
+        sessionStorage.setItem(USER_DISPLAY_NAME_KEY, candidate);
+        return candidate;
+    }
+
+    const cached = sessionStorage.getItem(USER_DISPLAY_NAME_KEY);
+    if (!cached) {
+        console.warn("로그인 사용자 정보에 표시할 이름/이메일이 없습니다:", user);
+    }
+    return cached || "";
+}
+
 // 5. 로그인 상태를 상단바 UI에 반영
 function showLoggedInUser(user) {
     document.getElementById("googleLoginLink").style.display = "none";
 
     const info = document.getElementById("userInfo");
     info.style.display = "flex";
-    document.getElementById("userName").textContent = user.name || user.email || "";
+    document.getElementById("userName").textContent = resolveUserDisplayName(user);
 }
 
 // 6. 로그아웃
@@ -1470,6 +1502,7 @@ async function logout() {
     } catch (error) {
         console.error("로그아웃 요청 실패:", error);
     } finally {
+        sessionStorage.removeItem(USER_DISPLAY_NAME_KEY);
         document.getElementById("userInfo").style.display = "none";
         document.getElementById("googleLoginLink").style.display = "block";
         toast("로그아웃되었습니다.");
