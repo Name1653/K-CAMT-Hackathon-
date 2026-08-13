@@ -678,6 +678,61 @@ button:disabled{
     background:var(--green2);
 }
 
+.foodItemGrid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.foodItemCard{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:.2s;
+}
+
+.foodItemCard:hover{
+    transform:translateY(-3px);
+}
+
+.foodItemImage{
+    height:120px;
+    display:grid;
+    place-items:center;
+    font-size:56px;
+    background:var(--mint);
+}
+
+.foodItemBody{
+    padding:17px;
+}
+
+.foodItemBody h4{
+    margin:0 0 4px;
+}
+
+.foodItemRestaurant{
+    margin:0 0 8px;
+    color:var(--green2);
+    font-size:12px;
+    font-weight:850;
+}
+
+.foodItemDescription{
+    margin:0 0 12px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.foodItemFooter{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
 .greenFoodRewards{
     margin-top:28px;
     background:var(--mint);
@@ -1890,6 +1945,10 @@ button:disabled{
 @media(max-width:700px){
 
     .restaurantGrid{
+        grid-template-columns:1fr;
+    }
+
+    .foodItemGrid{
         grid-template-columns:1fr;
     }
 

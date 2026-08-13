@@ -412,7 +412,8 @@ const restaurantData={
                 description:"Croissants, pastries & bread",
                 price:45,
                 emoji:"🥐",
-                credits:15
+                credits:15,
+                category:"BAKERY"
             },
 
             {
@@ -421,7 +422,8 @@ const restaurantData={
                 description:"Fresh bakery rescue item",
                 price:25,
                 emoji:"🥐",
-                credits:8
+                credits:8,
+                category:"BAKERY"
             },
 
             {
@@ -430,7 +432,8 @@ const restaurantData={
                 description:"Assorted fresh bread",
                 price:35,
                 emoji:"🍞",
-                credits:10
+                credits:10,
+                category:"BAKERY"
             }
 
         ]
@@ -449,7 +452,8 @@ const restaurantData={
                 description:"8-piece mixed sushi",
                 price:87,
                 emoji:"🍣",
-                credits:15
+                credits:15,
+                category:"MEAT"
             },
 
             {
@@ -458,7 +462,8 @@ const restaurantData={
                 description:"Fresh salmon sushi",
                 price:99,
                 emoji:"🍣",
-                credits:18
+                credits:18,
+                category:"MEAT"
             },
 
             {
@@ -467,7 +472,8 @@ const restaurantData={
                 description:"Assorted maki rolls",
                 price:65,
                 emoji:"🍱",
-                credits:12
+                credits:12,
+                category:"MEAT"
             }
 
         ]
@@ -486,7 +492,8 @@ const restaurantData={
                 description:"Freshly baked pizza",
                 price:62,
                 emoji:"🍕",
-                credits:15
+                credits:15,
+                category:"PROCESSED"
             },
 
             {
@@ -495,7 +502,8 @@ const restaurantData={
                 description:"Tomato, mozzarella & basil",
                 price:75,
                 emoji:"🍕",
-                credits:18
+                credits:18,
+                category:"PROCESSED"
             },
 
             {
@@ -504,7 +512,8 @@ const restaurantData={
                 description:"Single rescue slice",
                 price:29,
                 emoji:"🍕",
-                credits:8
+                credits:8,
+                category:"PROCESSED"
             }
 
         ]
@@ -523,7 +532,8 @@ const restaurantData={
                 description:"Fresh vegetables & dressing",
                 price:45,
                 emoji:"🥗",
-                credits:15
+                credits:15,
+                category:"VEGE"
             },
 
             {
@@ -532,7 +542,8 @@ const restaurantData={
                 description:"Chicken, vegetables & wrap",
                 price:49,
                 emoji:"🌯",
-                credits:12
+                credits:12,
+                category:"MEAT"
             },
 
             {
@@ -541,7 +552,8 @@ const restaurantData={
                 description:"Fresh seasonal fruits",
                 price:35,
                 emoji:"🍉",
-                credits:10
+                credits:10,
+                category:"VEGE"
             }
 
         ]
@@ -619,6 +631,140 @@ function closeRestaurant(){
 
     document.getElementById("restaurantModal")
         .classList.remove("show");
+}
+
+
+/* =========================================================
+   VIEW ALL FOOD ITEMS / CATEGORY FILTER
+========================================================= */
+
+const foodCategoryLabels={
+    MEAT:"Meat",
+    VEGE:"Vege",
+    BAKERY:"Bakery",
+    PROCESSED:"Processed",
+    DRINKS:"Drinks",
+    DEFAULT:"All"
+};
+
+function selectFoodCategory(button,category){
+
+    document.querySelectorAll(".foodCategory")
+        .forEach(btn=>btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    showAllFoodItems(category);
+}
+
+
+function showAllFoodItems(category){
+
+    document.getElementById("restaurantSectionHead").style.display="none";
+    document.getElementById("restaurantGrid").style.display="none";
+
+    document.getElementById("allFoodItemsSectionHead").style.display="flex";
+
+    const label=foodCategoryLabels[category]||null;
+
+    document.getElementById("allFoodItemsTitle").textContent=
+        label&&category!=="DEFAULT" ? `${label} deals` : "All food deals";
+
+    document.getElementById("allFoodItemsSubtitle").textContent=
+        label&&category!=="DEFAULT"
+            ? `Rescue items in the ${label} category`
+            : "Every rescue item from restaurants near you";
+
+    const grid=document.getElementById("allFoodItemsGrid");
+
+    grid.style.display="grid";
+    grid.innerHTML="";
+
+    let hasItems=false;
+
+    Object.entries(restaurantData).forEach(([restaurantId,restaurant])=>{
+
+        restaurant.items.forEach(item=>{
+
+            if(category&&category!=="DEFAULT"&&item.category!==category){
+                return;
+            }
+
+            hasItems=true;
+
+            const card=document.createElement("article");
+
+            card.className="foodItemCard";
+
+            card.innerHTML=`
+
+                <div class="foodItemImage">
+                    ${item.emoji}
+                </div>
+
+                <div class="foodItemBody">
+
+                    <h4>
+                        ${item.name}
+                    </h4>
+
+                    <p class="foodItemRestaurant">
+                        ${restaurant.icon} ${restaurant.name}
+                    </p>
+
+                    <p class="foodItemDescription">
+                        ${item.description}
+                    </p>
+
+                    <div class="foodItemFooter">
+
+                        <span class="menuPrice">
+                            ฿${item.price} · 🌱 +${item.credits}
+                        </span>
+
+                        <button class="addMenu"
+                                onclick="addToCartDirect('${restaurantId}','${item.id}')">
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+            grid.appendChild(card);
+        });
+    });
+
+    if(!hasItems){
+
+        grid.innerHTML=`
+            <p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">
+                No ${label||"matching"} deals right now — check back soon!
+            </p>
+        `;
+    }
+}
+
+
+function hideAllFoodItems(){
+
+    document.getElementById("allFoodItemsSectionHead").style.display="none";
+    document.getElementById("allFoodItemsGrid").style.display="none";
+
+    document.getElementById("restaurantSectionHead").style.display="flex";
+    document.getElementById("restaurantGrid").style.display="grid";
+
+    document.querySelectorAll(".foodCategory")
+        .forEach(btn=>btn.classList.remove("active"));
+}
+
+
+function addToCartDirect(restaurantId,itemId){
+
+    currentRestaurant=restaurantId;
+
+    addToCart(itemId);
 }
 
 
