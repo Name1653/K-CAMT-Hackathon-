@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLoop — Sustainable Local Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .role-selection-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+
+        .role-selection-wrapper .title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #000;
+        }
+
+        .card-container {
+            display: flex;
+            gap: 40px; /* 두 카드 사이의 간격 */
+        }
+
+        /* 카드 기본 스타일 (이미지 기반 회색 배경 적용) */
+        .role-card {
+            background-color: #dbdbdb; 
+            border-radius: 8px;
+            width: 260px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .role-card:hover {
+            background-color: #cccccc;
+            transform: translateY(-3px); /* 마우스 오버 시 살짝 떠오르는 효과 */
+        }
+
+        .role-card .icon-placeholder {
+            font-size: 60px;
+            margin-bottom: 25px;
+        }
+
+        .role-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            color: #333;
+        }
+
+        .role-card p {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================================
+        NAV
+    ========================================================= -->
+
+    <nav class="nav">
+
+        <div class="logo">
+            <span>🌱</span>
+            GreenLoop
+        </div>
+
+        <div class="navlinks">
+
+            <button class="active"
+                    data-page="home"
+                    onclick="showPage('home',this)">
+                Home
+            </button>
+
+            <button data-page="food"
+                    onclick="showPage('food',this)">
+                Food Deals
+            </button>
+
+            <button data-page="recycle"
+                    onclick="showPage('recycle',this)">
+                Recycle
+            </button>
+
+            <button data-page="transport"
+                    onclick="showPage('transport',this)">
+                Green Ride
+            </button>
+
+            <button data-page="used"
+                    onclick="showPage('used',this)">
+                Used Items
+            </button>
+
+            <button data-page="wallet"
+                    onclick="showPage('wallet',this)">
+                Carbon Wallet
+            </button>
+
+        </div>
+
+        <div class="actions">
+            <div
+                href="#"
+                id="googleLoginLink"
+                data-i18n="login"
+                onclick="triggerGoogleLogin(event)"
+                style="cursor: pointer; font-weight: 850; color: var(--green2); text-decoration: none; padding: 0 10px;">
+                Login / Sign Up
+            </div>
+            <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
+                <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
+                <button onclick="logout()" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+                    Logout
+                </button>
+            </div>
+            <div class="credits">
+                🌱 <span id="navCredits">1,250</span>
+            </div>
+
+            <select class="lang"
+                    id="language"
+                    onchange="setLanguage(this.value)">
+                <option value="en">EN</option>
+                <option value="th">TH</option>
+                <option value="ko">한국어</option>
+            </select>
+
+        </div>
+
+    </nav>
+
+    <main class="role-selection-wrapper">
+        <h2 class="title">어떤 유형으로 가입하시겠어요?</h2>
+        
+        <div class="card-container">
+            <!-- 일반 회원 카드 -->
+            <div class="role-card" id="memberCard">
+                <div class="icon-placeholder">👤</div> <!-- 이미지로 교체 가능 -->
+                <h3>일반 회원</h3>
+                <p>상품을 구매하고<br>포인트를 적립해요</p>
+            </div>
+
+            <!-- 파트너 회원 카드 -->
+            <div class="role-card" id="partnerCard">
+                <div class="icon-placeholder">🏪</div> <!-- 이미지로 교체 가능 -->
+                <h3>파트너 회원</h3>
+                <p>상품을 등록하고<br>판매할 수 있어요</p>
+            </div>
+        </div>
+    </main>
+    <script src="script.js"></script>
+    <script src="register.js"></script>
+</body>
+</html>
