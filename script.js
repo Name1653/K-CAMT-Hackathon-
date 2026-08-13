@@ -1220,7 +1220,38 @@ function initializeGoogleLogin() {
     );
 }
 
-document.addEventListener("DOMContentLoaded", initializeGoogleLogin);
+document.addEventListener("DOMContentLoaded", async () => {
+    // 1. 기존 구글 로그인 초기화 로직 실행
+    initializeGoogleLogin(); 
+    
+    // 2. 페이지 로드 시 백엔드에 로그인 상태 확인
+    await checkLoginStatus();
+});
+
+async function checkLoginStatus() {
+    try {
+        // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
+        const response = await fetch("http://localhost:8080/api/auth/me", {
+            method: "GET",
+            credentials: "include" // 브라우저에 저장된 쿠키(인증 정보) 전송
+        });
+
+        if (response.ok) {
+            // 로그인 상태 (HTTP 200 OK)
+            const userData = await response.json();
+            
+            // 로그인 UI 업데이트 (작성해두신 showLoggedInUser 함수 재활용)
+            showLoggedInUser(userData);
+        } else {
+            // 비로그인 상태 (HTTP 401 Unauthorized 등)
+            // 구글 로그인 버튼이 보이도록 기본 상태 유지
+            document.getElementById("googleLoginLink").style.display = "block";
+            document.getElementById("userInfo").style.display = "none";
+        }
+    } catch (error) {
+        console.error("로그인 상태 확인 실패:", error);
+    }
+}
 window.addEventListener("load", initializeGoogleLogin);
 
 // 4. 구글 로그인이 성공적으로 완료되었을 때 실행되는 콜백 함수
@@ -1253,9 +1284,19 @@ async function handleCredentialResponse(response) {
             console.log("백엔드 통신 성공:", data);
             toast("로그인되었습니다.");
             showLoggedInUser(data);
-        } else {
-            console.error("백엔드 에러:", data);
-            toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
+
+            // 💡 백엔드에서 보내준 회원 상태에 따라 분기 처리
+            if (data.role === "NONE") {
+                // if I login first, I have to register this service
+                window.location.replace("/register.html");
+            } if (data.role === "RESTAURANT") {
+                window.location.replace("/restaurant/home.html");
+            } else if (data.role === "MEMBER") {
+                window.location.replace("/member/home");
+            } else {
+                console.error("백엔드 에러:", data);
+                toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
+            }
         }
     } catch (error) {
         console.error("통신 실패:", error);
