@@ -703,6 +703,15 @@ button:disabled{
     place-items:center;
     font-size:56px;
     background:var(--mint);
+    overflow:hidden;
+}
+
+.foodItemImage img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    font-size:12px;
+    color:var(--muted);
 }
 
 .foodItemBody{
@@ -1128,6 +1137,40 @@ button:disabled{
     border-radius:12px;
     padding:12px;
     outline:none;
+}
+
+.formField{
+    margin-bottom:18px;
+}
+
+.formField label{
+    display:block;
+    margin-bottom:7px;
+    font-weight:750;
+    font-size:13px;
+    color:#52655d;
+}
+
+.formField input,
+.formField select{
+    width:100%;
+    border:1px solid var(--line);
+    background:#fafcfb;
+    padding:12px 13px;
+    border-radius:12px;
+    outline:none;
+    font-family:inherit;
+    font-size:14px;
+    color:inherit;
+}
+
+.formRow{
+    display:flex;
+    gap:14px;
+}
+
+.formRow .formField{
+    flex:1;
 }
 
 .priceSummary{
@@ -1950,6 +1993,11 @@ button:disabled{
 
     .foodItemGrid{
         grid-template-columns:1fr;
+    }
+
+    .formRow{
+        flex-direction:column;
+        gap:0;
     }
 
     .foodHeader{

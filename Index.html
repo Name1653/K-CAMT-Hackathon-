@@ -256,48 +256,24 @@
 
     </div>
 
-    <button class="foodCartButton"
-            onclick="openCart()">
+    <div style="display:flex; gap:10px; align-items:center;">
 
-        🛒 Cart
-        <span id="cartCount">0</span>
+        <button class="foodCartButton"
+                id="registerRestaurantButton"
+                style="display:none; background:#fff; color:var(--green2); white-space:nowrap;"
+                onclick="openFoodRegisterPage()">
+            🍽️ 음식 등록하기
+        </button>
 
-    </button>
+        <button class="foodCartButton"
+                onclick="openCart()">
 
-</div>
+            🛒 Cart
+            <span id="cartCount">0</span>
 
+        </button>
 
-<div class="foodToolbar">
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'MEAT')">
-        🥩 Meat
-    </button>
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'VEGE')">
-        🥦 Vege
-    </button>
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'BAKERY')">
-        🥐 Bakery
-    </button>
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'PROCESSED')">
-        🥫 Processed
-    </button>
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'DRINKS')">
-        ☕ Drinks
-    </button>
-
-    <button class="foodCategory"
-            onclick="selectFoodCategory(this,'DEFAULT')">
-        🍽️ All
-    </button>
+    </div>
 
 </div>
 
@@ -639,6 +615,40 @@
 
 </div>
 
+<div class="foodToolbar" id="foodCategoryToolbar" style="display:none;">
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'MEAT')">
+        🥩 Meat
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'VEGE')">
+        🥦 Vege
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'BAKERY')">
+        🥐 Bakery
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'PROCESSED')">
+        🥫 Processed
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'DRINKS')">
+        ☕ Drinks
+    </button>
+
+    <button class="foodCategory"
+            onclick="selectFoodCategory(this,'DEFAULT')">
+        🍽️ All
+    </button>
+
+</div>
+
 <div class="foodItemGrid" id="allFoodItemsGrid" style="display:none;"></div>
 
 
@@ -659,6 +669,137 @@
         </p>
 
     </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     FOOD REGISTER (RESTAURANT ONLY)
+========================================================= -->
+
+<section id="page-food-register" class="page">
+
+<div class="container">
+
+<div class="pageHeader foodHeader">
+
+    <div>
+
+        <h1>
+            🍽️ Add a Food Deal
+        </h1>
+
+        <p>
+            List a rescue food item for customers to discover.
+        </p>
+
+    </div>
+
+    <button class="foodCartButton"
+            onclick="showPage('food')">
+        ← Back
+    </button>
+
+</div>
+
+<div class="foodModalBox checkoutBox" id="restaurantSetupForm" style="display:none; margin:0 auto; max-width:520px; text-align:left;">
+
+    <h3 style="margin-top:0;">
+        먼저 가게 정보를 등록해 주세요
+    </h3>
+
+    <p style="color:var(--muted); font-size:13px; margin-top:-8px;">
+        가게는 한 번만 등록하면 돼요. 이후 음식은 이 가게 아래로 계속 등록할 수 있어요.
+    </p>
+
+    <div class="formField">
+        <label>가게 이름</label>
+        <input id="restaurantName" placeholder="e.g. Morning Bake">
+    </div>
+
+    <div class="formField">
+        <label>위치</label>
+        <input id="restaurantLocation" placeholder="e.g. 서울시 강남구 ...">
+    </div>
+
+    <div class="formRow">
+
+        <div class="formField">
+            <label>오픈 시간</label>
+            <input id="restaurantOpenTime" type="time">
+        </div>
+
+        <div class="formField">
+            <label>마감 시간</label>
+            <input id="restaurantCloseTime" type="time">
+        </div>
+
+    </div>
+
+    <button class="checkoutButton" onclick="submitRestaurantSetup()">
+        가게 등록하기
+    </button>
+
+</div>
+
+<div class="foodModalBox checkoutBox" id="foodRegisterForm" style="display:none; margin:0 auto; max-width:520px; text-align:left;">
+
+    <p style="color:var(--muted); font-size:13px; margin-top:0;">
+        <strong id="myRestaurantName"></strong> 이름으로 등록됩니다.
+    </p>
+
+    <div class="formField">
+        <label>음식 이름</label>
+        <input id="registerFoodTitle" placeholder="e.g. 마감 할인 도시락">
+    </div>
+
+    <div class="formField">
+        <label>설명</label>
+        <textarea id="registerFoodDescription"
+                  class="orderNote"
+                  placeholder="e.g. 오늘 만든 도시락 마감세일합니다"></textarea>
+    </div>
+
+    <div class="formRow">
+
+        <div class="formField">
+            <label>정가 (฿)</label>
+            <input id="registerFoodOriginalPrice" type="number" min="0" placeholder="5000" oninput="updateDiscountedPricePreview()">
+        </div>
+
+        <div class="formField">
+            <label>할인율 (%)</label>
+            <input id="registerFoodDiscountRate" type="number" min="0" max="100" placeholder="30" oninput="updateDiscountedPricePreview()">
+        </div>
+
+    </div>
+
+    <p id="discountedPricePreview" style="color:var(--green2); font-weight:850; font-size:13px; margin-top:-8px;"></p>
+
+    <div class="formField">
+        <label>카테고리</label>
+        <select id="registerFoodCategory">
+            <option value="MEAT">🥩 Meat</option>
+            <option value="VEGE">🥦 Vege</option>
+            <option value="BAKERY">🥐 Bakery</option>
+            <option value="PROCESSED">🥫 Processed</option>
+            <option value="DRINKS">☕ Drinks</option>
+            <option value="DEFAULT">🍽️ Other</option>
+        </select>
+    </div>
+
+    <div class="formField">
+        <label>사진</label>
+        <input id="registerFoodImage" type="file" accept="image/*">
+    </div>
+
+    <button class="checkoutButton" onclick="submitFoodRegistration()">
+        음식 등록하기
+    </button>
 
 </div>
 
@@ -2240,7 +2381,38 @@
         </p>
         
         <div id="googleButtonContainer" style="display: flex; justify-content: center;"></div>
-        
+
+    </div>
+</div>
+
+
+<div class="foodModal" id="foodDetailModal">
+    <div class="foodModalBox checkoutBox" style="max-width: 480px;">
+
+        <div class="foodModalHeader" style="margin-bottom: 15px;">
+            <h2 style="margin: 0; font-size: 20px;">Food details</h2>
+            <button class="closeFoodModal" onclick="closeFoodDetail()">✕</button>
+        </div>
+
+        <div class="foodItemImage" style="height:200px; border-radius:16px; margin-bottom:16px;">
+            <img id="foodDetailImage" src="" alt="" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+
+        <h3 id="foodDetailTitle" style="margin:0 0 6px;"></h3>
+
+        <p id="foodDetailMeta" style="color:var(--muted); font-size:13px; margin:0 0 12px;"></p>
+
+        <p id="foodDetailDescription" style="color:var(--muted); font-size:14px; line-height:1.5; margin:0 0 16px;"></p>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <s id="foodDetailOriginalPrice" style="color:var(--muted);"></s>
+            <strong id="foodDetailPrice" style="color:var(--green2); font-size:20px;"></strong>
+        </div>
+
+        <button class="checkoutButton" id="foodDetailAddButton">
+            Add to cart
+        </button>
+
     </div>
 </div>
 
