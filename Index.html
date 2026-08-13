@@ -35,22 +35,10 @@
             Food Deals
         </button>
 
-        <button data-page="recycle"
-                data-i18n="recycle"
-                onclick="showPage('recycle',this)">
-            Recycle
-        </button>
-
         <button data-page="transport"
                 data-i18n="transport"
                 onclick="showPage('transport',this)">
             Green Ride
-        </button>
-
-        <button data-page="used"
-                data-i18n="used"
-                onclick="showPage('used',this)">
-            Used Items
         </button>
 
         <button data-page="wallet"
@@ -110,15 +98,15 @@
         </h1>
 
         <p data-i18n="home_hero_desc">
-            Rescue food. Recycle. Ride green.
-            Reuse. Earn Carbon Credits.
+            Rescue food. Ride green.
+            Earn Carbon Credits.
         </p>
 
         <div class="search">
 
             <input id="searchInput"
                    data-i18n-placeholder="home_search_placeholder"
-                   placeholder="Search food, recycling stations, transport, or used items...">
+                   placeholder="Search food or transport...">
 
             <button onclick="search()" data-i18n="home_search_button">
                 Search
@@ -172,27 +160,11 @@
         </small>
     </button>
 
-    <button onclick="showPage('recycle')">
-        <span>♻️</span>
-        <b data-i18n="recycle">Recycle</b>
-        <small class="muted" data-i18n="home_quick_recycle_sub">
-            Earn credits
-        </small>
-    </button>
-
     <button onclick="showPage('transport')">
         <span>🚗</span>
         <b data-i18n="transport">Green Ride</b>
         <small class="muted" data-i18n="home_quick_transport_sub">
             Book an EV
-        </small>
-    </button>
-
-    <button onclick="showPage('used')">
-        <span>📦</span>
-        <b data-i18n="used">Used Items</b>
-        <small class="muted" data-i18n="home_quick_used_sub">
-            Reuse locally
         </small>
     </button>
 
@@ -835,207 +807,6 @@
 
 
 <!-- =========================================================
-     RECYCLE
-========================================================= -->
-
-<section id="page-recycle" class="page">
-
-<div class="container">
-
-<div class="pageHeader">
-
-    <h1 data-i18n="recycle_page_title">
-        ♻️ Recycling Stations
-    </h1>
-
-    <p data-i18n="recycle_page_desc">
-        Recycle verified materials and earn Carbon Credits.
-    </p>
-
-</div>
-
-
-<div class="recycleBanner">
-
-    <div class="recycleInfo">
-
-        <strong>
-            +20
-        </strong>
-
-        <span data-i18n="recycle_avg_credits">
-            Average credits per recycling action
-        </span>
-
-    </div>
-
-    <div class="earnBadge">
-
-        <h3 data-i18n="recycle_challenge_title">
-            🌱 Green Challenge
-        </h3>
-
-        <p data-i18n="recycle_challenge_desc">
-            Recycle 3 times this week
-            and earn an extra 100 credits.
-        </p>
-
-        <button class="primary"
-                onclick="earn(100,'Weekly recycling challenge')"
-                data-i18n="recycle_challenge_button">
-            Complete Challenge +100
-        </button>
-
-    </div>
-
-</div>
-
-
-<div class="grid">
-
-    <article class="card">
-
-        <div class="pic">
-            ♻️
-        </div>
-
-        <div class="cardbody">
-
-            <h3 data-i18n="recycle_s1_name">
-                Green Hub Nimman
-            </h3>
-
-            <div class="muted" data-i18n="recycle_s1_meta">
-                0.9 km · Open until 20:00
-            </div>
-
-            <div class="row">
-
-                <b data-i18n="recycle_s1_tags">
-                    Plastic · Glass · Paper
-                </b>
-
-                <button class="secondary"
-                        onclick="earn(20,'Recycling at Green Hub')">
-                    +20
-                </button>
-
-            </div>
-
-        </div>
-
-    </article>
-
-
-    <article class="card">
-
-        <div class="pic">
-            🔋
-        </div>
-
-        <div class="cardbody">
-
-            <h3 data-i18n="recycle_s2_name">
-                Eco Drop Station
-            </h3>
-
-            <div class="muted" data-i18n="recycle_s2_meta">
-                1.7 km · Open until 18:00
-            </div>
-
-            <div class="row">
-
-                <b data-i18n="recycle_s2_tags">
-                    Battery · E-waste
-                </b>
-
-                <button class="secondary"
-                        onclick="earn(30,'E-waste recycling')">
-                    +30
-                </button>
-
-            </div>
-
-        </div>
-
-    </article>
-
-
-    <article class="card">
-
-        <div class="pic">
-            🧴
-        </div>
-
-        <div class="cardbody">
-
-            <h3 data-i18n="recycle_s3_name">
-                Zero Waste Point
-            </h3>
-
-            <div class="muted" data-i18n="recycle_s3_meta">
-                2.4 km · Open until 21:00
-            </div>
-
-            <div class="row">
-
-                <b data-i18n="recycle_s3_tags">
-                    Plastic · Metal
-                </b>
-
-                <button class="secondary"
-                        onclick="earn(20,'Recycling at Zero Waste Point')">
-                    +20
-                </button>
-
-            </div>
-
-        </div>
-
-    </article>
-
-
-    <article class="card">
-
-        <div class="pic">
-            🌱
-        </div>
-
-        <div class="cardbody">
-
-            <h3 data-i18n="recycle_s4_name">
-                Community Green Point
-            </h3>
-
-            <div class="muted" data-i18n="recycle_s4_meta">
-                3.1 km · Open until 19:00
-            </div>
-
-            <div class="row">
-
-                <b data-i18n="recycle_s4_tags">
-                    All recyclables
-                </b>
-
-                <button class="secondary"
-                        onclick="earn(25,'Community recycling')">
-                    +25
-                </button>
-
-            </div>
-
-        </div>
-
-    </article>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
      GREEN RIDE
 ========================================================= -->
 
@@ -1321,207 +1092,6 @@
 
 
 <!-- =========================================================
-     USED MARKETPLACE
-========================================================= -->
-
-<section id="page-used" class="page">
-
-<div class="container">
-
-<div class="pageHeader">
-
-    <h1 data-i18n="used_page_title">
-        📦 Used Marketplace
-    </h1>
-
-    <p data-i18n="used_page_desc">
-        Give products a second life in your community.
-    </p>
-
-</div>
-
-
-<div class="marketToolbar">
-
-    <input id="marketSearch"
-           data-i18n-placeholder="used_search_placeholder"
-           placeholder="Search used items...">
-
-    <button class="primary"
-            onclick="marketSearch()"
-            data-i18n="home_search_button">
-        Search
-    </button>
-
-</div>
-
-
-<div class="grid">
-
-
-<article class="card">
-
-    <div class="pic">
-        🎧
-    </div>
-
-    <div class="cardbody">
-
-        <h3 data-i18n="used_i1_name">
-            Wireless Headphones
-        </h3>
-
-        <div class="muted" data-i18n="used_i1_meta">
-            Good condition · 0.7 km
-        </div>
-
-        <div class="price">
-            <strong>฿450</strong>
-        </div>
-
-        <div class="row">
-
-            <small class="muted" data-i18n="used_i1_impact">
-                Reuse impact +15
-            </small>
-
-            <button class="primary"
-                    onclick="toast(t('used_contact_toast'))"
-                    data-i18n="used_contact_button">
-                Contact
-            </button>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-<article class="card">
-
-    <div class="pic">
-        🪑
-    </div>
-
-    <div class="cardbody">
-
-        <h3 data-i18n="used_i2_name">
-            Wooden Study Chair
-        </h3>
-
-        <div class="muted" data-i18n="used_i2_meta">
-            Like new · 1.4 km
-        </div>
-
-        <div class="price">
-            <strong>฿600</strong>
-        </div>
-
-        <div class="row">
-
-            <small class="muted" data-i18n="used_i2_impact">
-                Reuse impact +20
-            </small>
-
-            <button class="primary"
-                    onclick="toast(t('used_contact_toast'))"
-                    data-i18n="used_contact_button">
-                Contact
-            </button>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-<article class="card">
-
-    <div class="pic">
-        📚
-    </div>
-
-    <div class="cardbody">
-
-        <h3 data-i18n="used_i3_name">
-            University Textbook Set
-        </h3>
-
-        <div class="muted" data-i18n="used_i3_meta">
-            Used · 1.9 km
-        </div>
-
-        <div class="price">
-            <strong>฿250</strong>
-        </div>
-
-        <div class="row">
-
-            <small class="muted" data-i18n="used_i3_impact">
-                Reuse impact +15
-            </small>
-
-            <button class="primary"
-                    onclick="toast(t('used_contact_toast'))"
-                    data-i18n="used_contact_button">
-                Contact
-            </button>
-
-        </div>
-
-    </div>
-
-</article>
-
-
-<article class="card">
-
-    <div class="pic">
-        🎒
-    </div>
-
-    <div class="cardbody">
-
-        <h3 data-i18n="used_i4_name">
-            Travel Backpack
-        </h3>
-
-        <div class="muted" data-i18n="used_i4_meta">
-            Excellent · 2.2 km
-        </div>
-
-        <div class="price">
-            <strong>฿390</strong>
-        </div>
-
-        <div class="row">
-
-            <small class="muted" data-i18n="used_i4_impact">
-                Reuse impact +15
-            </small>
-
-            <button class="primary"
-                    onclick="toast(t('used_contact_toast'))"
-                    data-i18n="used_contact_button">
-                Contact
-            </button>
-
-        </div>
-
-    </div>
-
-</article>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================================================
      WALLET
 ========================================================= -->
 
@@ -1673,11 +1243,6 @@
     </h3>
 
     <div id="activityList">
-
-        <div class="activityItem">
-            <span data-i18n="wallet_activity_recycling">♻️ Recycling plastic</span>
-            <span class="plus">+20</span>
-        </div>
 
         <div class="activityItem">
             <span data-i18n="wallet_activity_transport">🚗 Green transportation</span>

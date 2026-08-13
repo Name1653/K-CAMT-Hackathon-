@@ -194,19 +194,6 @@ function search(){
     }
 
     if(
-        lower.includes("recycle")||
-        lower.includes("plastic")||
-        lower.includes("battery")
-    ){
-
-        showPage("recycle");
-
-        toast(tf("search_recycle_toast",{q}));
-
-        return;
-    }
-
-    if(
         lower.includes("ev")||
         lower.includes("ride")||
         lower.includes("transport")||
@@ -220,38 +207,7 @@ function search(){
         return;
     }
 
-    if(
-        lower.includes("used")||
-        lower.includes("chair")||
-        lower.includes("book")||
-        lower.includes("headphone")
-    ){
-
-        showPage("used");
-
-        toast(tf("search_used_toast",{q}));
-
-        return;
-    }
-
     toast(tf("search_generic_toast",{q}));
-}
-
-
-/* =========================================================
-   USED MARKET SEARCH
-========================================================= */
-
-function marketSearch(){
-
-    const q=document.getElementById("marketSearch")
-        .value.trim();
-
-    toast(
-        q
-        ? tf("search_market_toast",{q})
-        : t("search_market_empty_toast")
-    );
 }
 
 
@@ -1382,9 +1338,7 @@ const translations={
     en:{
         home:"Home",
         food:"Food Deals",
-        recycle:"Recycle",
         transport:"Green Ride",
-        used:"Used Items",
         wallet:"Carbon Wallet",
         login: "Login / Sign Up",
         logout: "Logout",
@@ -1443,16 +1397,14 @@ const translations={
         route_metric_pill: "✓ Emissions offset · counted toward Net-Zero",
 
         home_hero_title: "Turn Everyday Actions Into Rewards.",
-        home_hero_desc: "Rescue food. Recycle. Ride green. Reuse. Earn Carbon Credits.",
-        home_search_placeholder: "Search food, recycling stations, transport, or used items...",
+        home_hero_desc: "Rescue food. Ride green. Earn Carbon Credits.",
+        home_search_placeholder: "Search food or transport...",
         home_search_button: "Search",
         home_wallet_label: "CARBON WALLET",
         home_impact_desc: "estimated CO₂ reduction",
         home_wallet_redeem: "Redeem Carbon Credits",
         home_quick_food_sub: "Save 70–80%",
-        home_quick_recycle_sub: "Earn credits",
         home_quick_transport_sub: "Book an EV",
-        home_quick_used_sub: "Reuse locally",
         home_impact_title: "🌍 Your GreenLoop Impact",
         home_impact_subtitle: "Every small action creates measurable impact.",
         home_stat_credits: "Carbon Credits",
@@ -1549,25 +1501,6 @@ const translations={
         food_register_failed_toast: "Food registration failed",
         try_again: "please try again.",
 
-        recycle_page_title: "♻️ Recycling Stations",
-        recycle_page_desc: "Recycle verified materials and earn Carbon Credits.",
-        recycle_avg_credits: "Average credits per recycling action",
-        recycle_challenge_title: "🌱 Green Challenge",
-        recycle_challenge_desc: "Recycle 3 times this week and earn an extra 100 credits.",
-        recycle_challenge_button: "Complete Challenge +100",
-        recycle_s1_name: "Green Hub Nimman",
-        recycle_s1_meta: "0.9 km · Open until 20:00",
-        recycle_s1_tags: "Plastic · Glass · Paper",
-        recycle_s2_name: "Eco Drop Station",
-        recycle_s2_meta: "1.7 km · Open until 18:00",
-        recycle_s2_tags: "Battery · E-waste",
-        recycle_s3_name: "Zero Waste Point",
-        recycle_s3_meta: "2.4 km · Open until 21:00",
-        recycle_s3_tags: "Plastic · Metal",
-        recycle_s4_name: "Community Green Point",
-        recycle_s4_meta: "3.1 km · Open until 19:00",
-        recycle_s4_tags: "All recyclables",
-
         transport_page_title: "🚗 Green Ride",
         transport_page_desc: "Book an EV and track your driver live.",
         transport_driver_arriving: "Driver arriving",
@@ -1605,24 +1538,6 @@ const translations={
         map_zoom_in_toast: "Zooming in...",
         map_zoom_out_toast: "Zooming out...",
 
-        used_page_title: "📦 Used Marketplace",
-        used_page_desc: "Give products a second life in your community.",
-        used_search_placeholder: "Search used items...",
-        used_contact_button: "Contact",
-        used_contact_toast: "Seller contact opened",
-        used_i1_name: "Wireless Headphones",
-        used_i1_meta: "Good condition · 0.7 km",
-        used_i1_impact: "Reuse impact +15",
-        used_i2_name: "Wooden Study Chair",
-        used_i2_meta: "Like new · 1.4 km",
-        used_i2_impact: "Reuse impact +20",
-        used_i3_name: "University Textbook Set",
-        used_i3_meta: "Used · 1.9 km",
-        used_i3_impact: "Reuse impact +15",
-        used_i4_name: "Travel Backpack",
-        used_i4_meta: "Excellent · 2.2 km",
-        used_i4_impact: "Reuse impact +15",
-
         wallet_page_title: "🌱 Carbon Wallet",
         wallet_page_desc: "Turn your sustainable actions into rewards.",
         wallet_available_label: "AVAILABLE CARBON CREDITS",
@@ -1637,7 +1552,6 @@ const translations={
         wallet_activity_title: "🌱 Sustainability Activity",
         wallet_activity_desc: "Track your impact and rewards.",
         wallet_recent_credits_title: "Recent Carbon Credits",
-        wallet_activity_recycling: "♻️ Recycling plastic",
         wallet_activity_transport: "🚗 Green transportation",
         wallet_activity_food: "🍱 Food rescue",
         wallet_activity_discount: "🎁 Food discount",
@@ -1716,14 +1630,10 @@ const translations={
         footer_tagline: "Every sustainable action has value.",
         login_modal_desc: "Please sign in to use the service.",
 
-        search_empty_toast: "Try searching for food, recycling, rides, or used items.",
+        search_empty_toast: "Try searching for food or rides.",
         search_food_toast: "Showing food results for \"{q}\"",
-        search_recycle_toast: "Showing recycling results for \"{q}\"",
         search_transport_toast: "Opening Green Ride for \"{q}\"",
-        search_used_toast: "Showing marketplace results for \"{q}\"",
         search_generic_toast: "Searching GreenLoop for \"{q}\"...",
-        search_market_toast: "Searching marketplace for \"{q}\"...",
-        search_market_empty_toast: "Enter an item to search.",
 
         google_login_checking_toast: "Google account verified. Signing in to the server...",
         login_success_toast: "Logged in.",
@@ -1735,9 +1645,7 @@ const translations={
     th:{
         home:"หน้าหลัก",
         food:"อาหารลดพิเศษ",
-        recycle:"รีไซเคิล",
         transport:"เรียกรถ EV",
-        used:"ของมือสอง",
         wallet:"กระเป๋าคาร์บอน",
         login: "เข้าสู่ระบบ / สมัครสมาชิก",
         logout: "ออกจากระบบ",
@@ -1796,16 +1704,14 @@ const translations={
         route_metric_pill: "✓ ชดเชยการปล่อยคาร์บอนแล้ว · นับรวมใน Net-Zero",
 
         home_hero_title: "เปลี่ยนกิจกรรมประจำวันให้เป็นรางวัล",
-        home_hero_desc: "กู้อาหาร รีไซเคิล เดินทางแบบกรีน ใช้ซ้ำ และสะสมคาร์บอนเครดิต",
-        home_search_placeholder: "ค้นหาอาหาร จุดรีไซเคิล การเดินทาง หรือของมือสอง...",
+        home_hero_desc: "กู้อาหาร เดินทางแบบกรีน และสะสมคาร์บอนเครดิต",
+        home_search_placeholder: "ค้นหาอาหารหรือการเดินทาง...",
         home_search_button: "ค้นหา",
         home_wallet_label: "กระเป๋าคาร์บอน",
         home_impact_desc: "คาดว่าลด CO₂",
         home_wallet_redeem: "แลกคาร์บอนเครดิต",
         home_quick_food_sub: "ลดสูงสุด 70–80%",
-        home_quick_recycle_sub: "รับเครดิต",
         home_quick_transport_sub: "จองรถ EV",
-        home_quick_used_sub: "ใช้ซ้ำในพื้นที่",
         home_impact_title: "🌍 อิมแพคของคุณบน GreenLoop",
         home_impact_subtitle: "ทุกการกระทำเล็กๆ สร้างผลลัพธ์ที่วัดได้",
         home_stat_credits: "คาร์บอนเครดิต",
@@ -1902,25 +1808,6 @@ const translations={
         food_register_failed_toast: "ลงทะเบียนอาหารไม่สำเร็จ",
         try_again: "กรุณาลองใหม่อีกครั้ง",
 
-        recycle_page_title: "♻️ จุดรีไซเคิล",
-        recycle_page_desc: "รีไซเคิลวัสดุที่ผ่านการตรวจสอบและรับคาร์บอนเครดิต",
-        recycle_avg_credits: "เครดิตเฉลี่ยต่อการรีไซเคิลหนึ่งครั้ง",
-        recycle_challenge_title: "🌱 ชาเลนจ์กรีน",
-        recycle_challenge_desc: "รีไซเคิล 3 ครั้งในสัปดาห์นี้ รับเพิ่มอีก 100 เครดิต",
-        recycle_challenge_button: "ทำชาเลนจ์สำเร็จ +100",
-        recycle_s1_name: "กรีนฮับ นิมมาน",
-        recycle_s1_meta: "0.9 km · เปิดถึง 20:00",
-        recycle_s1_tags: "พลาสติก · แก้ว · กระดาษ",
-        recycle_s2_name: "เอโค่ดร็อป สเตชั่น",
-        recycle_s2_meta: "1.7 km · เปิดถึง 18:00",
-        recycle_s2_tags: "แบตเตอรี่ · ขยะอิเล็กทรอนิกส์",
-        recycle_s3_name: "ซีโร่เวสต์ พอยต์",
-        recycle_s3_meta: "2.4 km · เปิดถึง 21:00",
-        recycle_s3_tags: "พลาสติก · โลหะ",
-        recycle_s4_name: "คอมมูนิตี้กรีนพอยต์",
-        recycle_s4_meta: "3.1 km · เปิดถึง 19:00",
-        recycle_s4_tags: "รีไซเคิลได้ทุกชนิด",
-
         transport_page_title: "🚗 เดินทางแบบกรีน",
         transport_page_desc: "จองรถ EV และติดตามคนขับแบบเรียลไทม์",
         transport_driver_arriving: "คนขับกำลังมาถึง",
@@ -1958,24 +1845,6 @@ const translations={
         map_zoom_in_toast: "กำลังซูมเข้า...",
         map_zoom_out_toast: "กำลังซูมออก...",
 
-        used_page_title: "📦 ตลาดมือสอง",
-        used_page_desc: "ให้ชีวิตใหม่กับสินค้าในชุมชนของคุณ",
-        used_search_placeholder: "ค้นหาสินค้ามือสอง...",
-        used_contact_button: "ติดต่อ",
-        used_contact_toast: "เปิดหน้าติดต่อผู้ขายแล้ว",
-        used_i1_name: "หูฟังไร้สาย",
-        used_i1_meta: "สภาพดี · 0.7 km",
-        used_i1_impact: "อิมแพคการใช้ซ้ำ +15",
-        used_i2_name: "เก้าอี้ทำงานไม้",
-        used_i2_meta: "เหมือนใหม่ · 1.4 km",
-        used_i2_impact: "อิมแพคการใช้ซ้ำ +20",
-        used_i3_name: "ชุดตำราเรียนมหาวิทยาลัย",
-        used_i3_meta: "มือสอง · 1.9 km",
-        used_i3_impact: "อิมแพคการใช้ซ้ำ +15",
-        used_i4_name: "เป้เดินทาง",
-        used_i4_meta: "สภาพดีเยี่ยม · 2.2 km",
-        used_i4_impact: "อิมแพคการใช้ซ้ำ +15",
-
         wallet_page_title: "🌱 กระเป๋าคาร์บอน",
         wallet_page_desc: "เปลี่ยนกิจกรรมที่ยั่งยืนของคุณให้เป็นรางวัล",
         wallet_available_label: "คาร์บอนเครดิตที่ใช้ได้",
@@ -1990,7 +1859,6 @@ const translations={
         wallet_activity_title: "🌱 กิจกรรมความยั่งยืน",
         wallet_activity_desc: "ติดตามอิมแพคและรางวัลของคุณ",
         wallet_recent_credits_title: "คาร์บอนเครดิตล่าสุด",
-        wallet_activity_recycling: "♻️ รีไซเคิลพลาสติก",
         wallet_activity_transport: "🚗 เดินทางแบบกรีน",
         wallet_activity_food: "🍱 กู้อาหาร",
         wallet_activity_discount: "🎁 ส่วนลดอาหาร",
@@ -2069,14 +1937,10 @@ const translations={
         footer_tagline: "ทุกการกระทำที่ยั่งยืนมีคุณค่า",
         login_modal_desc: "กรุณาเข้าสู่ระบบเพื่อใช้งานบริการ",
 
-        search_empty_toast: "ลองค้นหาอาหาร รีไซเคิล การเดินทาง หรือของมือสอง",
+        search_empty_toast: "ลองค้นหาอาหารหรือการเดินทาง",
         search_food_toast: "แสดงผลอาหารสำหรับ \"{q}\"",
-        search_recycle_toast: "แสดงผลรีไซเคิลสำหรับ \"{q}\"",
         search_transport_toast: "เปิดกรีนไรด์สำหรับ \"{q}\"",
-        search_used_toast: "แสดงผลตลาดมือสองสำหรับ \"{q}\"",
         search_generic_toast: "กำลังค้นหา \"{q}\" ใน GreenLoop...",
-        search_market_toast: "กำลังค้นหา \"{q}\" ในตลาด...",
-        search_market_empty_toast: "กรุณากรอกสิ่งที่ต้องการค้นหา",
 
         google_login_checking_toast: "ยืนยันบัญชี Google แล้ว กำลังเข้าสู่ระบบ...",
         login_success_toast: "เข้าสู่ระบบสำเร็จแล้ว",
@@ -2088,9 +1952,7 @@ const translations={
     ko:{
         home:"홈",
         food:"마감 할인 음식",
-        recycle:"재활용",
         transport:"친환경 차량",
-        used:"중고 물품",
         wallet:"탄소 지갑",
         login: "로그인 / 회원가입",
         logout: "로그아웃",
@@ -2149,16 +2011,14 @@ const translations={
         route_metric_pill: "✓ 배출가스 상쇄 집계 완료 · Net-Zero 집계 반영",
 
         home_hero_title: "일상 속 작은 행동을 리워드로 바꿔보세요.",
-        home_hero_desc: "음식을 구출하고, 재활용하고, 친환경 이동을 하고, 재사용하세요. 탄소 크레딧을 적립하세요.",
-        home_search_placeholder: "음식, 재활용 거점, 이동수단, 중고물품을 검색하세요...",
+        home_hero_desc: "음식을 구출하고, 친환경 이동을 하세요. 탄소 크레딧을 적립하세요.",
+        home_search_placeholder: "음식이나 이동수단을 검색하세요...",
         home_search_button: "검색",
         home_wallet_label: "탄소 지갑",
         home_impact_desc: "예상 CO₂ 절감량",
         home_wallet_redeem: "탄소 크레딧 사용하기",
         home_quick_food_sub: "최대 70~80% 할인",
-        home_quick_recycle_sub: "크레딧 적립",
         home_quick_transport_sub: "전기차 예약",
-        home_quick_used_sub: "우리 동네 재사용",
         home_impact_title: "🌍 나의 GreenLoop 임팩트",
         home_impact_subtitle: "작은 행동 하나하나가 눈에 보이는 변화를 만듭니다.",
         home_stat_credits: "탄소 크레딧",
@@ -2255,25 +2115,6 @@ const translations={
         food_register_failed_toast: "음식 등록에 실패했습니다",
         try_again: "다시 시도해 주세요.",
 
-        recycle_page_title: "♻️ 재활용 거점",
-        recycle_page_desc: "검증된 재활용품을 배출하고 탄소 크레딧을 적립하세요.",
-        recycle_avg_credits: "재활용 1회당 평균 적립 크레딧",
-        recycle_challenge_title: "🌱 그린 챌린지",
-        recycle_challenge_desc: "이번 주 3번 재활용하면 추가로 100 크레딧을 드려요.",
-        recycle_challenge_button: "챌린지 완료하기 +100",
-        recycle_s1_name: "그린허브 님만",
-        recycle_s1_meta: "0.9 km · 20:00까지 영업",
-        recycle_s1_tags: "플라스틱 · 유리 · 종이",
-        recycle_s2_name: "에코드롭 스테이션",
-        recycle_s2_meta: "1.7 km · 18:00까지 영업",
-        recycle_s2_tags: "배터리 · 전자폐기물",
-        recycle_s3_name: "제로웨이스트 포인트",
-        recycle_s3_meta: "2.4 km · 21:00까지 영업",
-        recycle_s3_tags: "플라스틱 · 금속",
-        recycle_s4_name: "커뮤니티 그린 포인트",
-        recycle_s4_meta: "3.1 km · 19:00까지 영업",
-        recycle_s4_tags: "모든 재활용품",
-
         transport_page_title: "🚗 친환경 이동",
         transport_page_desc: "전기차를 예약하고 실시간으로 기사님 위치를 확인하세요.",
         transport_driver_arriving: "기사님이 오고 있어요",
@@ -2311,24 +2152,6 @@ const translations={
         map_zoom_in_toast: "확대하는 중...",
         map_zoom_out_toast: "축소하는 중...",
 
-        used_page_title: "📦 중고 마켓",
-        used_page_desc: "우리 동네에서 물건에 새로운 삶을 선물하세요.",
-        used_search_placeholder: "중고 물품을 검색하세요...",
-        used_contact_button: "연락하기",
-        used_contact_toast: "판매자 연락 화면이 열렸어요",
-        used_i1_name: "무선 헤드폰",
-        used_i1_meta: "상태 좋음 · 0.7 km",
-        used_i1_impact: "재사용 임팩트 +15",
-        used_i2_name: "원목 스터디 의자",
-        used_i2_meta: "거의 새것 · 1.4 km",
-        used_i2_impact: "재사용 임팩트 +20",
-        used_i3_name: "대학 교재 세트",
-        used_i3_meta: "중고 · 1.9 km",
-        used_i3_impact: "재사용 임팩트 +15",
-        used_i4_name: "여행용 백팩",
-        used_i4_meta: "매우 좋음 · 2.2 km",
-        used_i4_impact: "재사용 임팩트 +15",
-
         wallet_page_title: "🌱 탄소 지갑",
         wallet_page_desc: "친환경 행동을 리워드로 바꿔보세요.",
         wallet_available_label: "사용 가능한 탄소 크레딧",
@@ -2343,7 +2166,6 @@ const translations={
         wallet_activity_title: "🌱 지속가능 활동",
         wallet_activity_desc: "나의 임팩트와 리워드를 확인하세요.",
         wallet_recent_credits_title: "최근 탄소 크레딧",
-        wallet_activity_recycling: "♻️ 플라스틱 재활용",
         wallet_activity_transport: "🚗 친환경 이동",
         wallet_activity_food: "🍱 음식 구출",
         wallet_activity_discount: "🎁 음식 할인",
@@ -2422,14 +2244,10 @@ const translations={
         footer_tagline: "모든 지속가능한 행동에는 가치가 있어요.",
         login_modal_desc: "서비스를 이용하시려면 로그인이 필요합니다.",
 
-        search_empty_toast: "음식, 재활용, 이동, 중고물품 등으로 검색해 보세요.",
+        search_empty_toast: "음식이나 이동수단으로 검색해 보세요.",
         search_food_toast: "\"{q}\" 음식 검색 결과를 보여드려요",
-        search_recycle_toast: "\"{q}\" 재활용 검색 결과를 보여드려요",
         search_transport_toast: "\"{q}\" 친환경 이동을 열었어요",
-        search_used_toast: "\"{q}\" 마켓 검색 결과를 보여드려요",
         search_generic_toast: "GreenLoop에서 \"{q}\"을(를) 검색 중...",
-        search_market_toast: "마켓에서 \"{q}\"을(를) 검색 중...",
-        search_market_empty_toast: "검색할 항목을 입력해 주세요.",
 
         google_login_checking_toast: "Google 계정을 확인했습니다. 서버에 로그인하는 중입니다.",
         login_success_toast: "로그인되었습니다.",

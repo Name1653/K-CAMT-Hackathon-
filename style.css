@@ -1744,65 +1744,6 @@ button:disabled{
 }
 
 /* =========================================================
-   RECYCLE
-========================================================= */
-
-.recycleBanner{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:18px;
-    margin-bottom:25px;
-}
-
-.recycleInfo{
-    background:var(--mint);
-    border-radius:22px;
-    padding:25px;
-}
-
-.recycleInfo strong{
-    display:block;
-    color:var(--green2);
-    font-size:42px;
-}
-
-.recycleInfo span{
-    color:var(--muted);
-}
-
-.earnBadge{
-    background:#10241b;
-    color:#fff;
-    border-radius:22px;
-    padding:25px;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-/* =========================================================
-   USED
-========================================================= */
-
-.marketToolbar{
-    background:#fff;
-    padding:15px;
-    border-radius:17px;
-    border:1px solid var(--line);
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.marketToolbar input{
-    flex:1;
-    border:1px solid var(--line);
-    padding:11px 14px;
-    border-radius:11px;
-    outline:none;
-}
-
-/* =========================================================
    WALLET
 ========================================================= */
 
@@ -1976,10 +1917,6 @@ button:disabled{
         grid-template-columns:1fr;
     }
 
-    .recycleBanner{
-        grid-template-columns:1fr;
-    }
-
     .activity{
         grid-template-columns:1fr;
     }
@@ -2085,10 +2022,6 @@ button:disabled{
 
     .bigWallet .number{
         font-size:45px;
-    }
-
-    .marketToolbar{
-        flex-direction:column;
     }
 
     .footer{
