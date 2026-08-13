@@ -84,14 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function updateBalance(){
 
-    document.getElementById("balance")
-        .textContent=balance.toLocaleString();
+    const balanceEl=document.getElementById("balance");
+    const navCreditsEl=document.getElementById("navCredits");
+    const walletBalanceEl=document.getElementById("walletBalance");
 
-    document.getElementById("navCredits")
-        .textContent=balance.toLocaleString();
-
-    document.getElementById("walletBalance")
-        .textContent=balance.toLocaleString();
+    if(balanceEl)balanceEl.textContent=balance.toLocaleString();
+    if(navCreditsEl)navCreditsEl.textContent=balance.toLocaleString();
+    if(walletBalanceEl)walletBalanceEl.textContent=balance.toLocaleString();
 }
 
 
@@ -766,18 +765,20 @@ function addLiveFoodToCart(foodId){
 
     if(existing){
 
-        existing.qty++;
+        toast(t("cart_limit_one_toast"));
+        return;
 
-    }else{
-
-        foodCart.push({
-            id:cartId,
-            name:food.title,
-            price:food.discountedPrice,
-            restaurant:tf("restaurant_hash_label",{id:food.restaurantId}),
-            qty:1
-        });
     }
+
+    foodCart.push({
+        id:cartId,
+        foodId:food.id,
+        name:food.title,
+        price:food.discountedPrice,
+        image:"http://localhost:8080"+food.imageUrl,
+        restaurant:tf("restaurant_hash_label",{id:food.restaurantId}),
+        qty:1
+    });
 
     updateCartUI();
 
@@ -898,6 +899,11 @@ function changeCartQty(itemId,amount){
 
     if(!item)return;
 
+    if(item.id.startsWith("live-")&&amount>0){
+        toast(t("cart_limit_one_toast"));
+        return;
+    }
+
     item.qty+=amount;
 
     if(item.qty<=0){
@@ -971,7 +977,7 @@ function updateCartUI(){
         div.innerHTML=`
 
             <div class="cartItemEmoji">
-                ${item.emoji}
+                ${item.image ? `<img src="${item.image}" alt="${item.name}">` : (item.emoji||"🍽️")}
             </div>
 
             <div class="cartItemInfo">
@@ -981,8 +987,7 @@ function updateCartUI(){
                 </b>
 
                 <small>
-                    ฿${item.price}
-                    · 🌱 +${item.credits}
+                    ฿${item.price}${item.credits ? ` · 🌱 +${item.credits}` : ""}
                 </small>
 
             </div>
@@ -1064,16 +1069,11 @@ function selectTime(button,type){
 
     orderTime=type;
 
-    const area=document.getElementById("scheduleArea");
+    document.getElementById("scheduleArea")
+        .classList.toggle("show",type==="schedule");
 
-    if(type==="schedule"){
-
-        area.classList.add("show");
-
-    }else{
-
-        area.classList.remove("show");
-    }
+    document.getElementById("pickupTimeArea")
+        .classList.toggle("show",type==="pickup");
 
     updateCheckoutTotals();
 }
@@ -1183,7 +1183,7 @@ function updateCheckoutTotals(){
    PLACE FOOD ORDER
 ========================================================= */
 
-function placeFoodOrder(){
+async function placeFoodOrder(){
 
     if(!foodCart.length){
 
@@ -1192,14 +1192,133 @@ function placeFoodOrder(){
         return;
     }
 
+    closeCart();
+
+    const liveItems=foodCart.filter(item=>item.id.startsWith("live-"));
+    const mockItems=foodCart.filter(item=>!item.id.startsWith("live-"));
+
+    if(liveItems.length){
+
+        const purchased=await purchaseLiveItems(liveItems);
+
+        foodCart=foodCart.filter(item=>!purchased.includes(item.id));
+
+        updateCartUI();
+    }
+
+    if(mockItems.length){
+
+        placeMockFoodOrder(mockItems);
+
+        foodCart=foodCart.filter(item=>item.id.startsWith("live-"));
+
+        updateCartUI();
+    }
+}
+
+
+// 실제 게시물(오늘의 딜) 구매 — 한 게시물당 한 건씩 POST /api/purchases
+async function purchaseLiveItems(liveItems){
+
+    if(!currentUser){
+        toast(t("purchase_login_required_toast"));
+        return [];
+    }
+
+    const pickupTimeInput=document.getElementById("pickupTimeInput").value;
+
+    if(!pickupTimeInput){
+        toast(t("purchase_pickup_time_required_toast"));
+        return [];
+    }
+
+    const pickupTime=pickupTimeInput+":00";
+
+    let earnedTotal=0;
+    const purchasedIds=[];
+    const failed=[];
+
+    for(const item of liveItems){
+
+        try{
+            const res=await fetch("http://localhost:8080/api/purchases",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                credentials:"include",
+                body:JSON.stringify({
+                    foodId:item.foodId,
+                    pickupTime
+                }),
+            });
+
+            if(!res.ok){
+                const errText=await res.text();
+                throw new Error(errText||("구매 요청 실패: "+res.status));
+            }
+
+            const data=await res.json();
+
+            earnedTotal+=data.earnedMileage||0;
+            purchasedIds.push(item.id);
+
+        }catch(error){
+            console.error("구매 실패:",item.name,error);
+            failed.push(item.name);
+        }
+    }
+
+    if(purchasedIds.length){
+
+        fetchMileageBalance();
+
+        showPurchaseThanks(liveItems.filter(item=>purchasedIds.includes(item.id)),pickupTimeInput,earnedTotal);
+    }
+
+    if(failed.length){
+        toast(tf("purchase_failed_items_toast",{items:failed.join(", ")}));
+    }
+
+    return purchasedIds;
+}
+
+
+// 실제 구매 완료 후 배달 추적 대신 보여주는 간단한 감사 인사 모달
+function showPurchaseThanks(purchasedItems,pickupTime,earnedTotal){
+
+    document.getElementById("purchaseThanksItems").textContent=
+        purchasedItems.map(item=>item.name).join(", ");
+
+    document.getElementById("purchaseThanksPickup").textContent=
+        tf("purchase_thanks_pickup",{time:pickupTime});
+
+    document.getElementById("purchaseThanksMileage").textContent=
+        tf("purchase_thanks_mileage",{mileage:earnedTotal});
+
+    document.getElementById("purchaseThanksModal")
+        .classList.add("show");
+}
+
+
+function closePurchaseThanks(){
+    document.getElementById("purchaseThanksModal")
+        .classList.remove("show");
+}
+
+
+// 데모용 목 레스토랑 주문 (실제 결제/구매 API 없음 — 로컬로만 크레딧 적립)
+function placeMockFoodOrder(mockItems){
+
+    const subtotal=mockItems.reduce(
+        (sum,item)=>sum+item.price*item.qty,
+        0
+    );
+
     const total=Math.max(
         0,
-        getFoodSubtotal()+
+        subtotal+
         (orderTime==="pickup"?0:deliveryFee)-
         promoDiscount
     );
-
-    closeCart();
 
     document.getElementById("orderModal")
         .classList.add("show");
@@ -1210,9 +1329,9 @@ function placeFoodOrder(){
 
     startFoodTracking();
 
-    const credits=foodCart.reduce(
+    const credits=mockItems.reduce(
         (sum,item)=>
-            sum+(item.credits*item.qty),
+            sum+((item.credits||0)*item.qty),
         0
     );
 
@@ -1224,9 +1343,6 @@ function placeFoodOrder(){
         );
 
     },1200);
-
-    foodCart=[];
-    updateCartUI();
 }
 
 
@@ -1600,6 +1716,15 @@ const translations={
         cart_empty_title: "Your cart is empty",
         cart_empty_desc: "Add some rescued food first.",
         cart_empty_toast: "Your cart is empty.",
+        cart_limit_one_toast: "This deal is limited to 1 per order.",
+        purchase_login_required_toast: "Please log in to purchase today's rescue deals.",
+        purchase_pickup_time_required_toast: "Please choose a pickup time.",
+        purchase_failed_items_toast: "Could not purchase: {items}",
+        pickup_time_label: "🏪 Pickup time (must be within the restaurant's opening hours)",
+        purchase_thanks_title: "Thank you for your purchase!",
+        purchase_thanks_pickup: "🏪 Pickup at {time}",
+        purchase_thanks_mileage: "🌱 +{mileage} mileage earned!",
+        purchase_thanks_done: "Done",
         promo_green70_applied: "✓ GreenLoop promo applied: 10% extra off",
         promo_rescue100_applied: "✓ ฿30 rescue food discount applied",
         promo_invalid: "Invalid promo code",
@@ -1907,6 +2032,15 @@ const translations={
         cart_empty_title: "ตะกร้าของคุณว่างเปล่า",
         cart_empty_desc: "เพิ่มอาหารกู้สักรายการก่อนนะ",
         cart_empty_toast: "ตะกร้าของคุณว่างเปล่า",
+        cart_limit_one_toast: "ดีลนี้จำกัดออเดอร์ละ 1 ชิ้น",
+        purchase_login_required_toast: "กรุณาเข้าสู่ระบบเพื่อซื้อดีลกู้อาหารวันนี้",
+        purchase_pickup_time_required_toast: "กรุณาเลือกเวลารับสินค้า",
+        purchase_failed_items_toast: "ไม่สามารถซื้อได้: {items}",
+        pickup_time_label: "🏪 เวลารับสินค้า (ต้องอยู่ในเวลาทำการของร้าน)",
+        purchase_thanks_title: "ขอบคุณสำหรับการสั่งซื้อ!",
+        purchase_thanks_pickup: "🏪 รับสินค้าเวลา {time}",
+        purchase_thanks_mileage: "🌱 ได้รับไมล์สะสม +{mileage}!",
+        purchase_thanks_done: "เสร็จสิ้น",
         promo_green70_applied: "✓ ใช้โปรโมชัน GreenLoop แล้ว: ลดเพิ่ม 10%",
         promo_rescue100_applied: "✓ ใช้ส่วนลดอาหารกู้ ฿30 แล้ว",
         promo_invalid: "โค้ดโปรโมชันไม่ถูกต้อง",
@@ -2214,6 +2348,15 @@ const translations={
         cart_empty_title: "장바구니가 비어있어요",
         cart_empty_desc: "먼저 구출 음식을 담아보세요.",
         cart_empty_toast: "장바구니가 비어있어요.",
+        cart_limit_one_toast: "이 딜은 주문당 1개까지만 담을 수 있어요.",
+        purchase_login_required_toast: "오늘의 마감 할인 딜을 구매하려면 로그인해 주세요.",
+        purchase_pickup_time_required_toast: "픽업 시간을 선택해 주세요.",
+        purchase_failed_items_toast: "구매하지 못했어요: {items}",
+        pickup_time_label: "🏪 픽업 시간 (가게 영업시간 내로 선택하세요)",
+        purchase_thanks_title: "구매해 주셔서 감사합니다!",
+        purchase_thanks_pickup: "🏪 {time}에 픽업",
+        purchase_thanks_mileage: "🌱 마일리지 +{mileage} 적립!",
+        purchase_thanks_done: "확인",
         promo_green70_applied: "✓ GreenLoop 프로모 적용: 10% 추가 할인",
         promo_rescue100_applied: "✓ ฿30 구출 음식 할인 적용",
         promo_invalid: "유효하지 않은 프로모 코드예요",
@@ -2498,6 +2641,31 @@ function showLoggedInUser(user) {
     document.getElementById("userName").textContent = resolveUserDisplayName(user);
 
     applyUserRoleUI();
+    fetchMileageBalance();
+}
+
+// 마일리지 잔액 조회 (로그인한 본인 것만 조회 가능)
+async function fetchMileageBalance() {
+    if (!currentUser || !currentUser.memberId) return;
+
+    try {
+        const res = await fetch(`http://localhost:8080/api/members/${currentUser.memberId}/mileage`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!res.ok) {
+            throw new Error("마일리지 조회 실패: " + res.status);
+        }
+
+        const data = await res.json();
+
+        balance = data.balance;
+        updateBalance();
+
+    } catch (error) {
+        console.error("마일리지 조회 실패:", error);
+    }
 }
 
 // 6. 로그아웃
@@ -2517,6 +2685,9 @@ async function logout() {
         document.getElementById("googleLoginLink").style.display = "block";
 
         applyUserRoleUI();
+
+        balance = 0;
+        updateBalance();
 
         toast(t("logout_success_toast"));
     }
