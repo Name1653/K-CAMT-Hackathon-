@@ -1366,7 +1366,42 @@ function initializeGoogleLogin() {
     );
 }
 
-document.addEventListener("DOMContentLoaded", initializeGoogleLogin);
+document.addEventListener("DOMContentLoaded", async () => {
+    // 1. 기존 구글 로그인 초기화 로직 실행
+    initializeGoogleLogin(); 
+    
+    // 2. 페이지 로드 시 백엔드에 로그인 상태 확인
+    await checkLoginStatus();
+});
+
+async function checkLoginStatus() {
+    // register.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만 오는 페이지이므로
+    // 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
+    const isRegisterPage = location.pathname.endsWith("register.html");
+
+    try {
+        // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
+        const response = await fetch("http://localhost:8080/api/auth/me", {
+            method: "GET",
+            credentials: "include" // 브라우저에 저장된 쿠키(인증 정보) 전송
+        });
+
+        if (response.ok && !isRegisterPage) {
+            // 로그인 상태 (HTTP 200 OK)
+            const userData = await response.json();
+            
+            // 로그인 UI 업데이트 (작성해두신 showLoggedInUser 함수 재활용)
+            showLoggedInUser(userData);
+        } else {
+            // 비로그인 상태 (HTTP 401 Unauthorized 등)
+            // 구글 로그인 버튼이 보이도록 기본 상태 유지
+            document.getElementById("googleLoginLink").style.display = "block";
+            document.getElementById("userInfo").style.display = "none";
+        }
+    } catch (error) {
+        console.error("로그인 상태 확인 실패:", error);
+    }
+}
 window.addEventListener("load", initializeGoogleLogin);
 
 // 4. 구글 로그인이 성공적으로 완료되었을 때 실행되는 콜백 함수
@@ -1399,14 +1434,53 @@ async function handleCredentialResponse(response) {
             console.log("백엔드 통신 성공:", data);
             toast("로그인되었습니다.");
             showLoggedInUser(data);
-        } else {
-            console.error("백엔드 에러:", data);
-            toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
+
+            // 💡 백엔드에서 보내준 회원 상태에 따라 분기 처리
+            if (data.role === "NONE") {
+                // if I login first, I have to register this service
+                window.location.replace("/register.html");
+            } 
+            else if (data.role === "RESTAURANT" || data.role === "MEMBER") {
+                window.location.replace("/index.html");
+            } 
+            // backend error
+            else {
+                console.error("백엔드 에러:", data);
+                toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
+            }
         }
     } catch (error) {
         console.error("통신 실패:", error);
         toast("로그인 서버(localhost:8080)에 연결할 수 없습니다. 백엔드를 실행해 주세요.");
     }
+}
+
+// 4-1. 응답 형태가 엔드포인트마다 달라도(예: /api/auth/google 은 name을 주지만
+//      /api/auth/me 는 안 주는 경우) 표시할 이름을 최대한 찾아내고, 한 번 찾은
+//      이름은 세션에 캐싱해서 리다이렉트 이후에도 유지되게 한다.
+const USER_DISPLAY_NAME_KEY = "gl_userDisplayName";
+
+function resolveUserDisplayName(user) {
+    if (!user) return sessionStorage.getItem(USER_DISPLAY_NAME_KEY) || "";
+
+    const source = user.user || user.data || user;
+    const candidate =
+        source.name ||
+        source.nickname ||
+        source.username ||
+        source.given_name ||
+        source.email;
+
+    if (candidate) {
+        sessionStorage.setItem(USER_DISPLAY_NAME_KEY, candidate);
+        return candidate;
+    }
+
+    const cached = sessionStorage.getItem(USER_DISPLAY_NAME_KEY);
+    if (!cached) {
+        console.warn("로그인 사용자 정보에 표시할 이름/이메일이 없습니다:", user);
+    }
+    return cached || "";
 }
 
 // 5. 로그인 상태를 상단바 UI에 반영
@@ -1415,7 +1489,7 @@ function showLoggedInUser(user) {
 
     const info = document.getElementById("userInfo");
     info.style.display = "flex";
-    document.getElementById("userName").textContent = user.name || user.email || "";
+    document.getElementById("userName").textContent = resolveUserDisplayName(user);
 }
 
 // 6. 로그아웃
@@ -1428,6 +1502,7 @@ async function logout() {
     } catch (error) {
         console.error("로그아웃 요청 실패:", error);
     } finally {
+        sessionStorage.removeItem(USER_DISPLAY_NAME_KEY);
         document.getElementById("userInfo").style.display = "none";
         document.getElementById("googleLoginLink").style.display = "block";
         toast("로그아웃되었습니다.");
