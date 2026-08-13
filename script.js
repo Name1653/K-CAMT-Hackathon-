@@ -1289,11 +1289,12 @@ async function handleCredentialResponse(response) {
             if (data.role === "NONE") {
                 // if I login first, I have to register this service
                 window.location.replace("/register.html");
-            } if (data.role === "RESTAURANT") {
-                window.location.replace("/restaurant/home.html");
-            } else if (data.role === "MEMBER") {
-                window.location.replace("/member/home");
-            } else {
+            } 
+            else if (data.role === "RESTAURANT" || data.role === "MEMBER") {
+                window.location.replace("/index.html");
+            } 
+            // backend error
+            else {
                 console.error("백엔드 에러:", data);
                 toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
             }
