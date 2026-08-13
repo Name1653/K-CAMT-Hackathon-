@@ -1193,19 +1193,22 @@ function closeLoginModal() {
 
 // 3. 구글 로그인 시스템 초기화 및 버튼 렌더링
 // 💡 만약 window.onload가 이미 코드에 존재한다면, 내부 내용만 병합해 주세요!
-window.onload = function () {
-    // (기존에 작성해 두셨던 초기화 함수 호출이 있다면 여기에 유지하세요)
-    // updateBalance();
+let googleLoginInitialized = false;
 
-    // 구글 OAuth 초기화
+function initializeGoogleLogin() {
+    if (googleLoginInitialized || !window.google?.accounts?.id) return;
+
+    const buttonContainer = document.getElementById("googleButtonContainer");
+    if (!buttonContainer) return;
+
+    googleLoginInitialized = true;
     google.accounts.id.initialize({
-        client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // ⚠️ 본인의 실제 Client ID로 교체하세요!
+        client_id: "913313676574-m0goem1u6dri2jnserrrskvne0g17bku.apps.googleusercontent.com",
         callback: handleCredentialResponse
     });
 
-    // 모달 안의 빈 공간(#googleButtonContainer)에 구글 공식 버튼 그리기
     google.accounts.id.renderButton(
-        document.getElementById("googleButtonContainer"),
+        buttonContainer,
         { 
             theme: "outline", 
             size: "large", 
@@ -1215,15 +1218,17 @@ window.onload = function () {
             width: "280"
         } 
     );
-};
+}
+
+document.addEventListener("DOMContentLoaded", initializeGoogleLogin);
+window.addEventListener("load", initializeGoogleLogin);
 
 // 4. 구글 로그인이 성공적으로 완료되었을 때 실행되는 콜백 함수
 async function handleCredentialResponse(response) {
     // 모달 팝업 닫기
     closeLoginModal();
     
-    toast("구글 로그인 성공! 백엔드로 데이터를 전송합니다.");
-    console.log("구글 토큰: ", response.credential);
+    toast("Google 계정을 확인했습니다. 서버에 로그인하는 중입니다.");
 
     // Spring Boot 백엔드로 JWT 토큰 전송 테스트
     try {
@@ -1234,19 +1239,52 @@ async function handleCredentialResponse(response) {
             body: JSON.stringify({ idToken: response.credential }),
         });
         
-        const data = await res.json();
+        const responseText = await res.text();
+        let data = {};
+        if (responseText) {
+            try {
+                data = JSON.parse(responseText);
+            } catch (_) {
+                data = { message: responseText };
+            }
+        }
         
         if (res.ok) {
             console.log("백엔드 통신 성공:", data);
-            toast("서버 로그인 처리가 완료되었습니다!");
-            // TODO: 백엔드에서 받아온 유저 정보를 활용한 UI 업데이트 처리
+            toast("로그인되었습니다.");
+            showLoggedInUser(data);
         } else {
             console.error("백엔드 에러:", data);
-            toast("서버 처리 중 문제가 발생했습니다.");
+            toast(data.message || data.error || `로그인 요청 실패 (${res.status})`);
         }
     } catch (error) {
         console.error("통신 실패:", error);
-        toast("백엔드 서버와 연결할 수 없습니다.");
+        toast("로그인 서버(localhost:8080)에 연결할 수 없습니다. 백엔드를 실행해 주세요.");
+    }
+}
+
+// 5. 로그인 상태를 상단바 UI에 반영
+function showLoggedInUser(user) {
+    document.getElementById("googleLoginLink").style.display = "none";
+
+    const info = document.getElementById("userInfo");
+    info.style.display = "flex";
+    document.getElementById("userName").textContent = user.name || user.email || "";
+}
+
+// 6. 로그아웃
+async function logout() {
+    try {
+        await fetch("http://localhost:8080/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+        });
+    } catch (error) {
+        console.error("로그아웃 요청 실패:", error);
+    } finally {
+        document.getElementById("userInfo").style.display = "none";
+        document.getElementById("googleLoginLink").style.display = "block";
+        toast("로그아웃되었습니다.");
     }
 }
 
