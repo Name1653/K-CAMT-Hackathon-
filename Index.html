@@ -24,31 +24,37 @@
 
         <button class="active"
                 data-page="home"
+                data-i18n="home"
                 onclick="showPage('home',this)">
             Home
         </button>
 
         <button data-page="food"
+                data-i18n="food"
                 onclick="showPage('food',this)">
             Food Deals
         </button>
 
         <button data-page="recycle"
+                data-i18n="recycle"
                 onclick="showPage('recycle',this)">
             Recycle
         </button>
 
         <button data-page="transport"
+                data-i18n="transport"
                 onclick="showPage('transport',this)">
             Green Ride
         </button>
 
         <button data-page="used"
+                data-i18n="used"
                 onclick="showPage('used',this)">
             Used Items
         </button>
 
         <button data-page="wallet"
+                data-i18n="wallet"
                 onclick="showPage('wallet',this)">
             Carbon Wallet
         </button>
@@ -66,7 +72,7 @@
         </div>
         <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
             <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
-            <button onclick="logout()" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+            <button onclick="logout()" data-i18n="logout" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
                 Logout
             </button>
         </div>
@@ -99,11 +105,11 @@
 
     <div class="heroMain">
 
-        <h1>
+        <h1 data-i18n="home_hero_title">
             Turn Everyday Actions Into Rewards.
         </h1>
 
-        <p>
+        <p data-i18n="home_hero_desc">
             Rescue food. Recycle. Ride green.
             Reuse. Earn Carbon Credits.
         </p>
@@ -111,9 +117,10 @@
         <div class="search">
 
             <input id="searchInput"
+                   data-i18n-placeholder="home_search_placeholder"
                    placeholder="Search food, recycling stations, transport, or used items...">
 
-            <button onclick="search()">
+            <button onclick="search()" data-i18n="home_search_button">
                 Search
             </button>
 
@@ -124,7 +131,7 @@
 
     <div class="wallet">
 
-        <small>
+        <small data-i18n="home_wallet_label">
             CARBON WALLET
         </small>
 
@@ -138,14 +145,15 @@
 
             <br>
 
-            <small>
+            <small data-i18n="home_impact_desc">
                 estimated CO₂ reduction
             </small>
 
         </div>
 
         <button class="redeem"
-                onclick="showPage('wallet')">
+                onclick="showPage('wallet')"
+                data-i18n="home_wallet_redeem">
             Redeem Carbon Credits
         </button>
 
@@ -158,32 +166,32 @@
 
     <button onclick="showPage('food')">
         <span>🍱</span>
-        <b>Food Deals</b>
-        <small class="muted">
+        <b data-i18n="food">Food Deals</b>
+        <small class="muted" data-i18n="home_quick_food_sub">
             Save 70–80%
         </small>
     </button>
 
     <button onclick="showPage('recycle')">
         <span>♻️</span>
-        <b>Recycle</b>
-        <small class="muted">
+        <b data-i18n="recycle">Recycle</b>
+        <small class="muted" data-i18n="home_quick_recycle_sub">
             Earn credits
         </small>
     </button>
 
     <button onclick="showPage('transport')">
         <span>🚗</span>
-        <b>Green Ride</b>
-        <small class="muted">
+        <b data-i18n="transport">Green Ride</b>
+        <small class="muted" data-i18n="home_quick_transport_sub">
             Book an EV
         </small>
     </button>
 
     <button onclick="showPage('used')">
         <span>📦</span>
-        <b>Used Items</b>
-        <small class="muted">
+        <b data-i18n="used">Used Items</b>
+        <small class="muted" data-i18n="home_quick_used_sub">
             Reuse locally
         </small>
     </button>
@@ -196,11 +204,11 @@
     <div class="sectionHead">
 
         <div>
-            <h2>
+            <h2 data-i18n="home_impact_title">
                 🌍 Your GreenLoop Impact
             </h2>
 
-            <p>
+            <p data-i18n="home_impact_subtitle">
                 Every small action creates measurable impact.
             </p>
         </div>
@@ -212,17 +220,17 @@
 
         <div class="statBox">
             <strong>1,250</strong>
-            <span>Carbon Credits</span>
+            <span data-i18n="home_stat_credits">Carbon Credits</span>
         </div>
 
         <div class="statBox">
             <strong>32.4 kg</strong>
-            <span>CO₂ reduction</span>
+            <span data-i18n="home_stat_co2">CO₂ reduction</span>
         </div>
 
         <div class="statBox">
             <strong>Top 18%</strong>
-            <span>Green users this month</span>
+            <span data-i18n="home_stat_rank">Green users this month</span>
         </div>
 
     </div>
@@ -245,11 +253,11 @@
 
     <div>
 
-        <h1>
+        <h1 data-i18n="food_page_title">
             🍱 GreenLoop Food
         </h1>
 
-        <p>
+        <p data-i18n="food_page_desc">
             Rescue great food before it becomes waste.
             Save 70–80% and earn Carbon Credits.
         </p>
@@ -261,14 +269,15 @@
         <button class="foodCartButton"
                 id="registerRestaurantButton"
                 style="display:none; background:#fff; color:var(--green2); white-space:nowrap;"
-                onclick="openFoodRegisterPage()">
+                onclick="openFoodRegisterPage()"
+                data-i18n="food_register_button">
             🍽️ 음식 등록하기
         </button>
 
         <button class="foodCartButton"
                 onclick="openCart()">
 
-            🛒 Cart
+            <span data-i18n="food_cart_button">🛒 Cart</span>
             <span id="cartCount">0</span>
 
         </button>
@@ -278,19 +287,21 @@
 </div>
 
 
-<div class="foodBanner">
+<div class="foodBanner"
+     onclick="window.location.href='route.html'"
+     style="cursor:pointer;">
 
     <div>
 
-        <span>
+        <span data-i18n="food_banner_tag">
             🔥 TODAY'S GREEN DEAL
         </span>
 
-        <h2>
+        <h2 data-i18n="food_banner_title">
             Up to 80% OFF
         </h2>
 
-        <p>
+        <p data-i18n="food_banner_desc">
             Save money and help prevent food waste.
         </p>
 
@@ -307,18 +318,19 @@
 
     <div>
 
-        <h2>
+        <h2 data-i18n="food_section_title">
             Restaurants near you
         </h2>
 
-        <p>
+        <p data-i18n="food_section_desc">
             Available for sustainable food rescue delivery
         </p>
 
     </div>
 
     <button class="viewall"
-            onclick="showAllFoodItems()">
+            onclick="showAllFoodItems()"
+            data-i18n="food_view_all_button">
         View all →
     </button>
 
@@ -336,11 +348,11 @@
 
         🥐
 
-        <span class="restaurantDiscount">
+        <span class="restaurantDiscount" data-i18n="food_r1_discount">
             75% OFF
         </span>
 
-        <span class="restaurantOpen">
+        <span class="restaurantOpen" data-i18n="food_badge_open">
             OPEN
         </span>
 
@@ -352,11 +364,11 @@
 
             <div>
 
-                <h3>
+                <h3 data-i18n="food_r1_name">
                     Morning Bake
                 </h3>
 
-                <div class="restaurantMeta">
+                <div class="restaurantMeta" data-i18n="food_r1_meta">
                     ⭐ 4.8 · Bakery · 0.8 km
                 </div>
 
@@ -368,24 +380,25 @@
 
         </div>
 
-        <p class="restaurantDescription">
+        <p class="restaurantDescription" data-i18n="food_r1_desc">
             End-of-day bakery boxes with fresh pastries.
         </p>
 
         <div class="restaurantDelivery">
 
-            <span>
+            <span data-i18n="food_r1_time">
                 🚴 15–25 min
             </span>
 
-            <span>
+            <span data-i18n="food_r1_fee">
                 ฿10 delivery
             </span>
 
         </div>
 
         <button class="restaurantButton"
-                onclick="openRestaurant('bakery')">
+                onclick="openRestaurant('bakery')"
+                data-i18n="food_view_menu_button">
             View menu
         </button>
 
@@ -402,11 +415,11 @@
 
         🍣
 
-        <span class="restaurantDiscount">
+        <span class="restaurantDiscount" data-i18n="food_r2_discount">
             70% OFF
         </span>
 
-        <span class="restaurantOpen">
+        <span class="restaurantOpen" data-i18n="food_badge_open">
             OPEN
         </span>
 
@@ -418,11 +431,11 @@
 
             <div>
 
-                <h3>
+                <h3 data-i18n="food_r2_name">
                     Sakana House
                 </h3>
 
-                <div class="restaurantMeta">
+                <div class="restaurantMeta" data-i18n="food_r2_meta">
                     ⭐ 4.7 · Japanese · 1.2 km
                 </div>
 
@@ -434,24 +447,25 @@
 
         </div>
 
-        <p class="restaurantDescription">
+        <p class="restaurantDescription" data-i18n="food_r2_desc">
             Fresh sushi sets available before closing.
         </p>
 
         <div class="restaurantDelivery">
 
-            <span>
+            <span data-i18n="food_r2_time">
                 🚴 20–30 min
             </span>
 
-            <span>
+            <span data-i18n="food_r2_fee">
                 ฿15 delivery
             </span>
 
         </div>
 
         <button class="restaurantButton"
-                onclick="openRestaurant('sushi')">
+                onclick="openRestaurant('sushi')"
+                data-i18n="food_view_menu_button">
             View menu
         </button>
 
@@ -468,11 +482,11 @@
 
         🍕
 
-        <span class="restaurantDiscount">
+        <span class="restaurantDiscount" data-i18n="food_r3_discount">
             75% OFF
         </span>
 
-        <span class="restaurantOpen">
+        <span class="restaurantOpen" data-i18n="food_badge_open">
             OPEN
         </span>
 
@@ -484,11 +498,11 @@
 
             <div>
 
-                <h3>
+                <h3 data-i18n="food_r3_name">
                     Green Slice
                 </h3>
 
-                <div class="restaurantMeta">
+                <div class="restaurantMeta" data-i18n="food_r3_meta">
                     ⭐ 4.9 · Pizza · 1.8 km
                 </div>
 
@@ -500,24 +514,25 @@
 
         </div>
 
-        <p class="restaurantDescription">
+        <p class="restaurantDescription" data-i18n="food_r3_desc">
             End-of-day pizzas at heavily reduced prices.
         </p>
 
         <div class="restaurantDelivery">
 
-            <span>
+            <span data-i18n="food_r3_time">
                 🚴 18–28 min
             </span>
 
-            <span>
+            <span data-i18n="food_r3_fee">
                 FREE delivery
             </span>
 
         </div>
 
         <button class="restaurantButton"
-                onclick="openRestaurant('pizza')">
+                onclick="openRestaurant('pizza')"
+                data-i18n="food_view_menu_button">
             View menu
         </button>
 
@@ -534,11 +549,11 @@
 
         🥗
 
-        <span class="restaurantDiscount">
+        <span class="restaurantDiscount" data-i18n="food_r4_discount">
             70% OFF
         </span>
 
-        <span class="restaurantOpen">
+        <span class="restaurantOpen" data-i18n="food_badge_open">
             OPEN
         </span>
 
@@ -550,11 +565,11 @@
 
             <div>
 
-                <h3>
+                <h3 data-i18n="food_r4_name">
                     Fresh Corner
                 </h3>
 
-                <div class="restaurantMeta">
+                <div class="restaurantMeta" data-i18n="food_r4_meta">
                     ⭐ 4.6 · Healthy · 2.1 km
                 </div>
 
@@ -566,24 +581,25 @@
 
         </div>
 
-        <p class="restaurantDescription">
+        <p class="restaurantDescription" data-i18n="food_r4_desc">
             Healthy salad boxes rescued before closing.
         </p>
 
         <div class="restaurantDelivery">
 
-            <span>
+            <span data-i18n="food_r4_time">
                 🚴 20–35 min
             </span>
 
-            <span>
+            <span data-i18n="food_r4_fee">
                 ฿12 delivery
             </span>
 
         </div>
 
         <button class="restaurantButton"
-                onclick="openRestaurant('salad')">
+                onclick="openRestaurant('salad')"
+                data-i18n="food_view_menu_button">
             View menu
         </button>
 
@@ -598,18 +614,19 @@
 
     <div>
 
-        <h2 id="allFoodItemsTitle">
+        <h2 id="allFoodItemsTitle" data-i18n="food_all_title">
             All food deals
         </h2>
 
-        <p id="allFoodItemsSubtitle">
+        <p id="allFoodItemsSubtitle" data-i18n="food_all_subtitle">
             Every rescue item from restaurants near you
         </p>
 
     </div>
 
     <button class="viewall"
-            onclick="hideAllFoodItems()">
+            onclick="hideAllFoodItems()"
+            data-i18n="food_back_button">
         ← Back
     </button>
 
@@ -618,32 +635,38 @@
 <div class="foodToolbar" id="foodCategoryToolbar" style="display:none;">
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'MEAT')">
+            onclick="selectFoodCategory(this,'MEAT')"
+            data-i18n="food_category_meat">
         🥩 Meat
     </button>
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'VEGE')">
+            onclick="selectFoodCategory(this,'VEGE')"
+            data-i18n="food_category_vege">
         🥦 Vege
     </button>
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'BAKERY')">
+            onclick="selectFoodCategory(this,'BAKERY')"
+            data-i18n="food_category_bakery">
         🥐 Bakery
     </button>
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'PROCESSED')">
+            onclick="selectFoodCategory(this,'PROCESSED')"
+            data-i18n="food_category_processed">
         🥫 Processed
     </button>
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'DRINKS')">
+            onclick="selectFoodCategory(this,'DRINKS')"
+            data-i18n="food_category_drinks">
         ☕ Drinks
     </button>
 
     <button class="foodCategory"
-            onclick="selectFoodCategory(this,'DEFAULT')">
+            onclick="selectFoodCategory(this,'DEFAULT')"
+            data-i18n="food_category_all">
         🍽️ All
     </button>
 
@@ -660,11 +683,11 @@
 
     <div>
 
-        <strong>
+        <strong data-i18n="food_rewards_title">
             Every rescue order earns Carbon Credits
         </strong>
 
-        <p>
+        <p data-i18n="food_rewards_desc">
             Reduce food waste and earn +10 to +25 credits.
         </p>
 
@@ -689,18 +712,19 @@
 
     <div>
 
-        <h1>
+        <h1 data-i18n="food_register_page_title">
             🍽️ Add a Food Deal
         </h1>
 
-        <p>
+        <p data-i18n="food_register_page_desc">
             List a rescue food item for customers to discover.
         </p>
 
     </div>
 
     <button class="foodCartButton"
-            onclick="showPage('food')">
+            onclick="showPage('food')"
+            data-i18n="food_back_button">
         ← Back
     </button>
 
@@ -708,39 +732,39 @@
 
 <div class="foodModalBox checkoutBox" id="restaurantSetupForm" style="display:none; margin:0 auto; max-width:520px; text-align:left;">
 
-    <h3 style="margin-top:0;">
+    <h3 style="margin-top:0;" data-i18n="restaurant_setup_title">
         먼저 가게 정보를 등록해 주세요
     </h3>
 
-    <p style="color:var(--muted); font-size:13px; margin-top:-8px;">
+    <p style="color:var(--muted); font-size:13px; margin-top:-8px;" data-i18n="restaurant_setup_desc">
         가게는 한 번만 등록하면 돼요. 이후 음식은 이 가게 아래로 계속 등록할 수 있어요.
     </p>
 
     <div class="formField">
-        <label>가게 이름</label>
-        <input id="restaurantName" placeholder="e.g. Morning Bake">
+        <label data-i18n="restaurant_setup_name_label">가게 이름</label>
+        <input id="restaurantName" data-i18n-placeholder="restaurant_setup_name_placeholder" placeholder="e.g. Morning Bake">
     </div>
 
     <div class="formField">
-        <label>위치</label>
-        <input id="restaurantLocation" placeholder="e.g. 서울시 강남구 ...">
+        <label data-i18n="restaurant_setup_location_label">위치</label>
+        <input id="restaurantLocation" data-i18n-placeholder="restaurant_setup_location_placeholder" placeholder="e.g. 서울시 강남구 ...">
     </div>
 
     <div class="formRow">
 
         <div class="formField">
-            <label>오픈 시간</label>
+            <label data-i18n="restaurant_setup_open_label">오픈 시간</label>
             <input id="restaurantOpenTime" type="time">
         </div>
 
         <div class="formField">
-            <label>마감 시간</label>
+            <label data-i18n="restaurant_setup_close_label">마감 시간</label>
             <input id="restaurantCloseTime" type="time">
         </div>
 
     </div>
 
-    <button class="checkoutButton" onclick="submitRestaurantSetup()">
+    <button class="checkoutButton" onclick="submitRestaurantSetup()" data-i18n="restaurant_setup_submit">
         가게 등록하기
     </button>
 
@@ -749,30 +773,32 @@
 <div class="foodModalBox checkoutBox" id="foodRegisterForm" style="display:none; margin:0 auto; max-width:520px; text-align:left;">
 
     <p style="color:var(--muted); font-size:13px; margin-top:0;">
-        <strong id="myRestaurantName"></strong> 이름으로 등록됩니다.
+        <strong id="myRestaurantName"></strong>
+        <span data-i18n="food_register_owned_suffix"> 이름으로 등록됩니다.</span>
     </p>
 
     <div class="formField">
-        <label>음식 이름</label>
-        <input id="registerFoodTitle" placeholder="e.g. 마감 할인 도시락">
+        <label data-i18n="food_register_food_name_label">음식 이름</label>
+        <input id="registerFoodTitle" data-i18n-placeholder="food_register_food_name_placeholder" placeholder="e.g. 마감 할인 도시락">
     </div>
 
     <div class="formField">
-        <label>설명</label>
+        <label data-i18n="food_register_desc_label">설명</label>
         <textarea id="registerFoodDescription"
                   class="orderNote"
+                  data-i18n-placeholder="food_register_desc_placeholder"
                   placeholder="e.g. 오늘 만든 도시락 마감세일합니다"></textarea>
     </div>
 
     <div class="formRow">
 
         <div class="formField">
-            <label>정가 (฿)</label>
+            <label data-i18n="food_register_price_label">정가 (฿)</label>
             <input id="registerFoodOriginalPrice" type="number" min="0" placeholder="5000" oninput="updateDiscountedPricePreview()">
         </div>
 
         <div class="formField">
-            <label>할인율 (%)</label>
+            <label data-i18n="food_register_discount_label">할인율 (%)</label>
             <input id="registerFoodDiscountRate" type="number" min="0" max="100" placeholder="30" oninput="updateDiscountedPricePreview()">
         </div>
 
@@ -781,23 +807,23 @@
     <p id="discountedPricePreview" style="color:var(--green2); font-weight:850; font-size:13px; margin-top:-8px;"></p>
 
     <div class="formField">
-        <label>카테고리</label>
+        <label data-i18n="food_register_category_label">카테고리</label>
         <select id="registerFoodCategory">
-            <option value="MEAT">🥩 Meat</option>
-            <option value="VEGE">🥦 Vege</option>
-            <option value="BAKERY">🥐 Bakery</option>
-            <option value="PROCESSED">🥫 Processed</option>
-            <option value="DRINKS">☕ Drinks</option>
-            <option value="DEFAULT">🍽️ Other</option>
+            <option value="MEAT" data-i18n="food_category_meat">🥩 Meat</option>
+            <option value="VEGE" data-i18n="food_category_vege">🥦 Vege</option>
+            <option value="BAKERY" data-i18n="food_category_bakery">🥐 Bakery</option>
+            <option value="PROCESSED" data-i18n="food_category_processed">🥫 Processed</option>
+            <option value="DRINKS" data-i18n="food_category_drinks">☕ Drinks</option>
+            <option value="DEFAULT" data-i18n="food_category_other">🍽️ Other</option>
         </select>
     </div>
 
     <div class="formField">
-        <label>사진</label>
+        <label data-i18n="food_register_photo_label">사진</label>
         <input id="registerFoodImage" type="file" accept="image/*">
     </div>
 
-    <button class="checkoutButton" onclick="submitFoodRegistration()">
+    <button class="checkoutButton" onclick="submitFoodRegistration()" data-i18n="food_register_submit_button">
         음식 등록하기
     </button>
 
@@ -818,11 +844,11 @@
 
 <div class="pageHeader">
 
-    <h1>
+    <h1 data-i18n="recycle_page_title">
         ♻️ Recycling Stations
     </h1>
 
-    <p>
+    <p data-i18n="recycle_page_desc">
         Recycle verified materials and earn Carbon Credits.
     </p>
 
@@ -837,7 +863,7 @@
             +20
         </strong>
 
-        <span>
+        <span data-i18n="recycle_avg_credits">
             Average credits per recycling action
         </span>
 
@@ -845,17 +871,18 @@
 
     <div class="earnBadge">
 
-        <h3>
+        <h3 data-i18n="recycle_challenge_title">
             🌱 Green Challenge
         </h3>
 
-        <p>
+        <p data-i18n="recycle_challenge_desc">
             Recycle 3 times this week
             and earn an extra 100 credits.
         </p>
 
         <button class="primary"
-                onclick="earn(100,'Weekly recycling challenge')">
+                onclick="earn(100,'Weekly recycling challenge')"
+                data-i18n="recycle_challenge_button">
             Complete Challenge +100
         </button>
 
@@ -874,17 +901,17 @@
 
         <div class="cardbody">
 
-            <h3>
+            <h3 data-i18n="recycle_s1_name">
                 Green Hub Nimman
             </h3>
 
-            <div class="muted">
+            <div class="muted" data-i18n="recycle_s1_meta">
                 0.9 km · Open until 20:00
             </div>
 
             <div class="row">
 
-                <b>
+                <b data-i18n="recycle_s1_tags">
                     Plastic · Glass · Paper
                 </b>
 
@@ -908,17 +935,17 @@
 
         <div class="cardbody">
 
-            <h3>
+            <h3 data-i18n="recycle_s2_name">
                 Eco Drop Station
             </h3>
 
-            <div class="muted">
+            <div class="muted" data-i18n="recycle_s2_meta">
                 1.7 km · Open until 18:00
             </div>
 
             <div class="row">
 
-                <b>
+                <b data-i18n="recycle_s2_tags">
                     Battery · E-waste
                 </b>
 
@@ -942,17 +969,17 @@
 
         <div class="cardbody">
 
-            <h3>
+            <h3 data-i18n="recycle_s3_name">
                 Zero Waste Point
             </h3>
 
-            <div class="muted">
+            <div class="muted" data-i18n="recycle_s3_meta">
                 2.4 km · Open until 21:00
             </div>
 
             <div class="row">
 
-                <b>
+                <b data-i18n="recycle_s3_tags">
                     Plastic · Metal
                 </b>
 
@@ -976,17 +1003,17 @@
 
         <div class="cardbody">
 
-            <h3>
+            <h3 data-i18n="recycle_s4_name">
                 Community Green Point
             </h3>
 
-            <div class="muted">
+            <div class="muted" data-i18n="recycle_s4_meta">
                 3.1 km · Open until 19:00
             </div>
 
             <div class="row">
 
-                <b>
+                <b data-i18n="recycle_s4_tags">
                     All recyclables
                 </b>
 
@@ -1018,11 +1045,11 @@
 
 <div class="pageHeader">
 
-    <h1>
+    <h1 data-i18n="transport_page_title">
         🚗 Green Ride
     </h1>
 
-    <p>
+    <p data-i18n="transport_page_desc">
         Book an EV and track your driver live.
     </p>
 
@@ -1061,7 +1088,7 @@
             5 min
         </strong>
 
-        <span>
+        <span data-i18n="transport_driver_arriving">
             Driver arriving
         </span>
 
@@ -1085,12 +1112,12 @@
 
         <span class="statusDot"></span>
 
-        Ready to find nearby EV
+        <span data-i18n="transport_status_ready">Ready to find nearby EV</span>
 
     </div>
 
 
-    <h3>
+    <h3 data-i18n="transport_destination_question">
         Where are you going?
     </h3>
 
@@ -1101,6 +1128,7 @@
 
         <input id="pickup"
                value="Your current location"
+               data-i18n-placeholder="transport_pickup_placeholder"
                placeholder="Pickup location">
 
     </div>
@@ -1115,12 +1143,13 @@
 
         <input id="destination"
                value="Chiang Mai University"
+               data-i18n-placeholder="transport_destination_placeholder"
                placeholder="Enter destination">
 
     </div>
 
 
-    <h3 class="rideTitle">
+    <h3 class="rideTitle" data-i18n="transport_choose_ev">
         Choose your EV
     </h3>
 
@@ -1136,11 +1165,11 @@
 
             <span>
 
-                <b>
+                <b data-i18n="transport_vehicle_car">
                     EV Car
                 </b>
 
-                <small>
+                <small data-i18n="transport_vehicle_car_meta">
                     4 seats · 5 min
                 </small>
 
@@ -1162,11 +1191,11 @@
 
             <span>
 
-                <b>
+                <b data-i18n="transport_vehicle_taxi">
                     EV Taxi
                 </b>
 
-                <small>
+                <small data-i18n="transport_vehicle_taxi_meta">
                     4 seats · 3 min
                 </small>
 
@@ -1188,11 +1217,11 @@
 
             <span>
 
-                <b>
+                <b data-i18n="transport_vehicle_bike">
                     EV Bike
                 </b>
 
-                <small>
+                <small data-i18n="transport_vehicle_bike_meta">
                     1 seat · 2 min
                 </small>
 
@@ -1211,7 +1240,7 @@
 
         <div>
 
-            <small>
+            <small data-i18n="transport_estimated_fare">
                 Estimated fare
             </small>
 
@@ -1223,7 +1252,7 @@
 
         <div>
 
-            <small>
+            <small data-i18n="transport_co2_saved">
                 CO₂ saved
             </small>
 
@@ -1238,7 +1267,8 @@
 
     <button class="callRide"
             id="callRideButton"
-            onclick="callEV()">
+            onclick="callEV()"
+            data-i18n="transport_call_ev_button">
 
         🚗 Call EV
 
@@ -1253,15 +1283,15 @@
 
         <div class="driverInfo">
 
-            <b>
+            <b data-i18n="transport_driver_name">
                 Alex · EV Driver
             </b>
 
-            <span>
+            <span data-i18n="transport_driver_rating">
                 ⭐ 4.9 · Green Driver
             </span>
 
-            <small>
+            <small data-i18n="transport_driver_car">
                 BYD Dolphin · EV-2048
             </small>
 
@@ -1269,11 +1299,11 @@
 
         <div class="driverActions">
 
-            <button onclick="toast('Calling driver...')">
+            <button onclick="toast(t('transport_calling_driver'))">
                 📞
             </button>
 
-            <button onclick="toast('Opening driver chat...')">
+            <button onclick="toast(t('transport_opening_chat'))">
                 💬
             </button>
 
@@ -1300,11 +1330,11 @@
 
 <div class="pageHeader">
 
-    <h1>
+    <h1 data-i18n="used_page_title">
         📦 Used Marketplace
     </h1>
 
-    <p>
+    <p data-i18n="used_page_desc">
         Give products a second life in your community.
     </p>
 
@@ -1314,10 +1344,12 @@
 <div class="marketToolbar">
 
     <input id="marketSearch"
+           data-i18n-placeholder="used_search_placeholder"
            placeholder="Search used items...">
 
     <button class="primary"
-            onclick="marketSearch()">
+            onclick="marketSearch()"
+            data-i18n="home_search_button">
         Search
     </button>
 
@@ -1335,11 +1367,11 @@
 
     <div class="cardbody">
 
-        <h3>
+        <h3 data-i18n="used_i1_name">
             Wireless Headphones
         </h3>
 
-        <div class="muted">
+        <div class="muted" data-i18n="used_i1_meta">
             Good condition · 0.7 km
         </div>
 
@@ -1349,12 +1381,13 @@
 
         <div class="row">
 
-            <small class="muted">
+            <small class="muted" data-i18n="used_i1_impact">
                 Reuse impact +15
             </small>
 
             <button class="primary"
-                    onclick="toast('Seller contact opened')">
+                    onclick="toast(t('used_contact_toast'))"
+                    data-i18n="used_contact_button">
                 Contact
             </button>
 
@@ -1373,11 +1406,11 @@
 
     <div class="cardbody">
 
-        <h3>
+        <h3 data-i18n="used_i2_name">
             Wooden Study Chair
         </h3>
 
-        <div class="muted">
+        <div class="muted" data-i18n="used_i2_meta">
             Like new · 1.4 km
         </div>
 
@@ -1387,12 +1420,13 @@
 
         <div class="row">
 
-            <small class="muted">
+            <small class="muted" data-i18n="used_i2_impact">
                 Reuse impact +20
             </small>
 
             <button class="primary"
-                    onclick="toast('Seller contact opened')">
+                    onclick="toast(t('used_contact_toast'))"
+                    data-i18n="used_contact_button">
                 Contact
             </button>
 
@@ -1411,11 +1445,11 @@
 
     <div class="cardbody">
 
-        <h3>
+        <h3 data-i18n="used_i3_name">
             University Textbook Set
         </h3>
 
-        <div class="muted">
+        <div class="muted" data-i18n="used_i3_meta">
             Used · 1.9 km
         </div>
 
@@ -1425,12 +1459,13 @@
 
         <div class="row">
 
-            <small class="muted">
+            <small class="muted" data-i18n="used_i3_impact">
                 Reuse impact +15
             </small>
 
             <button class="primary"
-                    onclick="toast('Seller contact opened')">
+                    onclick="toast(t('used_contact_toast'))"
+                    data-i18n="used_contact_button">
                 Contact
             </button>
 
@@ -1449,11 +1484,11 @@
 
     <div class="cardbody">
 
-        <h3>
+        <h3 data-i18n="used_i4_name">
             Travel Backpack
         </h3>
 
-        <div class="muted">
+        <div class="muted" data-i18n="used_i4_meta">
             Excellent · 2.2 km
         </div>
 
@@ -1463,12 +1498,13 @@
 
         <div class="row">
 
-            <small class="muted">
+            <small class="muted" data-i18n="used_i4_impact">
                 Reuse impact +15
             </small>
 
             <button class="primary"
-                    onclick="toast('Seller contact opened')">
+                    onclick="toast(t('used_contact_toast'))"
+                    data-i18n="used_contact_button">
                 Contact
             </button>
 
@@ -1495,11 +1531,11 @@
 
 <div class="pageHeader">
 
-    <h1>
+    <h1 data-i18n="wallet_page_title">
         🌱 Carbon Wallet
     </h1>
 
-    <p>
+    <p data-i18n="wallet_page_desc">
         Turn your sustainable actions into rewards.
     </p>
 
@@ -1511,7 +1547,7 @@
 
 <div class="bigWallet">
 
-    <small>
+    <small data-i18n="wallet_available_label">
         AVAILABLE CARBON CREDITS
     </small>
 
@@ -1524,14 +1560,14 @@
     </div>
 
     <div>
-        Green Score: <b>82 / 100</b>
+        <span data-i18n="wallet_green_score_label">Green Score</span>: <b>82 / 100</b>
     </div>
 
     <div class="walletProgress">
         <div></div>
     </div>
 
-    <p>
+    <p data-i18n="wallet_rank_desc">
         You're currently in the top 18%
         of green users this month.
     </p>
@@ -1541,18 +1577,18 @@
 
 <div class="rewardPanel">
 
-    <h2>
+    <h2 data-i18n="wallet_redeem_title">
         🎁 Redeem Rewards
     </h2>
 
-    <p class="muted">
+    <p class="muted" data-i18n="wallet_redeem_desc">
         Use Carbon Credits for sustainable rewards.
     </p>
 
 
     <div class="reward">
 
-        <span>
+        <span data-i18n="wallet_reward1_name">
             ฿50 Food Discount
         </span>
 
@@ -1561,7 +1597,8 @@
         </b>
 
         <button class="primary"
-                onclick="redeem(500,'฿50 food discount')">
+                onclick="redeem(500,'฿50 food discount')"
+                data-i18n="wallet_redeem_button">
             Redeem
         </button>
 
@@ -1570,7 +1607,7 @@
 
     <div class="reward">
 
-        <span>
+        <span data-i18n="wallet_reward2_name">
             🚲 Free Green Ride
         </span>
 
@@ -1579,7 +1616,8 @@
         </b>
 
         <button class="primary"
-                onclick="redeem(800,'Free green ride')">
+                onclick="redeem(800,'Free green ride')"
+                data-i18n="wallet_redeem_button">
             Redeem
         </button>
 
@@ -1588,7 +1626,7 @@
 
     <div class="reward">
 
-        <span>
+        <span data-i18n="wallet_reward3_name">
             🍱 ฿100 Food Voucher
         </span>
 
@@ -1597,7 +1635,8 @@
         </b>
 
         <button class="primary"
-                onclick="redeem(1000,'฿100 food voucher')">
+                onclick="redeem(1000,'฿100 food voucher')"
+                data-i18n="wallet_redeem_button">
             Redeem
         </button>
 
@@ -1612,11 +1651,11 @@
 
     <div>
 
-        <h2>
+        <h2 data-i18n="wallet_activity_title">
             🌱 Sustainability Activity
         </h2>
 
-        <p>
+        <p data-i18n="wallet_activity_desc">
             Track your impact and rewards.
         </p>
 
@@ -1629,29 +1668,29 @@
 
 <div class="panel">
 
-    <h3>
+    <h3 data-i18n="wallet_recent_credits_title">
         Recent Carbon Credits
     </h3>
 
     <div id="activityList">
 
         <div class="activityItem">
-            <span>♻️ Recycling plastic</span>
+            <span data-i18n="wallet_activity_recycling">♻️ Recycling plastic</span>
             <span class="plus">+20</span>
         </div>
 
         <div class="activityItem">
-            <span>🚗 Green transportation</span>
+            <span data-i18n="wallet_activity_transport">🚗 Green transportation</span>
             <span class="plus">+15</span>
         </div>
 
         <div class="activityItem">
-            <span>🍱 Food rescue</span>
+            <span data-i18n="wallet_activity_food">🍱 Food rescue</span>
             <span class="plus">+35</span>
         </div>
 
         <div class="activityItem">
-            <span>🎁 Food discount</span>
+            <span data-i18n="wallet_activity_discount">🎁 Food discount</span>
             <span style="color:#d45b5b">−50</span>
         </div>
 
@@ -1662,7 +1701,7 @@
 
 <div class="panel">
 
-    <h3>
+    <h3 data-i18n="wallet_green_score_panel_title">
         🌍 Green Score
     </h3>
 
@@ -1697,13 +1736,14 @@
 
     </div>
 
-    <p class="muted">
+    <p class="muted" data-i18n="wallet_rank_desc_short">
         You're in the top 18%
         of green users this month.
     </p>
 
     <button class="secondary"
-            onclick="earn(100,'Weekly green challenge')">
+            onclick="earn(100,'Weekly green challenge')"
+            data-i18n="wallet_weekly_challenge_button">
 
         Complete weekly challenge +100
 
@@ -1761,7 +1801,7 @@
 
     <span>🌱</span>
 
-    <span>
+    <span data-i18n="food_rescue_note">
         Rescue food prices are discounted
         to prevent food waste.
     </span>
@@ -1772,7 +1812,7 @@
 <button class="checkoutButton"
         onclick="openCart()">
 
-    View Cart ·
+    <span data-i18n="food_view_cart_button">View Cart</span> ·
     <span id="modalCartTotal">
         ฿0
     </span>
@@ -1796,11 +1836,11 @@
 
     <div>
 
-        <h2>
+        <h2 data-i18n="cart_title">
             🛒 Your Order
         </h2>
 
-        <p class="muted">
+        <p class="muted" data-i18n="cart_subtitle">
             Review your items before checkout.
         </p>
 
@@ -1818,7 +1858,7 @@
      class="cartItems"></div>
 
 
-<h3>
+<h3 data-i18n="cart_delivery_option_title">
     Delivery option
 </h3>
 
@@ -1829,8 +1869,8 @@
         onclick="selectDelivery(this,'standard',25)">
 
     <div>
-        <b>🚴 Standard</b>
-        <small>
+        <b data-i18n="cart_delivery_standard">🚴 Standard</b>
+        <small data-i18n="cart_delivery_standard_time">
             25–35 min
         </small>
     </div>
@@ -1844,8 +1884,8 @@
         onclick="selectDelivery(this,'priority',45)">
 
     <div>
-        <b>⚡ Priority</b>
-        <small>
+        <b data-i18n="cart_delivery_priority">⚡ Priority</b>
+        <small data-i18n="cart_delivery_priority_time">
             15–25 min · Faster matching
         </small>
     </div>
@@ -1859,8 +1899,8 @@
         onclick="selectDelivery(this,'saver',10)">
 
     <div>
-        <b>🌱 Saver</b>
-        <small>
+        <b data-i18n="cart_delivery_saver">🌱 Saver</b>
+        <small data-i18n="cart_delivery_saver_time">
             35–50 min · Lowest fee
         </small>
     </div>
@@ -1872,7 +1912,7 @@
 </div>
 
 
-<h3>
+<h3 data-i18n="cart_delivery_time_title">
     Delivery time
 </h3>
 
@@ -1885,8 +1925,8 @@
     🚀
 
     <span>
-        <b>Now</b>
-        <small>
+        <b data-i18n="cart_time_now">Now</b>
+        <small data-i18n="cart_time_now_desc">
             As soon as possible
         </small>
     </span>
@@ -1900,8 +1940,8 @@
     🕒
 
     <span>
-        <b>Schedule</b>
-        <small>
+        <b data-i18n="cart_time_schedule">Schedule</b>
+        <small data-i18n="cart_time_schedule_desc">
             Choose delivery time
         </small>
     </span>
@@ -1915,8 +1955,8 @@
     🏪
 
     <span>
-        <b>Self Pickup</b>
-        <small>
+        <b data-i18n="cart_time_pickup">Self Pickup</b>
+        <small data-i18n="cart_time_pickup_desc">
             Skip delivery fee
         </small>
     </span>
@@ -1929,7 +1969,7 @@
 <div id="scheduleArea"
      class="scheduleArea">
 
-    <label>
+    <label data-i18n="cart_time_schedule_desc">
         Choose delivery time
     </label>
 
@@ -1956,7 +1996,7 @@
 </div>
 
 
-<h3>
+<h3 data-i18n="cart_address_title">
     📍 Delivery address
 </h3>
 
@@ -1967,7 +2007,7 @@
 
     <div>
 
-        <b>
+        <b data-i18n="cart_address_current">
             My Current Location
         </b>
 
@@ -1978,14 +2018,14 @@
 
     </div>
 
-    <button onclick="toast('Address selector opened')">
+    <button onclick="toast(t('cart_address_toast'))" data-i18n="cart_address_change">
         Change
     </button>
 
 </div>
 
 
-<h3>
+<h3 data-i18n="cart_payment_title">
     💳 Payment
 </h3>
 
@@ -1999,7 +2039,7 @@
 
     <span>
 
-        <b>
+        <b data-i18n="cart_payment_greenpay">
             GreenPay Wallet
         </b>
 
@@ -2025,7 +2065,7 @@
             Visa •••• 4242
         </b>
 
-        <small>
+        <small data-i18n="cart_payment_card">
             Debit / Credit Card
         </small>
 
@@ -2043,11 +2083,11 @@
 
     <span>
 
-        <b>
+        <b data-i18n="cart_payment_cash">
             Cash
         </b>
 
-        <small>
+        <small data-i18n="cart_payment_cash_desc">
             Pay driver on delivery
         </small>
 
@@ -2060,7 +2100,7 @@
 </div>
 
 
-<h3>
+<h3 data-i18n="cart_promo_title">
     🏷️ Promo
 </h3>
 
@@ -2068,9 +2108,10 @@
 <div class="promoBox">
 
     <input id="promoInput"
+           data-i18n-placeholder="cart_promo_placeholder"
            placeholder="Enter promo code">
 
-    <button onclick="applyPromo()">
+    <button onclick="applyPromo()" data-i18n="cart_promo_apply">
         Apply
     </button>
 
@@ -2086,24 +2127,24 @@
 
     <div>
 
-        <b>
+        <b data-i18n="cart_group_order_title">
             👥 Group Order
         </b>
 
-        <p>
+        <p data-i18n="cart_group_order_desc">
             Invite friends to add their own food.
         </p>
 
     </div>
 
-    <button onclick="startGroupOrder()">
+    <button onclick="startGroupOrder()" data-i18n="cart_group_order_start">
         Start
     </button>
 
 </div>
 
 
-<h3>
+<h3 data-i18n="cart_note_title">
     📝 Note for restaurant
 </h3>
 
@@ -2111,27 +2152,28 @@
 <textarea
     id="orderNote"
     class="orderNote"
+    data-i18n-placeholder="cart_note_placeholder"
     placeholder="Example: No onions, less spicy..."></textarea>
 
 
 <div class="priceSummary">
 
     <div>
-        <span>Food</span>
+        <span data-i18n="cart_summary_food">Food</span>
         <strong id="checkoutSubtotal">
             ฿0
         </strong>
     </div>
 
     <div>
-        <span>Delivery</span>
+        <span data-i18n="cart_summary_delivery">Delivery</span>
         <strong id="checkoutDelivery">
             ฿25
         </strong>
     </div>
 
     <div>
-        <span>Discount</span>
+        <span data-i18n="cart_summary_discount">Discount</span>
         <strong class="discountText"
                 id="checkoutDiscount">
             -฿0
@@ -2139,7 +2181,7 @@
     </div>
 
     <div class="totalRow">
-        <b>Total</b>
+        <b data-i18n="cart_summary_total">Total</b>
         <strong id="checkoutTotal">
             ฿0
         </strong>
@@ -2151,7 +2193,7 @@
 <button class="placeOrderButton"
         onclick="placeFoodOrder()">
 
-    Place Order ·
+    <span data-i18n="cart_place_order_button">Place Order</span> ·
     <span id="placeOrderTotal">
         ฿0
     </span>
@@ -2182,11 +2224,11 @@
 
     <div>✓</div>
 
-    <h2>
+    <h2 data-i18n="order_confirmed_title">
         Order confirmed!
     </h2>
 
-    <p>
+    <p data-i18n="order_confirmed_desc">
         Your GreenLoop order is being prepared.
     </p>
 
@@ -2222,11 +2264,11 @@
 
     <div>
 
-        <b>
+        <b data-i18n="tracking1_title">
             Order confirmed
         </b>
 
-        <small>
+        <small data-i18n="tracking1_desc">
             Restaurant received your order
         </small>
 
@@ -2242,11 +2284,11 @@
 
     <div>
 
-        <b>
+        <b data-i18n="tracking2_title">
             Preparing
         </b>
 
-        <small>
+        <small data-i18n="tracking2_desc">
             Restaurant is preparing your food
         </small>
 
@@ -2262,11 +2304,11 @@
 
     <div>
 
-        <b>
+        <b data-i18n="tracking3_title">
             Driver picked up
         </b>
 
-        <small>
+        <small data-i18n="tracking3_desc">
             Your food is on the way
         </small>
 
@@ -2282,11 +2324,11 @@
 
     <div>
 
-        <b>
+        <b data-i18n="tracking4_title">
             Arriving
         </b>
 
-        <small>
+        <small data-i18n="tracking4_desc">
             Your order is almost there
         </small>
 
@@ -2309,13 +2351,13 @@
             Alex
         </b>
 
-        <small>
+        <small data-i18n="tracking_driver_role">
             ⭐ 4.9 · Green Delivery Partner
         </small>
 
     </div>
 
-    <button onclick="toast('Calling delivery partner...')">
+    <button onclick="toast(t('tracking_calling_partner'))">
         📞
     </button>
 
@@ -2324,9 +2366,9 @@
 
 <button class="secondary"
         style="width:100%;margin-top:15px;"
-        onclick="toast('Opening order help center')">
+        onclick="toast(t('tracking_help_toast'))">
 
-    Need help?
+    <span data-i18n="tracking_need_help">Need help?</span>
 
 </button>
 
@@ -2356,7 +2398,7 @@
 
     <br>
 
-    <small>
+    <small data-i18n="footer_tagline">
         Every sustainable action has value.
     </small>
 
@@ -2376,7 +2418,7 @@
             <button class="closeFoodModal" onclick="closeLoginModal()" style="position: absolute; right: 0; top: -5px;">✕</button>
         </div>
 
-        <p style="color: var(--muted); margin-bottom: 30px; font-size: 14px;">
+        <p style="color: var(--muted); margin-bottom: 30px; font-size: 14px;" data-i18n="login_modal_desc">
             서비스를 이용하시려면 로그인이 필요합니다.
         </p>
         
@@ -2390,7 +2432,7 @@
     <div class="foodModalBox checkoutBox" style="max-width: 480px;">
 
         <div class="foodModalHeader" style="margin-bottom: 15px;">
-            <h2 style="margin: 0; font-size: 20px;">Food details</h2>
+            <h2 style="margin: 0; font-size: 20px;" data-i18n="food_detail_title">Food details</h2>
             <button class="closeFoodModal" onclick="closeFoodDetail()">✕</button>
         </div>
 

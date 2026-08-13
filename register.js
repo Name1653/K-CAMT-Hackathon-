@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     const errorText = await response.text();
                     console.error("역할 업데이트 실패:", errorText);
-                    alert("가입 처리 중 문제가 발생했습니다.");
+                    alert(t("role_update_failed"));
                 }
             } catch (error) {
                 console.error("통신 에러:", error);
-                alert("서버와 통신할 수 없습니다.");
+                alert(t("network_error"));
             }
         });
     }
@@ -49,11 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     const errorText = await response.text();
                     console.error("역할 업데이트 실패:", errorText);
-                    alert("가입 처리 중 문제가 발생했습니다.");
+                    alert(t("role_update_failed"));
                 }
             } catch (error) {
                 console.error("통신 에러:", error);
-                alert("서버와 통신할 수 없습니다.");
+                alert(t("network_error"));
             }
         });
     }

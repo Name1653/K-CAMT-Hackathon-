@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLoop — Sustainable Local Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .routePage {
+            background: #cfeaf7;
+            padding: 32px 5% 60px;
+        }
+
+        .routeCard {
+            max-width: 1120px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 24px;
+            padding: 28px 32px 34px;
+            box-shadow: var(--shadow);
+        }
+
+        .routeBreadcrumb {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 0 16px;
+        }
+
+        .routeHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .routeBrand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--green2);
+        }
+
+        .routeBrand span {
+            background: var(--green);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+        }
+
+        .routeGoalPill {
+            background: var(--mint);
+            color: var(--green2);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 9px 16px;
+            border-radius: 999px;
+        }
+
+        .routeSearch {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .routeSearchField {
+            flex: 1;
+            min-width: 200px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 16px;
+        }
+
+        .routeSearchField label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .routeSearchField input.value {
+            display: block;
+            width: 100%;
+            border: 0;
+            padding: 0;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            color: var(--ink);
+            background: none;
+        }
+
+        .routeSearchField input.value:focus {
+            outline: none;
+        }
+
+        .routeSearchButton {
+            background: var(--green);
+            color: #fff;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 0 26px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .routeSearchButton:hover {
+            background: var(--green2);
+        }
+
+        .routeGrid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .routeGrid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- Map panel ---- */
+
+        .mapPanel {
+            position: relative;
+            height: 460px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background:
+                repeating-linear-gradient(135deg, #eef6ee 0 60px, #e3efe3 60px 62px),
+                #eef6ee;
+        }
+
+        .mapPin {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transform: translate(-50%, -100%);
+        }
+
+        .mapPin .dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,.25);
+        }
+
+        .mapPin .label {
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+        }
+
+        .mapPin.start { top: 34%; left: 12%; }
+        .mapPin.start .dot { background: var(--blue); }
+
+        .mapPin.store { top: 42%; left: 41%; transform: translate(-50%, -50%); }
+        .mapPin.store .dot {
+            width: 30px;
+            height: 30px;
+            background: var(--green);
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            border-width: 4px;
+        }
+
+        .mapPin.end { top: 66%; left: 52%; }
+        .mapPin.end .dot { background: var(--red); }
+
+        .routeLine {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mapNote {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            max-width: 260px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            box-shadow: var(--shadow);
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .mapNote b {
+            color: var(--ink);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* ---- Side panels ---- */
+
+        .routeSide {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sidePanel {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px 20px;
+        }
+
+        .sidePanel h3 {
+            margin: 0 0 4px;
+            font-size: 15px;
+        }
+
+        .sidePanel .sub {
+            margin: 0 0 14px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .storeRow {
+            width: 100%;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .storeRow:last-child {
+            margin-bottom: 0;
+        }
+
+        .storeRow.selected {
+            border-color: var(--green);
+            background: var(--mint);
+        }
+
+        .storeRow .name {
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .storeRow .meta {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .storeRow .co2Badge {
+            background: var(--mint);
+            color: var(--green2);
+            font-weight: 800;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .selectedNote {
+            margin-top: 4px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--line);
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .selectedNote b {
+            color: var(--green2);
+        }
+
+        .transportRow {
+            display: flex;
+            gap: 8px;
+        }
+
+        .transportButton {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        .transportButton .icon {
+            font-size: 18px;
+        }
+
+        .transportButton.active {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .metricHeader {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metricHeader .statusDot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .metricValue {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin: 10px 0 8px;
+        }
+
+        .metricValue .num {
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--green2);
+        }
+
+        .metricValue .unit {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .metricDesc {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .metricPill {
+            background: var(--mint);
+            color: var(--green2);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================================
+        NAV
+    ========================================================= -->
+
+    <nav class="nav">
+
+        <div class="logo">
+            <span>🌱</span>
+            GreenLoop
+        </div>
+
+        <div class="navlinks">
+
+            <button class="active"
+                    data-page="home"
+                    data-i18n="home"
+                    onclick="showPage('home',this)">
+                Home
+            </button>
+
+            <button data-page="food"
+                    data-i18n="food"
+                    onclick="showPage('food',this)">
+                Food Deals
+            </button>
+
+            <button data-page="recycle"
+                    data-i18n="recycle"
+                    onclick="showPage('recycle',this)">
+                Recycle
+            </button>
+
+            <button data-page="transport"
+                    data-i18n="transport"
+                    onclick="showPage('transport',this)">
+                Green Ride
+            </button>
+
+            <button data-page="used"
+                    data-i18n="used"
+                    onclick="showPage('used',this)">
+                Used Items
+            </button>
+
+            <button data-page="wallet"
+                    data-i18n="wallet"
+                    onclick="showPage('wallet',this)">
+                Carbon Wallet
+            </button>
+
+        </div>
+
+        <div class="actions">
+            <div
+                href="#"
+                id="googleLoginLink"
+                data-i18n="login"
+                onclick="triggerGoogleLogin(event)"
+                style="cursor: pointer; font-weight: 850; color: var(--green2); text-decoration: none; padding: 0 10px;">
+                Login / Sign Up
+            </div>
+            <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
+                <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
+                <button onclick="logout()" data-i18n="logout" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+                    Logout
+                </button>
+            </div>
+            <div class="credits">
+                🌱 <span id="navCredits">1,250</span>
+            </div>
+
+            <select class="lang"
+                    id="language"
+                    onchange="setLanguage(this.value)">
+                <option value="en">EN</option>
+                <option value="th">TH</option>
+                <option value="ko">한국어</option>
+            </select>
+
+        </div>
+
+    </nav>
+
+    <!-- =========================================================
+        ROUTE RECOMMENDATION (모양만 구현 — 정적 목업)
+    ========================================================= -->
+
+    <main class="routePage">
+        <div class="routeCard">
+
+            <p class="routeBreadcrumb" data-i18n="route_breadcrumb">경로추천</p>
+
+            <div class="routeHeader">
+                <div class="routeBrand">
+                    <span>🌱</span>
+                    GreenRoute
+                </div>
+                <div class="routeGoalPill" data-i18n="route_goal_pill">오늘의 탄소 절감 목표 · 2.0 kg CO₂</div>
+            </div>
+
+            <div class="routeSearch">
+                <div class="routeSearchField">
+                    <label for="routeOrigin" data-i18n="route_origin_label">출발지</label>
+                    <input type="text" id="routeOrigin" class="value" value="강남역">
+                </div>
+                <div class="routeSearchField">
+                    <label for="routeDestination" data-i18n="route_destination_label">목적지</label>
+                    <input type="text" id="routeDestination" class="value" value="판교역">
+                </div>
+                <button type="button" class="routeSearchButton" data-i18n="route_search_button">동선 맞춤 매장 찾기</button>
+            </div>
+
+            <div class="routeGrid">
+
+                <!-- Map -->
+                <div class="mapPanel">
+
+                    <svg class="routeLine" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M 12 34 Q 26 8 41 42 Q 50 68 52 66"
+                              fill="none" stroke="#16a36b" stroke-width="1.6"
+                              stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                    </svg>
+
+                    <div class="mapPin start">
+                        <div class="label"><span data-i18n="route_map_start_prefix">출발</span> · 강남역</div>
+                        <div class="dot"></div>
+                    </div>
+
+                    <div class="mapPin store">
+                        <div class="label" data-i18n="route_store3_name">제로테이블</div>
+                        <div class="dot">🍽️</div>
+                    </div>
+
+                    <div class="mapPin end">
+                        <div class="label"><span data-i18n="route_map_end_prefix">도착</span> · 판교역</div>
+                        <div class="dot"></div>
+                    </div>
+
+                    <div class="mapNote">
+                        <b data-i18n="route_map_note_title">🛈 선택한 식당을 경유하는 추천 경로입니다</b>
+                        <span data-i18n="route_map_note_desc">식당 픽업 후 목적지까지 이동합니다.</span>
+                    </div>
+
+                </div>
+
+                <!-- Side panels -->
+                <div class="routeSide">
+
+                    <div class="sidePanel">
+                        <h3 data-i18n="route_store_panel_title">🍃 동선 맞춤 매장</h3>
+                        <p class="sub" data-i18n="route_store_panel_sub">식당을 선택하면 왼쪽 지도에 해당 매장을 포함한 경로가 표시됩니다.</p>
+
+                        <button type="button"
+                                class="storeRow"
+                                data-detour="+180m"
+                                data-net-saved="1.45 kg CO₂">
+                            <div>
+                                <div class="name" data-i18n="route_store1_name">그린키친 판교점</div>
+                                <div class="meta">
+                                    <span data-i18n="route_store1_tags">샐러드 · 비건 · 반소품 반품</span><br>
+                                    <span data-i18n="route_store1_distance">↗ 우회 거리 +180m · 경로에서 가장 가까움</span>
+                                </div>
+                            </div>
+                            <div class="co2Badge">-1.45 kg CO₂</div>
+                        </button>
+
+                        <button type="button"
+                                class="storeRow"
+                                data-detour="+420m"
+                                data-net-saved="1.12 kg CO₂">
+                            <div>
+                                <div class="name" data-i18n="route_store2_name">오늘의 샐러드</div>
+                                <div class="meta">
+                                    <span data-i18n="route_store2_tags">샐러드 · 로컬푸드</span><br>
+                                    <span data-i18n="route_store2_distance">↗ 우회 거리 +420m · 동선 내 매장</span>
+                                </div>
+                            </div>
+                            <div class="co2Badge">-1.12 kg CO₂</div>
+                        </button>
+
+                        <button type="button"
+                                class="storeRow selected"
+                                data-detour="+760m"
+                                data-net-saved="0.06 kg CO₂">
+                            <div>
+                                <div class="name" data-i18n="route_store3_name">제로테이블</div>
+                                <div class="meta">
+                                    <span data-i18n="route_store3_tags">제로웨이스트 · 친환경 식당</span><br>
+                                    <span data-i18n="route_store3_distance">↗ 우회 거리 +760m · 1km 이내</span>
+                                </div>
+                            </div>
+                            <div class="co2Badge">-0.86 kg CO₂</div>
+                        </button>
+
+                        <div class="selectedNote" id="selectedStoreNote"></div>
+                    </div>
+
+                    <div class="sidePanel">
+                        <h3 data-i18n="route_transport_panel_title">🚲 이동 수단</h3>
+                        <div class="transportRow">
+                            <button type="button" class="transportButton">
+                                <span class="icon">🚶</span>
+                                <span data-i18n="route_transport_walk">도보</span>
+                            </button>
+                            <button type="button" class="transportButton active">
+                                <span class="icon">🚲</span>
+                                <span data-i18n="route_transport_bike">자전거</span>
+                            </button>
+                            <button type="button" class="transportButton">
+                                <span class="icon">🚌</span>
+                                <span data-i18n="route_transport_transit">대중교통</span>
+                            </button>
+                            <button type="button" class="transportButton">
+                                <span class="icon">🚗</span>
+                                <span data-i18n="route_transport_car">승용차</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sidePanel">
+                        <div class="metricHeader">
+                            <span class="statusDot"></span>
+                            <h3 style="margin:0;" data-i18n="route_metric_title">Net Carbon Metric</h3>
+                        </div>
+
+                        <div class="metricValue">
+                            <span class="num">1.20</span>
+                            <span class="unit" data-i18n="route_metric_unit">kg CO₂ Net Saved</span>
+                        </div>
+
+                        <p class="metricDesc" data-i18n="route_metric_formula">
+                            음식 절감 탄소량(+) − 이동 배출량(−) = 최종 순 탄소 절감량
+                        </p>
+
+                        <div class="metricPill" data-i18n="route_metric_pill">
+                            ✓ 배출가스 상쇄 집계 완료 · Net-Zero 집계 반영
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="route.js"></script>
+</body>
+</html>
