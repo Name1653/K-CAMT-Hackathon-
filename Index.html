@@ -56,13 +56,19 @@
     </div>
 
     <div class="actions">
-        <div 
-            href="#" 
-            id="googleLoginLink" 
-            data-i18n="login" 
-            onclick="triggerGoogleLogin(event)" 
+        <div
+            href="#"
+            id="googleLoginLink"
+            data-i18n="login"
+            onclick="triggerGoogleLogin(event)"
             style="cursor: pointer; font-weight: 850; color: var(--green2); text-decoration: none; padding: 0 10px;">
             Login / Sign Up
+        </div>
+        <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
+            <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
+            <button onclick="logout()" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+                Logout
+            </button>
         </div>
         <div class="credits">
             🌱 <span id="navCredits">1,250</span>
