@@ -1,0 +1,1258 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+let balance = 1250;
+
+let selectedVehicle = "EV Car";
+let selectedPrice = 79;
+let trackingInterval = null;
+
+
+/* =========================================================
+   FOOD ORDER VARIABLES
+========================================================= */
+
+let foodCart = [];
+let currentRestaurant = "bakery";
+
+let deliveryType = "standard";
+let deliveryFee = 25;
+
+let orderTime = "instant";
+let paymentMethod = "GreenPay";
+let promoDiscount = 0;
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(page,button=null){
+
+    document.querySelectorAll(".page")
+        .forEach(p=>p.classList.remove("active"));
+
+    const target=document.getElementById("page-"+page);
+
+    if(!target)return;
+
+    target.classList.add("active");
+
+    document.querySelectorAll(".navlinks button")
+        .forEach(b=>b.classList.remove("active"));
+
+    if(button){
+
+        button.classList.add("active");
+
+    }else{
+
+        const navButton=document.querySelector(
+            `.navlinks button[data-page="${page}"]`
+        );
+
+        if(navButton){
+            navButton.classList.add("active");
+        }
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================================================
+   BALANCE
+========================================================= */
+
+function updateBalance(){
+
+    document.getElementById("balance")
+        .textContent=balance.toLocaleString();
+
+    document.getElementById("navCredits")
+        .textContent=balance.toLocaleString();
+
+    document.getElementById("walletBalance")
+        .textContent=balance.toLocaleString();
+}
+
+
+/* =========================================================
+   EARN
+========================================================= */
+
+function earn(amount,reason){
+
+    balance+=amount;
+
+    updateBalance();
+
+    const list=document.getElementById("activityList");
+
+    const item=document.createElement("div");
+
+    item.className="activityItem";
+
+    item.innerHTML=`
+        <span>🌱 ${reason}</span>
+        <span class="plus">+${amount}</span>
+    `;
+
+    if(list){
+        list.prepend(item);
+    }
+
+    toast(`+${amount} Carbon Credits earned!`);
+}
+
+
+/* =========================================================
+   REDEEM
+========================================================= */
+
+function redeem(cost,reward){
+
+    if(balance<cost){
+
+        toast("Not enough Carbon Credits");
+
+        return;
+    }
+
+    balance-=cost;
+
+    updateBalance();
+
+    const list=document.getElementById("activityList");
+
+    const item=document.createElement("div");
+
+    item.className="activityItem";
+
+    item.innerHTML=`
+        <span>🎁 ${reward}</span>
+        <span style="color:#d45b5b">−${cost}</span>
+    `;
+
+    if(list){
+        list.prepend(item);
+    }
+
+    toast(`${reward} redeemed successfully!`);
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function search(){
+
+    const input=document.getElementById("searchInput");
+
+    const q=input.value.trim();
+
+    if(!q){
+
+        toast("Try searching for food, recycling, rides, or used items.");
+
+        return;
+    }
+
+    const lower=q.toLowerCase();
+
+    if(
+        lower.includes("food")||
+        lower.includes("pizza")||
+        lower.includes("sushi")||
+        lower.includes("bakery")
+    ){
+
+        showPage("food");
+
+        toast(`Showing food results for "${q}"`);
+
+        return;
+    }
+
+    if(
+        lower.includes("recycle")||
+        lower.includes("plastic")||
+        lower.includes("battery")
+    ){
+
+        showPage("recycle");
+
+        toast(`Showing recycling results for "${q}"`);
+
+        return;
+    }
+
+    if(
+        lower.includes("ev")||
+        lower.includes("ride")||
+        lower.includes("transport")||
+        lower.includes("car")
+    ){
+
+        showPage("transport");
+
+        toast(`Opening Green Ride for "${q}"`);
+
+        return;
+    }
+
+    if(
+        lower.includes("used")||
+        lower.includes("chair")||
+        lower.includes("book")||
+        lower.includes("headphone")
+    ){
+
+        showPage("used");
+
+        toast(`Showing marketplace results for "${q}"`);
+
+        return;
+    }
+
+    toast(`Searching GreenLoop for "${q}"...`);
+}
+
+
+/* =========================================================
+   USED MARKET SEARCH
+========================================================= */
+
+function marketSearch(){
+
+    const q=document.getElementById("marketSearch")
+        .value.trim();
+
+    toast(
+        q
+        ? `Searching marketplace for "${q}"...`
+        : "Enter an item to search."
+    );
+}
+
+
+/* =========================================================
+   VEHICLE SELECT
+========================================================= */
+
+function selectVehicle(button,vehicle,price,eta){
+
+    document.querySelectorAll(".vehicle")
+        .forEach(v=>v.classList.remove("active"));
+
+    button.classList.add("active");
+
+    selectedVehicle=vehicle;
+    selectedPrice=price;
+
+    document.getElementById("ridePrice")
+        .textContent="฿"+price;
+
+    document.getElementById("eta")
+        .textContent=eta+" min";
+}
+
+
+/* =========================================================
+   CALL EV
+========================================================= */
+
+function callEV(){
+
+    const destination=document.getElementById("destination")
+        .value.trim();
+
+    if(!destination){
+
+        toast("Please enter your destination.");
+
+        return;
+    }
+
+    const status=document.getElementById("driverStatus");
+
+    const button=document.getElementById("callRideButton");
+
+    status.innerHTML=`
+        <span class="statusDot"></span>
+        Finding nearby EV driver...
+    `;
+
+    button.disabled=true;
+    button.textContent="🔎 Finding driver...";
+
+    setTimeout(()=>{
+
+        status.innerHTML=`
+            <span class="statusDot"></span>
+            Driver found · Arriving in 5 min
+        `;
+
+        button.textContent="🚗 Driver is on the way";
+
+        toast("EV driver found!");
+
+        startEVTracking();
+
+    },1800);
+}
+
+
+/* =========================================================
+   EV LIVE TRACKING PROTOTYPE
+========================================================= */
+
+function startEVTracking(){
+
+    const car=document.getElementById("evMarker");
+    const eta=document.getElementById("eta");
+    const status=document.getElementById("driverStatus");
+
+    let progress=0;
+
+    clearInterval(trackingInterval);
+
+    trackingInterval=setInterval(()=>{
+
+        progress+=5;
+
+        const startX=63;
+        const startY=20;
+
+        const endX=30;
+        const endY=65;
+
+        const x=startX+((endX-startX)*progress/100);
+        const y=startY+((endY-startY)*progress/100);
+
+        car.style.left=x+"%";
+        car.style.top=y+"%";
+
+        const remaining=Math.max(
+            1,
+            Math.ceil(5-progress/20)
+        );
+
+        eta.textContent=remaining+" min";
+
+        if(progress>=100){
+
+            clearInterval(trackingInterval);
+
+            status.innerHTML=`
+                <span class="statusDot"></span>
+                Driver arrived
+            `;
+
+            eta.textContent="Arrived";
+
+            toast("🚗 Your EV has arrived!");
+
+            const button=document.getElementById("callRideButton");
+
+            button.textContent="🚗 Start Ride";
+
+            button.disabled=false;
+
+            button.onclick=()=>{
+
+                earn(15,"Green EV ride");
+
+                toast("Enjoy your green ride! 🌱");
+            };
+        }
+
+    },1000);
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+function centerMap(){
+    toast("Map centered on your location.");
+}
+
+function zoomMap(){
+    toast("Zooming in...");
+}
+
+function zoomOutMap(){
+    toast("Zooming out...");
+}
+
+
+/* =========================================================
+   FOOD RESTAURANT DATA
+========================================================= */
+
+const restaurantData={
+
+    bakery:{
+        name:"Morning Bake",
+        icon:"🥐",
+        meta:"⭐ 4.8 · Bakery · 0.8 km",
+
+        items:[
+
+            {
+                id:"bakery-box",
+                name:"Bakery Surprise Box",
+                description:"Croissants, pastries & bread",
+                price:45,
+                emoji:"🥐",
+                credits:15
+            },
+
+            {
+                id:"croissant",
+                name:"Chocolate Croissant",
+                description:"Fresh bakery rescue item",
+                price:25,
+                emoji:"🥐",
+                credits:8
+            },
+
+            {
+                id:"bread",
+                name:"Mixed Bread Bundle",
+                description:"Assorted fresh bread",
+                price:35,
+                emoji:"🍞",
+                credits:10
+            }
+
+        ]
+    },
+
+    sushi:{
+        name:"Sakana House",
+        icon:"🍣",
+        meta:"⭐ 4.7 · Japanese · 1.2 km",
+
+        items:[
+
+            {
+                id:"sushi-box",
+                name:"Sushi Rescue Set",
+                description:"8-piece mixed sushi",
+                price:87,
+                emoji:"🍣",
+                credits:15
+            },
+
+            {
+                id:"salmon",
+                name:"Salmon Sushi Set",
+                description:"Fresh salmon sushi",
+                price:99,
+                emoji:"🍣",
+                credits:18
+            },
+
+            {
+                id:"maki",
+                name:"Maki Rescue Box",
+                description:"Assorted maki rolls",
+                price:65,
+                emoji:"🍱",
+                credits:12
+            }
+
+        ]
+    },
+
+    pizza:{
+        name:"Green Slice",
+        icon:"🍕",
+        meta:"⭐ 4.9 · Pizza · 1.8 km",
+
+        items:[
+
+            {
+                id:"pizza",
+                name:"Pizza End-of-Day",
+                description:"Freshly baked pizza",
+                price:62,
+                emoji:"🍕",
+                credits:15
+            },
+
+            {
+                id:"margherita",
+                name:"Margherita Pizza",
+                description:"Tomato, mozzarella & basil",
+                price:75,
+                emoji:"🍕",
+                credits:18
+            },
+
+            {
+                id:"slice",
+                name:"Pizza Slice Rescue",
+                description:"Single rescue slice",
+                price:29,
+                emoji:"🍕",
+                credits:8
+            }
+
+        ]
+    },
+
+    salad:{
+        name:"Fresh Corner",
+        icon:"🥗",
+        meta:"⭐ 4.6 · Healthy · 2.1 km",
+
+        items:[
+
+            {
+                id:"salad",
+                name:"Healthy Salad Box",
+                description:"Fresh vegetables & dressing",
+                price:45,
+                emoji:"🥗",
+                credits:15
+            },
+
+            {
+                id:"wrap",
+                name:"Chicken Green Wrap",
+                description:"Chicken, vegetables & wrap",
+                price:49,
+                emoji:"🌯",
+                credits:12
+            },
+
+            {
+                id:"fruit",
+                name:"Fruit Rescue Cup",
+                description:"Fresh seasonal fruits",
+                price:35,
+                emoji:"🍉",
+                credits:10
+            }
+
+        ]
+    }
+};
+
+
+/* =========================================================
+   OPEN RESTAURANT
+========================================================= */
+
+function openRestaurant(id){
+
+    currentRestaurant=id;
+
+    const restaurant=restaurantData[id];
+
+    document.getElementById("modalRestaurantName")
+        .textContent=restaurant.name;
+
+    document.getElementById("modalRestaurantIcon")
+        .textContent=restaurant.icon;
+
+    document.getElementById("modalRestaurantMeta")
+        .textContent=restaurant.meta;
+
+    const menu=document.getElementById("menuList");
+
+    menu.innerHTML="";
+
+    restaurant.items.forEach(item=>{
+
+        const div=document.createElement("div");
+
+        div.className="menuItem";
+
+        div.innerHTML=`
+
+            <div class="menuItemImage">
+                ${item.emoji}
+            </div>
+
+            <div class="menuItemInfo">
+
+                <h4>
+                    ${item.name}
+                </h4>
+
+                <p>
+                    ${item.description}
+                </p>
+
+                <span class="menuPrice">
+                    ฿${item.price}
+                    · 🌱 +${item.credits}
+                </span>
+
+            </div>
+
+            <button class="addMenu"
+                    onclick="addToCart('${item.id}')">
+                +
+            </button>
+        `;
+
+        menu.appendChild(div);
+    });
+
+    document.getElementById("restaurantModal")
+        .classList.add("show");
+}
+
+
+function closeRestaurant(){
+
+    document.getElementById("restaurantModal")
+        .classList.remove("show");
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+function addToCart(itemId){
+
+    const restaurant=restaurantData[currentRestaurant];
+
+    const item=restaurant.items.find(
+        x=>x.id===itemId
+    );
+
+    if(!item)return;
+
+    const existing=foodCart.find(
+        x=>x.id===itemId
+    );
+
+    if(existing){
+
+        existing.qty++;
+
+    }else{
+
+        foodCart.push({
+            ...item,
+            restaurant:restaurant.name,
+            qty:1
+        });
+
+    }
+
+    updateCartUI();
+
+    toast(`${item.name} added to cart`);
+}
+
+
+function changeCartQty(itemId,amount){
+
+    const item=foodCart.find(
+        x=>x.id===itemId
+    );
+
+    if(!item)return;
+
+    item.qty+=amount;
+
+    if(item.qty<=0){
+
+        foodCart=foodCart.filter(
+            x=>x.id!==itemId
+        );
+    }
+
+    updateCartUI();
+}
+
+
+function getFoodSubtotal(){
+
+    return foodCart.reduce(
+        (sum,item)=>
+            sum+(item.price*item.qty),
+        0
+    );
+}
+
+
+function updateCartUI(){
+
+    const count=foodCart.reduce(
+        (sum,item)=>sum+item.qty,
+        0
+    );
+
+    document.getElementById("cartCount")
+        .textContent=count;
+
+    document.getElementById("modalCartTotal")
+        .textContent="฿"+getFoodSubtotal();
+
+    const list=document.getElementById("cartItems");
+
+    if(!foodCart.length){
+
+        list.innerHTML=`
+
+            <div class="emptyCart">
+
+                🛒
+
+                <h3>
+                    Your cart is empty
+                </h3>
+
+                <p>
+                    Add some rescued food first.
+                </p>
+
+            </div>
+        `;
+
+        updateCheckoutTotals();
+
+        return;
+    }
+
+    list.innerHTML="";
+
+    foodCart.forEach(item=>{
+
+        const div=document.createElement("div");
+
+        div.className="cartItem";
+
+        div.innerHTML=`
+
+            <div class="cartItemEmoji">
+                ${item.emoji}
+            </div>
+
+            <div class="cartItemInfo">
+
+                <b>
+                    ${item.name}
+                </b>
+
+                <small>
+                    ฿${item.price}
+                    · 🌱 +${item.credits}
+                </small>
+
+            </div>
+
+            <div class="qtyControls">
+
+                <button onclick="changeCartQty('${item.id}',-1)">
+                    −
+                </button>
+
+                <b>
+                    ${item.qty}
+                </b>
+
+                <button onclick="changeCartQty('${item.id}',1)">
+                    +
+                </button>
+
+            </div>
+
+            <strong>
+                ฿${item.price*item.qty}
+            </strong>
+        `;
+
+        list.appendChild(div);
+    });
+
+    updateCheckoutTotals();
+}
+
+
+function openCart(){
+
+    closeRestaurant();
+
+    updateCartUI();
+
+    document.getElementById("cartModal")
+        .classList.add("show");
+}
+
+
+function closeCart(){
+
+    document.getElementById("cartModal")
+        .classList.remove("show");
+}
+
+
+/* =========================================================
+   DELIVERY OPTIONS
+========================================================= */
+
+function selectDelivery(button,type,fee){
+
+    document.querySelectorAll(".deliveryOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    deliveryType=type;
+    deliveryFee=fee;
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   DELIVERY TIME
+========================================================= */
+
+function selectTime(button,type){
+
+    document.querySelectorAll(".timeOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    orderTime=type;
+
+    const area=document.getElementById("scheduleArea");
+
+    if(type==="schedule"){
+
+        area.classList.add("show");
+
+    }else{
+
+        area.classList.remove("show");
+    }
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   PAYMENT
+========================================================= */
+
+function selectPayment(button,method){
+
+    document.querySelectorAll(".paymentOption")
+        .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    paymentMethod=method;
+}
+
+
+/* =========================================================
+   PROMO
+========================================================= */
+
+function applyPromo(){
+
+    const code=document.getElementById("promoInput")
+        .value
+        .trim()
+        .toUpperCase();
+
+    if(code==="GREEN70"){
+
+        promoDiscount=Math.round(
+            getFoodSubtotal()*.10
+        );
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "✓ GreenLoop promo applied: 10% extra off";
+
+    }else if(code==="RESCUE100"){
+
+        promoDiscount=30;
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "✓ ฿30 rescue food discount applied";
+
+    }else{
+
+        promoDiscount=0;
+
+        document.getElementById("promoMessage")
+            .textContent=
+            "Invalid promo code";
+    }
+
+    updateCheckoutTotals();
+}
+
+
+/* =========================================================
+   GROUP ORDER
+========================================================= */
+
+function startGroupOrder(){
+
+    toast(
+        "Group Order created! Share link with friends."
+    );
+}
+
+
+/* =========================================================
+   CHECKOUT TOTAL
+========================================================= */
+
+function updateCheckoutTotals(){
+
+    const subtotal=getFoodSubtotal();
+
+    let fee=deliveryFee;
+
+    if(orderTime==="pickup"){
+        fee=0;
+    }
+
+    const total=Math.max(
+        0,
+        subtotal+fee-promoDiscount
+    );
+
+    document.getElementById("checkoutSubtotal")
+        .textContent="฿"+subtotal;
+
+    document.getElementById("checkoutDelivery")
+        .textContent="฿"+fee;
+
+    document.getElementById("checkoutDiscount")
+        .textContent="-฿"+promoDiscount;
+
+    document.getElementById("checkoutTotal")
+        .textContent="฿"+total;
+
+    document.getElementById("placeOrderTotal")
+        .textContent="฿"+total;
+}
+
+
+/* =========================================================
+   PLACE FOOD ORDER
+========================================================= */
+
+function placeFoodOrder(){
+
+    if(!foodCart.length){
+
+        toast("Your cart is empty.");
+
+        return;
+    }
+
+    const total=Math.max(
+        0,
+        getFoodSubtotal()+
+        (orderTime==="pickup"?0:deliveryFee)-
+        promoDiscount
+    );
+
+    closeCart();
+
+    document.getElementById("orderModal")
+        .classList.add("show");
+
+    toast(
+        `Order placed successfully · ฿${total}`
+    );
+
+    startFoodTracking();
+
+    const credits=foodCart.reduce(
+        (sum,item)=>
+            sum+(item.credits*item.qty),
+        0
+    );
+
+    setTimeout(()=>{
+
+        earn(
+            credits,
+            "Food rescue order"
+        );
+
+    },1200);
+
+    foodCart=[];
+    updateCartUI();
+}
+
+
+/* =========================================================
+   FOOD ORDER TRACKING
+========================================================= */
+
+function startFoodTracking(){
+
+    const steps=[
+        "tracking1",
+        "tracking2",
+        "tracking3",
+        "tracking4"
+    ];
+
+    steps.forEach(id=>{
+        document.getElementById(id)
+            .classList.remove("active");
+    });
+
+    document.getElementById("tracking1")
+        .classList.add("active");
+
+    const bike=document.getElementById("deliveryBike");
+
+    bike.style.left="45%";
+    bike.style.top="50%";
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking2")
+            .classList.add("active");
+
+        toast(
+            "🍳 Restaurant is preparing your order"
+        );
+
+    },2500);
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking3")
+            .classList.add("active");
+
+        bike.style.left="65%";
+        bike.style.top="55%";
+
+        toast(
+            "🛵 Driver picked up your order"
+        );
+
+    },5500);
+
+    setTimeout(()=>{
+
+        document.getElementById("tracking4")
+            .classList.add("active");
+
+        bike.style.left="80%";
+        bike.style.top="70%";
+
+        toast(
+            "📍 Your order is arriving"
+        );
+
+    },8500);
+}
+
+
+function closeOrderTracking(){
+
+    document.getElementById("orderModal")
+        .classList.remove("show");
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(message){
+
+    const el=document.getElementById("toast");
+
+    el.textContent=message;
+
+    el.classList.add("show");
+
+    clearTimeout(window.greenLoopToast);
+
+    window.greenLoopToast=setTimeout(()=>{
+
+        el.classList.remove("show");
+
+    },2600);
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+const translations={
+
+    en:{
+        home:"Home",
+        food:"Food Deals",
+        recycle:"Recycle",
+        transport:"Green Ride",
+        used:"Used Items",
+        wallet:"Carbon Wallet",
+        login: "Login / Sign Up"
+    },
+
+    th:{
+        home:"หน้าหลัก",
+        food:"อาหารลดพิเศษ",
+        recycle:"รีไซเคิล",
+        transport:"เรียกรถ EV",
+        used:"ของมือสอง",
+        wallet:"กระเป๋าคาร์บอน",
+        login: "เข้าสู่ระบบ / สมัครสมาชิก"
+    },
+
+    ko:{
+        home:"홈",
+        food:"마감 할인 음식",
+        recycle:"재활용",
+        transport:"친환경 차량",
+        used:"중고 물품",
+        wallet:"탄소 지갑",
+        login: "로그인 / 회원가입"
+    }
+
+};
+
+
+function setLanguage(lang){
+    document.querySelectorAll("[data-i18n]").forEach(el => { 
+        let k = el.dataset.i18n; 
+        if (translations[lang][k]) { 
+            el.textContent = translations[lang][k]; 
+        } 
+    });
+
+    const t=translations[lang];
+
+    const pages=[
+        "home",
+        "food",
+        "recycle",
+        "transport",
+        "used",
+        "wallet"
+    ];
+
+    document.querySelectorAll(".navlinks button")
+        .forEach((button,index)=>{
+
+            if(t[pages[index]]){
+                button.textContent=t[pages[index]];
+            }
+        });
+
+    toast(
+        lang==="th"
+        ? "เปลี่ยนภาษาเป็นไทยแล้ว"
+        : lang==="ko"
+        ? "한국어로 변경되었습니다"
+        : "Language changed to English"
+    );
+}
+
+/* =========================================================
+   GOOGLE LOGIN MODAL & AUTH CONTROLS
+========================================================= */
+
+// 1. 상단바의 로그인 텍스트를 클릭했을 때 실행되는 함수
+function triggerGoogleLogin(event) {
+    if (event) event.preventDefault();
+    document.getElementById("loginModal").classList.add("show");
+}
+
+// 2. 모달 닫기 함수 (X 버튼 또는 로그인 성공 시 호출)
+function closeLoginModal() {
+    document.getElementById("loginModal").classList.remove("show");
+}
+
+// 3. 구글 로그인 시스템 초기화 및 버튼 렌더링
+// 💡 만약 window.onload가 이미 코드에 존재한다면, 내부 내용만 병합해 주세요!
+window.onload = function () {
+    // (기존에 작성해 두셨던 초기화 함수 호출이 있다면 여기에 유지하세요)
+    // updateBalance();
+
+    // 구글 OAuth 초기화
+    google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // ⚠️ 본인의 실제 Client ID로 교체하세요!
+        callback: handleCredentialResponse
+    });
+
+    // 모달 안의 빈 공간(#googleButtonContainer)에 구글 공식 버튼 그리기
+    google.accounts.id.renderButton(
+        document.getElementById("googleButtonContainer"),
+        { 
+            theme: "outline", 
+            size: "large", 
+            type: "standard",
+            text: "continue_with", // 브라우저 언어에 맞춰 "구글 계정으로 계속하기" 등이 자동 적용됩니다
+            shape: "rectangular",
+            width: "280"
+        } 
+    );
+};
+
+// 4. 구글 로그인이 성공적으로 완료되었을 때 실행되는 콜백 함수
+async function handleCredentialResponse(response) {
+    // 모달 팝업 닫기
+    closeLoginModal();
+    
+    toast("구글 로그인 성공! 백엔드로 데이터를 전송합니다.");
+    console.log("구글 토큰: ", response.credential);
+
+    // Spring Boot 백엔드로 JWT 토큰 전송 테스트
+    try {
+        const res = await fetch("http://localhost:8080/api/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ idToken: response.credential }),
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+            console.log("백엔드 통신 성공:", data);
+            toast("서버 로그인 처리가 완료되었습니다!");
+            // TODO: 백엔드에서 받아온 유저 정보를 활용한 UI 업데이트 처리
+        } else {
+            console.error("백엔드 에러:", data);
+            toast("서버 처리 중 문제가 발생했습니다.");
+        }
+    } catch (error) {
+        console.error("통신 실패:", error);
+        toast("백엔드 서버와 연결할 수 없습니다.");
+    }
+}
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+updateBalance();
