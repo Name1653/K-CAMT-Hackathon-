@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLoop — Sustainable Local Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .restaurant-register-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+
+        .restaurant-register-wrapper .title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 50px;
+            color: #000;
+        }
+
+        .restaurant-form {
+            background-color: #dbdbdb;
+            border-radius: 8px;
+            width: 360px;
+            padding: 40px 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-field input {
+            border: none;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            background-color: #fff;
+        }
+
+        .form-field input:focus {
+            outline: 2px solid var(--green);
+        }
+
+        .time-fields {
+            display: flex;
+            gap: 16px;
+        }
+
+        .time-fields .form-field {
+            flex: 1;
+        }
+
+        .submitButton {
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            background: var(--green);
+            color: #fff;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .submitButton:hover {
+            background: var(--green2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================================
+        NAV
+    ========================================================= -->
+
+    <nav class="nav">
+
+        <div class="logo">
+            <span>🌱</span>
+            GreenLoop
+        </div>
+
+        <div class="navlinks">
+
+            <button class="active"
+                    data-page="home"
+                    onclick="showPage('home',this)">
+                Home
+            </button>
+
+            <button data-page="food"
+                    onclick="showPage('food',this)">
+                Food Deals
+            </button>
+
+            <button data-page="recycle"
+                    onclick="showPage('recycle',this)">
+                Recycle
+            </button>
+
+            <button data-page="transport"
+                    onclick="showPage('transport',this)">
+                Green Ride
+            </button>
+
+            <button data-page="used"
+                    onclick="showPage('used',this)">
+                Used Items
+            </button>
+
+            <button data-page="wallet"
+                    onclick="showPage('wallet',this)">
+                Carbon Wallet
+            </button>
+
+        </div>
+
+        <div class="actions">
+            <div
+                href="#"
+                id="googleLoginLink"
+                data-i18n="login"
+                onclick="triggerGoogleLogin(event)"
+                style="cursor: pointer; font-weight: 850; color: var(--green2); text-decoration: none; padding: 0 10px;">
+                Login / Sign Up
+            </div>
+            <div id="userInfo" style="display: none; align-items: center; gap: 10px; padding: 0 10px;">
+                <span id="userName" style="font-weight: 850; color: var(--green2);"></span>
+                <button onclick="logout()" style="cursor: pointer; border: none; background: none; font-weight: 850; color: var(--muted); padding: 0;">
+                    Logout
+                </button>
+            </div>
+            <div class="credits">
+                🌱 <span id="navCredits">1,250</span>
+            </div>
+
+            <select class="lang"
+                    id="language"
+                    onchange="setLanguage(this.value)">
+                <option value="en">EN</option>
+                <option value="th">TH</option>
+                <option value="ko">한국어</option>
+            </select>
+
+        </div>
+
+    </nav>
+
+    <main class="restaurant-register-wrapper">
+        <h2 class="title">파트너 회원가입</h2>
+
+        <form class="restaurant-form" id="restaurantForm">
+            <div class="form-field">
+                <label for="restaurantName">가게명</label>
+                <input type="text" id="restaurantName" name="name" required placeholder="예) 그린루프 식당">
+            </div>
+
+            <div class="form-field">
+                <label for="restaurantLocation">가게 주소</label>
+                <input type="text" id="restaurantLocation" name="location" required placeholder="예) 서울시 강남구 테헤란로 123">
+            </div>
+
+            <div class="time-fields">
+                <div class="form-field">
+                    <label for="openTime">영업 시작 시간</label>
+                    <input type="time" id="openTime" name="openTime" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="closeTime">영업 종료 시간</label>
+                    <input type="time" id="closeTime" name="closeTime" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submitButton">가입하기</button>
+        </form>
+    </main>
+    <script src="script.js"></script>
+    <script src="register_restaurant.js"></script>
+</body>
+</html>

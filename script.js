@@ -1489,12 +1489,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function checkLoginStatus() {
-    // register.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만 오는 페이지이므로
-    // 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
+    // register.html / register_restaurant.html은 아직 회원가입(역할 선택)이 끝나지 않은 사용자만
+    // 오는 페이지이므로 백엔드에 인증 세션이 있어도 상단바는 "로그인" 상태로 유지한다.
     // 주의: 정적 서버(serve)가 "/register.html" 요청을 "/register"로 리다이렉트하는
     // clean URL 방식을 쓰기 때문에, 확장자가 없는 경로도 함께 확인해야 한다.
     // (이걸 빠뜨리면 register 페이지에서 자기 자신으로 리다이렉트를 반복하는 무한 루프가 생김)
-    const isRegisterPage = /(^|\/)register(\.html)?$/.test(location.pathname);
+    const isRegisterPage = /(^|\/)register(_restaurant)?(\.html)?$/.test(location.pathname);
 
     try {
         // 현재 로그인한 사용자의 정보를 가져오는 백엔드 API (엔드포인트 확인 필요)
@@ -1508,8 +1508,8 @@ async function checkLoginStatus() {
             const userData = await response.json();
 
             if (!userData.role || userData.role === "NONE") {
-                // 아직 회원 유형을 선택하지 않은 사용자는 계속 register로 보낸다
-                window.location.replace("/register");
+                // 아직 회원 유형을 선택하지 않은 사용자는 계속 register.html로 보낸다
+                window.location.replace("/register.html");
                 return;
             }
 
@@ -1561,7 +1561,7 @@ async function handleCredentialResponse(response) {
             // 💡 백엔드에서 보내준 회원 상태에 따라 분기 처리
             if (data.role === "NONE") {
                 // if I login first, I have to register this service
-                window.location.replace("/register");
+                window.location.replace("/register.html");
             }
             else if (data.role === "RESTAURANT" || data.role === "MEMBER") {
                 window.location.replace("/");
