@@ -56,6 +56,29 @@
             outline: 2px solid var(--green);
         }
 
+        .form-field gmp-place-autocomplete {
+            display: block;
+            width: 100%;
+            color-scheme: light;
+        }
+
+        .place-help {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #5f6f67;
+        }
+
+        .place-selected {
+            display: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: var(--mint);
+            color: var(--green2);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
         .time-fields {
             display: flex;
             gap: 16px;
@@ -110,22 +133,15 @@
                 Food Deals
             </button>
 
-            <button data-page="recycle"
-                    data-i18n="recycle"
-                    onclick="showPage('recycle',this)">
-                Recycle
+            <button data-page="route"
+                    onclick="window.location.href='route.html'">
+                GreenRoute
             </button>
 
             <button data-page="transport"
                     data-i18n="transport"
                     onclick="showPage('transport',this)">
                 Green Ride
-            </button>
-
-            <button data-page="used"
-                    data-i18n="used"
-                    onclick="showPage('used',this)">
-                Used Items
             </button>
 
             <button data-page="wallet"
@@ -172,17 +188,17 @@
 
         <form class="restaurant-form" id="restaurantForm">
             <div class="form-field">
-                <label for="restaurantName" data-i18n="restaurant_form_name_label">가게명</label>
-                <input type="text" id="restaurantName" name="name" required
-                       data-i18n-placeholder="restaurant_form_name_placeholder"
-                       placeholder="예) 그린루프 식당">
+                <label for="restaurantName">Restaurant name</label>
+                <input type="text" id="restaurantName" name="name" required readonly
+                       placeholder="Filled after selecting a Google place">
             </div>
 
             <div class="form-field">
-                <label for="restaurantLocation" data-i18n="restaurant_form_location_label">가게 주소</label>
+                <label for="restaurantLocation">Find your restaurant on Google</label>
                 <input type="text" id="restaurantLocation" name="location" required
-                       data-i18n-placeholder="restaurant_form_location_placeholder"
-                       placeholder="예) 서울시 강남구 테헤란로 123">
+                       placeholder="Search by restaurant name or address">
+                <p class="place-help">Select the exact restaurant from Google's suggestions.</p>
+                <div id="selectedGooglePlace" class="place-selected"></div>
             </div>
 
             <div class="time-fields">

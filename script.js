@@ -7,6 +7,21 @@ let balance = 1250;
 let selectedVehicle = "EV Car";
 let selectedPrice = 79;
 let trackingInterval = null;
+let greenRideMap = null;
+let greenRidePolyline = null;
+let greenRideMarkers = [];
+let greenRideRoute = null;
+let greenRideDriverMarker = null;
+const greenRideLocations = {
+    pickup: { address: "Chiang Mai University" },
+    destination: { address: "Wintree City Resort Chiang Mai" }
+};
+const GREEN_RIDE_PRICING = {
+    "EV Car": { base: 40, perKm: 10, perMin: 1.5, minimum: 79, evKgPerKm: 0.04519 },
+    "EV Taxi": { base: 35, perKm: 8, perMin: 1.2, minimum: 59, evKgPerKm: 0.04519 },
+    "EV Bike": { base: 25, perKm: 6, perMin: 0.8, minimum: 39, evKgPerKm: 0.012 }
+};
+const BASELINE_CAR_KG_CO2E_PER_KM = 0.16272;
 
 
 /* =========================================================
@@ -21,7 +36,7 @@ let deliveryFee = 25;
 
 let orderTime = "instant";
 let paymentMethod = "GreenPay";
-let promoDiscount = 0;
+let mileageDiscount = 0;
 
 
 /* =========================================================
@@ -222,13 +237,209 @@ function selectVehicle(button,vehicle,price,eta){
     button.classList.add("active");
 
     selectedVehicle=vehicle;
-    selectedPrice=price;
-
-    document.getElementById("ridePrice")
-        .textContent="฿"+price;
+    updateGreenRideEstimate();
 
     document.getElementById("eta")
         .textContent=eta+" min";
+}
+
+function setRideRouteStatus(message,isError=false){
+    const status=document.getElementById("rideRouteStatus");
+    if(!status)return;
+    status.textContent=message;
+    status.classList.toggle("error",isError);
+}
+
+async function loadGreenRideGoogleMaps(){
+    if(window.google?.maps?.places)return;
+    const configResponse=await fetch("http://localhost:8080/api/maps/config");
+    if(!configResponse.ok)throw new Error("Google Maps configuration could not be loaded.");
+    const {apiKey}=await configResponse.json();
+    await new Promise((resolve,reject)=>{
+        window.__initGreenRideMap=resolve;
+        const script=document.createElement("script");
+        script.src=`https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places,geometry&language=en&region=TH&callback=__initGreenRideMap&loading=async`;
+        script.async=true;
+        script.onerror=()=>reject(new Error("Google Maps could not be loaded."));
+        document.head.appendChild(script);
+    });
+}
+
+function bindGreenRideAutocomplete(inputId,stateKey){
+    const input=document.getElementById(inputId);
+    if(!input)return;
+    const initialAddress=input.value.trim();
+    const autocomplete=new google.maps.places.PlaceAutocompleteElement({includedRegionCodes:["th"]});
+    autocomplete.id=inputId;
+    autocomplete.placeholder=initialAddress;
+    input.replaceWith(autocomplete);
+    autocomplete.addEventListener("gmp-select",async event=>{
+        const place=event.placePrediction.toPlace();
+        await place.fetchFields({fields:["displayName","formattedAddress","location","id"]});
+        if(!place.location)return;
+        greenRideLocations[stateKey]={
+            address:place.formattedAddress||place.displayName,
+            placeId:place.id,
+            latitude:place.location.lat(),
+            longitude:place.location.lng()
+        };
+        if(stateKey==="pickup"){
+            const addressElement=document.getElementById("pickupResolvedAddress");
+            if(addressElement)addressElement.textContent=greenRideLocations[stateKey].address;
+        }
+        greenRideRoute=null;
+        setRideRouteStatus("Location selected. Preview the route to update the estimate.");
+    });
+}
+
+async function resolveGreenRideLocation(location){
+    if(location?.latitude!=null)return location;
+    const {places}=await google.maps.places.Place.searchByText({
+        textQuery:location?.address||"",fields:["displayName","formattedAddress","location","id"],
+        region:"TH",language:"en",maxResultCount:1
+    });
+    const place=places?.[0];
+    if(!place?.location)throw new Error(`Place not found: ${location?.address||""}`);
+    return {address:place.formattedAddress||place.displayName,placeId:place.id,
+        latitude:place.location.lat(),longitude:place.location.lng()};
+}
+
+async function useCurrentLocation(){
+    const button=document.querySelector(".useMyLocationButton");
+    if(!navigator.geolocation){
+        setRideRouteStatus("This browser does not support location access.",true);
+        return;
+    }
+
+    button.disabled=true;
+    setRideRouteStatus("Getting your current location…");
+    navigator.geolocation.getCurrentPosition(async position=>{
+        try{
+            const latitude=position.coords.latitude;
+            const longitude=position.coords.longitude;
+            let address="Current location";
+
+            if(window.google?.maps?.Geocoder){
+                try{
+                    const geocoder=new google.maps.Geocoder();
+                    const result=await geocoder.geocode({location:{lat:latitude,lng:longitude}});
+                    address=result.results?.[0]?.formatted_address||address;
+                }catch(geocodeError){
+                    console.warn("Reverse geocoding unavailable; using coordinates instead.",geocodeError);
+                    address="Current location";
+                }
+            }
+
+            greenRideLocations.pickup={address,latitude,longitude};
+            greenRideRoute=null;
+            const pickupElement=document.getElementById("pickup");
+            if(pickupElement){
+                pickupElement.placeholder=address;
+                pickupElement.setAttribute("aria-label",`Pickup: ${address}`);
+            }
+            const addressElement=document.getElementById("pickupResolvedAddress");
+            if(addressElement)addressElement.textContent=address;
+            setRideRouteStatus(`Current pickup location: ${address}`);
+            await calculateGreenRideRoute();
+        }catch(error){
+            setRideRouteStatus("Your location was found, but the route could not be calculated: "+error.message,true);
+        }finally{
+            button.disabled=false;
+        }
+    },error=>{
+        const messages={
+            1:"Location permission was denied. Allow location access in your browser settings.",
+            2:"Your current location is unavailable.",
+            3:"Getting your location timed out. Please try again."
+        };
+        setRideRouteStatus(messages[error.code]||"Your current location could not be retrieved.",true);
+        button.disabled=false;
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+
+async function calculateGreenRideRoute(){
+    const button=document.getElementById("previewRideRouteButton");
+    button.disabled=true;
+    setRideRouteStatus("Calculating route, fare and carbon savings…");
+    try{
+        const origin=await resolveGreenRideLocation(greenRideLocations.pickup);
+        const destination=await resolveGreenRideLocation(greenRideLocations.destination);
+        greenRideLocations.pickup=origin;
+        greenRideLocations.destination=destination;
+        const response=await fetch("http://localhost:8080/api/maps/routes",{
+            method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({origin,destination,travelMode:"DRIVE"})
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.routes?.length)throw new Error(data.message||"No driving route was found.");
+        greenRideRoute=data.routes[0];
+        if(greenRideDriverMarker){
+            greenRideDriverMarker.setMap(null);
+            greenRideDriverMarker=null;
+        }
+        renderGreenRideRoute(greenRideRoute);
+        updateGreenRideEstimate();
+    }catch(error){
+        greenRideRoute=null;
+        setRideRouteStatus(error.message,true);
+    }finally{button.disabled=false;}
+}
+
+function renderGreenRideRoute(route){
+    if(greenRidePolyline)greenRidePolyline.setMap(null);
+    greenRideMarkers.forEach(marker=>marker.setMap(null));
+    greenRideMarkers=[];
+    const path=google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
+    greenRidePolyline=new google.maps.Polyline({map:greenRideMap,path,strokeColor:"#16a36b",strokeOpacity:.95,strokeWeight:6});
+    const add=(position,label,color)=>{
+        const marker=new google.maps.Marker({map:greenRideMap,position,label:{text:label,color:"white",fontWeight:"700"},
+            icon:{path:google.maps.SymbolPath.CIRCLE,scale:10,fillColor:color,fillOpacity:1,strokeColor:"white",strokeWeight:3}});
+        greenRideMarkers.push(marker);
+    };
+    add(path[0],"A","#407de8"); add(path[path.length-1],"B","#ff6b6b");
+    const bounds=new google.maps.LatLngBounds(); path.forEach(point=>bounds.extend(point));
+    greenRideMap.fitBounds(bounds,55);
+}
+
+function updateGreenRideEstimate(){
+    const pricing=GREEN_RIDE_PRICING[selectedVehicle];
+    if(!greenRideRoute){
+        selectedPrice=pricing.minimum;
+        document.getElementById("ridePrice").textContent="฿"+selectedPrice;
+        document.getElementById("rideCarbonSaved").textContent="-- kg";
+        return;
+    }
+    const km=greenRideRoute.distanceMeters/1000;
+    const minutes=(Number.parseInt(greenRideRoute.duration,10)||0)/60;
+    const fareFor=rate=>Math.max(rate.minimum,Math.ceil(rate.base+km*rate.perKm+minutes*rate.perMin));
+    selectedPrice=fareFor(pricing);
+    const fareElements={"EV Car":"evCarFare","EV Taxi":"evTaxiFare","EV Bike":"evBikeFare"};
+    Object.entries(GREEN_RIDE_PRICING).forEach(([vehicle,rate])=>{
+        const element=document.getElementById(fareElements[vehicle]);
+        if(element)element.textContent="฿"+fareFor(rate);
+    });
+    const saved=Math.max(0,km*(BASELINE_CAR_KG_CO2E_PER_KM-pricing.evKgPerKm));
+    document.getElementById("ridePrice").textContent="฿"+selectedPrice;
+    document.getElementById("rideCarbonSaved").textContent=saved.toFixed(2)+" kg";
+    document.getElementById("rideCalculation").innerHTML=
+        `${km.toFixed(1)} km · ${Math.round(minutes)} min<br>`+
+        `Fare: max(฿${pricing.minimum}, ฿${pricing.base} + ${km.toFixed(1)}km × ฿${pricing.perKm} + ${Math.round(minutes)}min × ฿${pricing.perMin})<br>`+
+        `CO₂e saved: ${km.toFixed(1)}km × (${BASELINE_CAR_KG_CO2E_PER_KM} − ${pricing.evKgPerKm}) = ${saved.toFixed(2)} kg`;
+    document.getElementById("eta").textContent=Math.max(2,Math.round(minutes))+" min";
+    setRideRouteStatus(`${selectedVehicle} route ready · ${km.toFixed(1)} km · ${Math.round(minutes)} min`);
+}
+
+async function initializeGreenRideMap(){
+    try{
+        await loadGreenRideGoogleMaps();
+        greenRideMap=new google.maps.Map(document.getElementById("googleRideMap"),{
+            center:{lat:18.7883,lng:98.9853},zoom:12,mapTypeControl:false,streetViewControl:false
+        });
+        document.getElementById("rideMap").classList.add("googleReady");
+        bindGreenRideAutocomplete("pickup","pickup");
+        bindGreenRideAutocomplete("destination","destination");
+        await calculateGreenRideRoute();
+    }catch(error){setRideRouteStatus(error.message,true);}
 }
 
 
@@ -237,13 +448,9 @@ function selectVehicle(button,vehicle,price,eta){
 ========================================================= */
 
 function callEV(){
+    if(!greenRideRoute){
 
-    const destination=document.getElementById("destination")
-        .value.trim();
-
-    if(!destination){
-
-        toast(t("transport_enter_destination"));
+        toast("Preview a valid route before calling an EV.");
 
         return;
     }
@@ -282,10 +489,41 @@ function callEV(){
 ========================================================= */
 
 function startEVTracking(){
-
-    const car=document.getElementById("evMarker");
     const eta=document.getElementById("eta");
     const status=document.getElementById("driverStatus");
+
+    if(!greenRideMap||greenRideLocations.pickup.latitude==null){
+        toast("A valid pickup location is required.");
+        return;
+    }
+
+    const pickup=new google.maps.LatLng(
+        greenRideLocations.pickup.latitude,
+        greenRideLocations.pickup.longitude
+    );
+    const driverStart=google.maps.geometry.spherical.computeOffset(pickup,1200,65);
+
+    if(greenRideDriverMarker)greenRideDriverMarker.setMap(null);
+    greenRideDriverMarker=new google.maps.Marker({
+        map:greenRideMap,
+        position:driverStart,
+        title:"Alex · EV Driver",
+        zIndex:20,
+        label:{text:"🚗",fontSize:"22px"},
+        icon:{
+            path:google.maps.SymbolPath.CIRCLE,
+            scale:18,
+            fillColor:"#ffffff",
+            fillOpacity:1,
+            strokeColor:"#16a36b",
+            strokeWeight:3
+        }
+    });
+
+    const trackingBounds=new google.maps.LatLngBounds();
+    trackingBounds.extend(driverStart);
+    trackingBounds.extend(pickup);
+    greenRideMap.fitBounds(trackingBounds,90);
 
     let progress=0;
 
@@ -295,17 +533,12 @@ function startEVTracking(){
 
         progress+=5;
 
-        const startX=63;
-        const startY=20;
-
-        const endX=30;
-        const endY=65;
-
-        const x=startX+((endX-startX)*progress/100);
-        const y=startY+((endY-startY)*progress/100);
-
-        car.style.left=x+"%";
-        car.style.top=y+"%";
+        const position=google.maps.geometry.spherical.interpolate(
+            driverStart,
+            pickup,
+            Math.min(progress,100)/100
+        );
+        greenRideDriverMarker.setPosition(position);
 
         const remaining=Math.max(
             1,
@@ -324,6 +557,9 @@ function startEVTracking(){
             `;
 
             eta.textContent=t("transport_arrived");
+
+            greenRideDriverMarker.setPosition(pickup);
+            greenRideMap.panTo(pickup);
 
             toast("🚗 "+t("transport_ev_arrived_toast"));
 
@@ -350,16 +586,23 @@ function startEVTracking(){
 ========================================================= */
 
 function centerMap(){
-    toast(t("map_centered_toast"));
+    if(greenRideRoute){renderGreenRideRoute(greenRideRoute);return;}
+    greenRideMap?.setCenter({lat:18.7883,lng:98.9853});
 }
 
 function zoomMap(){
-    toast(t("map_zoom_in_toast"));
+    if(greenRideMap)greenRideMap.setZoom((greenRideMap.getZoom()||12)+1);
 }
 
 function zoomOutMap(){
-    toast(t("map_zoom_out_toast"));
+    if(greenRideMap)greenRideMap.setZoom((greenRideMap.getZoom()||12)-1);
 }
+
+document.addEventListener("DOMContentLoaded",()=>{
+    if(document.getElementById("googleRideMap")){
+        initializeGreenRideMap();
+    }
+});
 
 
 /* =========================================================
@@ -629,7 +872,7 @@ function selectFoodCategory(button,category){
 
 let liveFoods=[];
 
-async function showAllFoodItems(category){
+async function showAllFoodItems(category, restaurantId=null, restaurantName=""){
 
     document.getElementById("restaurantSectionHead").style.display="none";
     document.getElementById("restaurantGrid").style.display="none";
@@ -639,11 +882,13 @@ async function showAllFoodItems(category){
 
     const label=foodCategoryLabels[category]||null;
 
-    document.getElementById("allFoodItemsTitle").textContent=
-        label&&category!=="DEFAULT" ? `${label} deals` : "All food deals";
+    document.getElementById("allFoodItemsTitle").textContent=restaurantId
+        ? `${restaurantName} food deals`
+        : (label&&category!=="DEFAULT" ? `${label} deals` : "All food deals");
 
-    document.getElementById("allFoodItemsSubtitle").textContent=
-        label&&category!=="DEFAULT"
+    document.getElementById("allFoodItemsSubtitle").textContent=restaurantId
+        ? "Last-minute food currently registered by this restaurant"
+        : label&&category!=="DEFAULT"
             ? `Rescue items in the ${label} category`
             : "Today's rescue food deals, freshly posted by restaurants";
 
@@ -682,9 +927,13 @@ async function showAllFoodItems(category){
         return;
     }
 
-    const items=category&&category!=="DEFAULT"
+    let items=category&&category!=="DEFAULT"
         ? liveFoods.filter(food=>food.category===category)
         : liveFoods;
+
+    if(restaurantId){
+        items=items.filter(food=>String(food.restaurantId)===String(restaurantId));
+    }
 
     grid.innerHTML="";
 
@@ -751,6 +1000,92 @@ async function showAllFoodItems(category){
         `;
     }
 }
+
+async function loadRegisteredRestaurants(){
+    const grid=document.getElementById("restaurantGrid");
+    if(!grid)return;
+
+    grid.innerHTML=`<p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">Loading GreenLoop partner restaurants...</p>`;
+
+    try{
+        const response=await fetch("http://localhost:8080/api/restaurants/partners");
+        if(!response.ok)throw new Error(`Restaurant request failed (${response.status})`);
+        const restaurants=await response.json();
+
+        if(!restaurants.length){
+            grid.innerHTML=`<p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">There are currently no registered partner restaurants.</p>`;
+            return;
+        }
+
+        const restaurantAssets=await Promise.all(restaurants.map(async restaurant=>{
+            const [foods,photo]=await Promise.all([
+                fetch(`http://localhost:8080/api/foods/restaurant/${restaurant.id}`)
+                    .then(response=>response.ok?response.json():[]).catch(()=>[]),
+                fetch(`http://localhost:8080/api/maps/places/${encodeURIComponent(restaurant.googlePlaceId)}/photo`)
+                    .then(response=>response.ok?response.json():null).catch(()=>null)
+            ]);
+            return {foods,photo};
+        }));
+
+        grid.innerHTML="";
+        restaurants.forEach((restaurant,index)=>{
+            const {foods,photo}=restaurantAssets[index];
+            const maxDiscount=foods.reduce((max,food)=>Math.max(max,food.discountRate||0),0);
+            const photoAttribution=photo?.authorAttributions?.[0];
+            const photoSourceUri=photo?.googleMapsUri||photoAttribution?.uri||"";
+            const photoMarkup=photo?.photoUri
+                ? `<a class="restaurantPhotoLink" href="${escapeAppHtml(photoSourceUri||"https://maps.google.com")}" target="_blank" rel="noopener" aria-label="View this photo on Google Maps">
+                       <img src="${escapeAppHtml(photo.photoUri)}" alt="${escapeAppHtml(restaurant.name)}">
+                   </a>
+                   <a class="restaurantPhotoCredit" href="${escapeAppHtml(photoSourceUri||"https://maps.google.com")}" target="_blank" rel="noopener">
+                       ${photoAttribution?`Photo by ${escapeAppHtml(photoAttribution.displayName)}`:"View on Google Maps"}
+                   </a>`
+                : ["🍜","🥗","🍛","🥡"][index%4];
+            const card=document.createElement("article");
+            card.className="restaurantCard";
+            card.innerHTML=`
+                <div class="restaurantImage partnerRestaurantImage${photo?.photoUri?" hasPhoto":""}">
+                    ${photoMarkup}
+                    ${maxDiscount?`<span class="restaurantDiscount">UP TO ${maxDiscount}% OFF</span>`:""}
+                    <span class="restaurantOpen">GREENLOOP PARTNER</span>
+                </div>
+                <div class="restaurantBody">
+                    <div class="restaurantTop">
+                        <div>
+                            <h3>${escapeAppHtml(restaurant.name)}</h3>
+                            <div class="restaurantMeta">⏰ ${escapeAppHtml(formatPartnerTime(restaurant.openTime))}–${escapeAppHtml(formatPartnerTime(restaurant.closeTime))}</div>
+                        </div>
+                        <div class="restaurantEco">🌱 ${foods.length}</div>
+                    </div>
+                    <p class="restaurantDescription restaurantLocationText">📍 ${escapeAppHtml(restaurant.location)}</p>
+                    <div class="restaurantDelivery">
+                        <span>${foods.length} food deal${foods.length===1?"":"s"}</span>
+                        <span>Pickup available</span>
+                    </div>
+                    <button type="button" class="restaurantButton">View food deals</button>
+                </div>`;
+            card.querySelector(".restaurantButton").addEventListener("click",()=>{
+                showAllFoodItems(null,restaurant.id,restaurant.name);
+            });
+            grid.appendChild(card);
+        });
+    }catch(error){
+        console.error("Restaurant list load failed:",error);
+        grid.innerHTML=`<p style="grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0;">Could not load registered restaurants.</p>`;
+    }
+}
+
+function formatPartnerTime(value){
+    return value ? String(value).slice(0,5) : "--:--";
+}
+
+function escapeAppHtml(value=""){
+    return String(value).replace(/[&<>'"]/g,char=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"
+    })[char]);
+}
+
+document.addEventListener("DOMContentLoaded",loadRegisteredRestaurants);
 
 
 function addLiveFoodToCart(foodId){
@@ -832,6 +1167,35 @@ async function openFoodDetail(foodId){
         toast(t("food_detail_load_error"));
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const foodId = new URLSearchParams(window.location.search).get("foodId");
+    if (!foodId || !document.getElementById("foodDetailModal")) return;
+    showPage("food");
+    openFoodDetail(foodId);
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const params = new URLSearchParams(window.location.search);
+    const foodId = params.get("addFoodId")
+        || sessionStorage.getItem("greenloop_pending_cart_food_id");
+    if (!foodId || !document.getElementById("page-food")) return;
+
+    showPage("food");
+    await showAllFoodItems();
+
+    const food = liveFoods.find(item => String(item.id) === String(foodId));
+    if (food) {
+        addLiveFoodToCart(food.id);
+    } else {
+        toast("This food item is no longer available.");
+    }
+
+    sessionStorage.removeItem("greenloop_pending_cart_food_id");
+    params.delete("addFoodId");
+    const query = params.toString();
+    history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}#food`);
+});
 
 
 function closeFoodDetail(){
@@ -1026,6 +1390,8 @@ function openCart(){
 
     updateCartUI();
 
+    syncMileageUI();
+
     document.getElementById("cartModal")
         .classList.add("show");
 }
@@ -1094,52 +1460,44 @@ function selectPayment(button,method){
 }
 
 
-/* =========================================================
-   PROMO
-========================================================= */
+function getMileageEligibleSubtotal(){
+    return foodCart
+        .filter(item=>item.id.startsWith("live-"))
+        .reduce((sum,item)=>sum+(item.price*item.qty),0);
+}
 
-function applyPromo(){
+function syncMileageUI(){
+    const balanceEl=document.getElementById("checkoutMileageBalance");
+    if(balanceEl) balanceEl.textContent=balance.toLocaleString();
+}
 
-    const code=document.getElementById("promoInput")
-        .value
-        .trim()
-        .toUpperCase();
+function applyMileage(){
+    const input=document.getElementById("mileageInput");
+    const message=document.getElementById("mileageMessage");
 
-    if(code==="GREEN70"){
+    if(!currentUser){
+        mileageDiscount=0;
+        message.textContent=t("mileage_login_required");
+        updateCheckoutTotals();
+        return;
+    }
 
-        promoDiscount=Math.round(
-            getFoodSubtotal()*.10
-        );
+    const requested=Math.floor(Number(input.value));
+    const maximum=Math.min(balance,getMileageEligibleSubtotal());
 
-        document.getElementById("promoMessage")
-            .textContent=t("promo_green70_applied");
-
-    }else if(code==="RESCUE100"){
-
-        promoDiscount=30;
-
-        document.getElementById("promoMessage")
-            .textContent=t("promo_rescue100_applied");
-
+    if(maximum<=0){
+        mileageDiscount=0;
+        message.textContent=t("mileage_no_eligible_items");
+    }else if(!Number.isFinite(requested)||requested<0){
+        mileageDiscount=0;
+        message.textContent=t("mileage_invalid");
     }else{
-
-        promoDiscount=0;
-
-        document.getElementById("promoMessage")
-            .textContent=t("promo_invalid");
+        mileageDiscount=Math.min(requested,maximum);
+        input.value=mileageDiscount;
+        message.textContent=tf("mileage_applied",{mileage:mileageDiscount});
     }
 
     updateCheckoutTotals();
-}
-
-
-/* =========================================================
-   GROUP ORDER
-========================================================= */
-
-function startGroupOrder(){
-
-    toast(t("group_order_created_toast"));
 }
 
 
@@ -1157,9 +1515,12 @@ function updateCheckoutTotals(){
         fee=0;
     }
 
+    mileageDiscount=Math.min(mileageDiscount,balance,getMileageEligibleSubtotal());
+    syncMileageUI();
+
     const total=Math.max(
         0,
-        subtotal+fee-promoDiscount
+        subtotal+fee-mileageDiscount
     );
 
     document.getElementById("checkoutSubtotal")
@@ -1169,7 +1530,7 @@ function updateCheckoutTotals(){
         .textContent="฿"+fee;
 
     document.getElementById("checkoutDiscount")
-        .textContent="-฿"+promoDiscount;
+        .textContent="-฿"+mileageDiscount;
 
     document.getElementById("checkoutTotal")
         .textContent="฿"+total;
@@ -1208,7 +1569,7 @@ async function placeFoodOrder(){
 
     if(mockItems.length){
 
-        placeMockFoodOrder(mockItems);
+        await placeMockFoodOrder(mockItems);
 
         foodCart=foodCart.filter(item=>item.id.startsWith("live-"));
 
@@ -1237,8 +1598,11 @@ async function purchaseLiveItems(liveItems){
     let earnedTotal=0;
     const purchasedIds=[];
     const failed=[];
+    let remainingMileage=mileageDiscount;
 
     for(const item of liveItems){
+
+        const mileageToUse=Math.min(remainingMileage,item.price*item.qty);
 
         try{
             const res=await fetch("http://localhost:8080/api/purchases",{
@@ -1247,7 +1611,8 @@ async function purchaseLiveItems(liveItems){
                 credentials:"include",
                 body:JSON.stringify({
                     foodId:item.foodId,
-                    pickupTime
+                    pickupTime,
+                    mileageToUse
                 }),
             });
 
@@ -1260,6 +1625,7 @@ async function purchaseLiveItems(liveItems){
 
             earnedTotal+=data.earnedMileage||0;
             purchasedIds.push(item.id);
+            remainingMileage-=mileageToUse;
 
         }catch(error){
             console.error("구매 실패:",item.name,error);
@@ -1269,7 +1635,11 @@ async function purchaseLiveItems(liveItems){
 
     if(purchasedIds.length){
 
-        fetchMileageBalance();
+        mileageDiscount=remainingMileage;
+        const mileageInput=document.getElementById("mileageInput");
+        if(mileageInput) mileageInput.value=mileageDiscount||"";
+
+        await fetchMileageBalance();
 
         showPurchaseThanks(liveItems.filter(item=>purchasedIds.includes(item.id)),pickupTimeInput,earnedTotal);
     }
@@ -1306,7 +1676,7 @@ function closePurchaseThanks(){
 
 
 // 데모용 목 레스토랑 주문 (실제 결제/구매 API 없음 — 로컬로만 크레딧 적립)
-function placeMockFoodOrder(mockItems){
+async function placeMockFoodOrder(mockItems){
 
     const subtotal=mockItems.reduce(
         (sum,item)=>sum+item.price*item.qty,
@@ -1316,8 +1686,7 @@ function placeMockFoodOrder(mockItems){
     const total=Math.max(
         0,
         subtotal+
-        (orderTime==="pickup"?0:deliveryFee)-
-        promoDiscount
+        (orderTime==="pickup"?0:deliveryFee)
     );
 
     document.getElementById("orderModal")
@@ -1335,14 +1704,32 @@ function placeMockFoodOrder(mockItems){
         0
     );
 
-    setTimeout(()=>{
+    if(!currentUser || !currentUser.memberId || credits<=0){
+        return;
+    }
 
-        earn(
-            credits,
-            "Food rescue order"
-        );
+    try{
+        const res=await fetch(`http://localhost:8080/api/members/${currentUser.memberId}/mileage/food-orders`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            credentials:"include",
+            body:JSON.stringify({amount:credits})
+        });
 
-    },1200);
+        if(!res.ok){
+            throw new Error("Mileage earning failed: "+res.status);
+        }
+
+        const data=await res.json();
+        balance=data.balance;
+        updateBalance();
+        syncMileageUI();
+        updateCheckoutTotals();
+        toast(`+${credits} mileage · Food rescue order`);
+    }catch(error){
+        console.error("Mileage earning failed:",error);
+        toast("The order was placed, but mileage could not be earned.");
+    }
 }
 
 
@@ -1531,9 +1918,16 @@ const translations={
         food_page_desc: "Rescue great food before it becomes waste. Save 70–80% and earn Carbon Credits.",
         food_register_button: "🍽️ Add a food item",
         food_cart_button: "🛒 Cart",
-        food_banner_tag: "🔥 TODAY'S GREEN DEAL",
-        food_banner_title: "Up to 80% OFF",
-        food_banner_desc: "Save money and help prevent food waste.",
+        food_banner_tag: "GREENROUTE · SMART FOOD RESCUE",
+        food_banner_title: "Rescue food already on your way",
+        food_banner_desc: "Enter your trip and discover last-minute partner deals along your route.",
+        food_route_proof: "Live routes · Real partner deals",
+        food_route_start: "Your route",
+        food_route_store: "Partner food deal",
+        food_route_store_sub: "Before it goes to waste",
+        food_route_end: "Destination",
+        food_route_discount: "Save up to 80%",
+        food_route_cta: "Find food on my route",
         food_section_title: "Restaurants near you",
         food_section_desc: "Available for sustainable food rescue delivery",
         food_view_all_button: "View all →",
@@ -1700,17 +2094,16 @@ const translations={
         cart_payment_card: "Debit / Credit Card",
         cart_payment_cash: "Cash",
         cart_payment_cash_desc: "Pay driver on delivery",
-        cart_promo_title: "🏷️ Promo",
-        cart_promo_placeholder: "Enter promo code",
-        cart_promo_apply: "Apply",
-        cart_group_order_title: "👥 Group Order",
-        cart_group_order_desc: "Invite friends to add their own food.",
-        cart_group_order_start: "Start",
+        cart_mileage_title: "🌱 Use mileage",
+        cart_mileage_available: "Available mileage",
+        cart_mileage_placeholder: "Mileage to use",
+        cart_mileage_apply: "Use",
+        cart_mileage_rate: "1 mileage = ฿1 discount",
         cart_note_title: "📝 Note for restaurant",
         cart_note_placeholder: "Example: No onions, less spicy...",
         cart_summary_food: "Food",
         cart_summary_delivery: "Delivery",
-        cart_summary_discount: "Discount",
+        cart_summary_mileage: "Mileage discount",
         cart_summary_total: "Total",
         cart_place_order_button: "Place Order",
         cart_empty_title: "Your cart is empty",
@@ -1725,10 +2118,10 @@ const translations={
         purchase_thanks_pickup: "🏪 Pickup at {time}",
         purchase_thanks_mileage: "🌱 +{mileage} mileage earned!",
         purchase_thanks_done: "Done",
-        promo_green70_applied: "✓ GreenLoop promo applied: 10% extra off",
-        promo_rescue100_applied: "✓ ฿30 rescue food discount applied",
-        promo_invalid: "Invalid promo code",
-        group_order_created_toast: "Group Order created! Share link with friends.",
+        mileage_login_required: "Please log in to use mileage.",
+        mileage_no_eligible_items: "Add a registered food deal to use mileage.",
+        mileage_invalid: "Enter a valid mileage amount.",
+        mileage_applied: "✓ {mileage} mileage applied",
         order_placed_toast: "Order placed successfully · ฿{total}",
         not_enough_credits: "Not enough Carbon Credits",
         credits_earned_toast: "+{amount} Carbon Credits earned!",
@@ -1847,9 +2240,16 @@ const translations={
         food_page_desc: "กู้อาหารดีๆ ก่อนกลายเป็นขยะ ลดสูงสุด 70–80% พร้อมสะสมคาร์บอนเครดิต",
         food_register_button: "🍽️ เพิ่มเมนูอาหาร",
         food_cart_button: "🛒 ตะกร้า",
-        food_banner_tag: "🔥 ดีลกรีนวันนี้",
-        food_banner_title: "ลดสูงสุด 80%",
-        food_banner_desc: "ประหยัดเงินและช่วยลดขยะอาหาร",
+        food_banner_tag: "GREENROUTE · กู้มื้ออาหารอย่างชาญฉลาด",
+        food_banner_title: "กู้มื้ออาหารที่อยู่บนเส้นทางของคุณ",
+        food_banner_desc: "กรอกเส้นทาง แล้วค้นหาดีลอาหารใกล้หมดเวลาจากร้านพาร์ทเนอร์ระหว่างทาง",
+        food_route_proof: "เส้นทางจริง · ดีลพาร์ทเนอร์จริง",
+        food_route_start: "เส้นทางของคุณ",
+        food_route_store: "ดีลร้านพาร์ทเนอร์",
+        food_route_store_sub: "ก่อนอาหารถูกทิ้ง",
+        food_route_end: "จุดหมาย",
+        food_route_discount: "ประหยัดสูงสุด 80%",
+        food_route_cta: "ค้นหาอาหารระหว่างทาง",
         food_section_title: "ร้านอาหารใกล้คุณ",
         food_section_desc: "พร้อมให้บริการจัดส่งอาหารกู้แบบยั่งยืน",
         food_view_all_button: "ดูทั้งหมด →",
@@ -2016,17 +2416,16 @@ const translations={
         cart_payment_card: "บัตรเดบิต/เครดิต",
         cart_payment_cash: "เงินสด",
         cart_payment_cash_desc: "จ่ายคนขับตอนรับของ",
-        cart_promo_title: "🏷️ โปรโมชัน",
-        cart_promo_placeholder: "กรอกโค้ดโปรโมชัน",
-        cart_promo_apply: "ใช้โค้ด",
-        cart_group_order_title: "👥 สั่งเป็นกลุ่ม",
-        cart_group_order_desc: "ชวนเพื่อนมาเพิ่มอาหารของตัวเอง",
-        cart_group_order_start: "เริ่ม",
+        cart_mileage_title: "🌱 ใช้ไมล์สะสม",
+        cart_mileage_available: "ไมล์สะสมที่ใช้ได้",
+        cart_mileage_placeholder: "จำนวนไมล์ที่ต้องการใช้",
+        cart_mileage_apply: "ใช้",
+        cart_mileage_rate: "1 ไมล์ = ส่วนลด ฿1",
         cart_note_title: "📝 หมายเหตุถึงร้าน",
         cart_note_placeholder: "เช่น ไม่ใส่หัวหอม เผ็ดน้อย...",
         cart_summary_food: "อาหาร",
         cart_summary_delivery: "ค่าส่ง",
-        cart_summary_discount: "ส่วนลด",
+        cart_summary_mileage: "ส่วนลดจากไมล์",
         cart_summary_total: "รวมทั้งหมด",
         cart_place_order_button: "สั่งซื้อ",
         cart_empty_title: "ตะกร้าของคุณว่างเปล่า",
@@ -2041,10 +2440,10 @@ const translations={
         purchase_thanks_pickup: "🏪 รับสินค้าเวลา {time}",
         purchase_thanks_mileage: "🌱 ได้รับไมล์สะสม +{mileage}!",
         purchase_thanks_done: "เสร็จสิ้น",
-        promo_green70_applied: "✓ ใช้โปรโมชัน GreenLoop แล้ว: ลดเพิ่ม 10%",
-        promo_rescue100_applied: "✓ ใช้ส่วนลดอาหารกู้ ฿30 แล้ว",
-        promo_invalid: "โค้ดโปรโมชันไม่ถูกต้อง",
-        group_order_created_toast: "สร้างออเดอร์กลุ่มแล้ว! แชร์ลิงก์ให้เพื่อนได้เลย",
+        mileage_login_required: "กรุณาเข้าสู่ระบบเพื่อใช้ไมล์สะสม",
+        mileage_no_eligible_items: "เพิ่มรายการอาหารที่ลงทะเบียนเพื่อใช้ไมล์สะสม",
+        mileage_invalid: "กรุณากรอกจำนวนไมล์ที่ถูกต้อง",
+        mileage_applied: "✓ ใช้ {mileage} ไมล์แล้ว",
         order_placed_toast: "สั่งซื้อสำเร็จ · ฿{total}",
         not_enough_credits: "คาร์บอนเครดิตไม่พอ",
         credits_earned_toast: "ได้รับคาร์บอนเครดิต +{amount}!",
@@ -2163,9 +2562,16 @@ const translations={
         food_page_desc: "버려지기 전에 좋은 음식을 구출하세요. 최대 70~80% 할인받고 탄소 크레딧도 적립하세요.",
         food_register_button: "🍽️ 음식 등록하기",
         food_cart_button: "🛒 장바구니",
-        food_banner_tag: "🔥 오늘의 그린딜",
-        food_banner_title: "최대 80% 할인",
-        food_banner_desc: "돈도 아끼고 음식물 쓰레기도 줄여보세요.",
+        food_banner_tag: "GREENROUTE · 스마트 푸드 레스큐",
+        food_banner_title: "가는 길에 남는 음식을 구출하세요",
+        food_banner_desc: "이동 경로를 입력하고 동선 위 파트너 식당의 마감 임박 음식을 찾아보세요.",
+        food_route_proof: "실제 경로 · 실제 파트너 할인 음식",
+        food_route_start: "나의 경로",
+        food_route_store: "파트너 음식 딜",
+        food_route_store_sub: "버려지기 전에 구출",
+        food_route_end: "목적지",
+        food_route_discount: "최대 80% 절약",
+        food_route_cta: "경로에서 음식 찾기",
         food_section_title: "내 주변 식당",
         food_section_desc: "친환경 음식 구출 배달이 가능해요",
         food_view_all_button: "전체보기 →",
@@ -2332,17 +2738,16 @@ const translations={
         cart_payment_card: "체크/신용카드",
         cart_payment_cash: "현금",
         cart_payment_cash_desc: "배달 시 기사님께 결제",
-        cart_promo_title: "🏷️ 프로모션",
-        cart_promo_placeholder: "프로모 코드를 입력하세요",
-        cart_promo_apply: "적용",
-        cart_group_order_title: "👥 함께 주문",
-        cart_group_order_desc: "친구를 초대해서 함께 음식을 담아보세요.",
-        cart_group_order_start: "시작하기",
+        cart_mileage_title: "🌱 마일리지 사용",
+        cart_mileage_available: "사용 가능 마일리지",
+        cart_mileage_placeholder: "사용할 마일리지",
+        cart_mileage_apply: "사용",
+        cart_mileage_rate: "1 마일리지 = ฿1 할인",
         cart_note_title: "📝 가게에 남길 메모",
         cart_note_placeholder: "예: 양파 빼주세요, 덜 맵게...",
         cart_summary_food: "음식",
         cart_summary_delivery: "배달비",
-        cart_summary_discount: "할인",
+        cart_summary_mileage: "마일리지 할인",
         cart_summary_total: "총액",
         cart_place_order_button: "주문하기",
         cart_empty_title: "장바구니가 비어있어요",
@@ -2357,10 +2762,10 @@ const translations={
         purchase_thanks_pickup: "🏪 {time}에 픽업",
         purchase_thanks_mileage: "🌱 마일리지 +{mileage} 적립!",
         purchase_thanks_done: "확인",
-        promo_green70_applied: "✓ GreenLoop 프로모 적용: 10% 추가 할인",
-        promo_rescue100_applied: "✓ ฿30 구출 음식 할인 적용",
-        promo_invalid: "유효하지 않은 프로모 코드예요",
-        group_order_created_toast: "함께 주문이 생성됐어요! 친구에게 링크를 공유하세요.",
+        mileage_login_required: "마일리지를 사용하려면 로그인해 주세요.",
+        mileage_no_eligible_items: "마일리지를 사용할 등록 음식을 장바구니에 담아 주세요.",
+        mileage_invalid: "올바른 마일리지 값을 입력해 주세요.",
+        mileage_applied: "✓ {mileage} 마일리지가 적용됐어요",
         order_placed_toast: "주문이 완료됐어요 · ฿{total}",
         not_enough_credits: "탄소 크레딧이 부족해요",
         credits_earned_toast: "+{amount} 탄소 크레딧을 획득했어요!",
@@ -2662,6 +3067,8 @@ async function fetchMileageBalance() {
 
         balance = data.balance;
         updateBalance();
+        syncMileageUI();
+        updateCheckoutTotals();
 
     } catch (error) {
         console.error("마일리지 조회 실패:", error);

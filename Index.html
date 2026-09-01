@@ -35,6 +35,11 @@
             Food Deals
         </button>
 
+        <button data-page="route"
+                onclick="window.location.href='route.html'">
+            GreenRoute
+        </button>
+
         <button data-page="transport"
                 data-i18n="transport"
                 onclick="showPage('transport',this)">
@@ -259,31 +264,45 @@
 </div>
 
 
-<div class="foodBanner"
-     onclick="window.location.href='route.html'"
-     style="cursor:pointer;">
-
-    <div>
-
-        <span data-i18n="food_banner_tag">
-            🔥 TODAY'S GREEN DEAL
-        </span>
-
-        <h2 data-i18n="food_banner_title">
-            Up to 80% OFF
-        </h2>
-
+<a class="foodBanner foodRouteBanner" href="route.html">
+    <div class="foodRouteCopy">
+        <span data-i18n="food_banner_tag">GREENROUTE · SMART FOOD RESCUE</span>
+        <h2 data-i18n="food_banner_title">Rescue food already on your way</h2>
         <p data-i18n="food_banner_desc">
-            Save money and help prevent food waste.
+            Enter your trip and discover last-minute partner deals along your route.
         </p>
-
+        <div class="foodRouteProof">
+            <span>✓</span>
+            <b data-i18n="food_route_proof">Live routes · Real partner deals</b>
+        </div>
     </div>
 
-    <div class="foodBannerIcon">
-        🍱
+    <div class="foodRouteVisual" aria-hidden="true">
+        <svg viewBox="0 0 420 115" preserveAspectRatio="none">
+            <path class="routePathShadow" d="M35 77 C115 16 198 104 286 48 C331 19 360 37 390 30" />
+            <path class="routePathDash" d="M35 77 C115 16 198 104 286 48 C331 19 360 37 390 30" />
+        </svg>
+        <div class="routeVisualNode routeVisualStart">
+            <i>●</i>
+            <span data-i18n="food_route_start">Your route</span>
+        </div>
+        <div class="routeVisualNode routeVisualStore">
+            <i>🍱</i>
+            <span data-i18n="food_route_store">Partner food deal</span>
+            <small data-i18n="food_route_store_sub">Before it goes to waste</small>
+        </div>
+        <div class="routeVisualNode routeVisualEnd">
+            <i>◆</i>
+            <span data-i18n="food_route_end">Destination</span>
+        </div>
     </div>
 
-</div>
+    <div class="foodRouteAction">
+        <span class="foodRouteDiscount" data-i18n="food_route_discount">Save up to 80%</span>
+        <strong data-i18n="food_route_cta">Find food on my route</strong>
+        <i>→</i>
+    </div>
+</a>
 
 
 <div class="sectionHead" id="restaurantSectionHead">
@@ -831,6 +850,8 @@
 
 <div class="rideMap" id="rideMap">
 
+    <div id="googleRideMap" class="googleRideMap"></div>
+
     <div class="mapRoad r1"></div>
     <div class="mapRoad r2"></div>
 
@@ -898,10 +919,19 @@
         <span>🟢</span>
 
         <input id="pickup"
-               value="Your current location"
+               value="Chiang Mai University"
                data-i18n-placeholder="transport_pickup_placeholder"
                placeholder="Pickup location">
 
+        <button type="button" class="useMyLocationButton"
+                onclick="useCurrentLocation()"
+                title="Use my current location"
+                aria-label="Use my current location">◎</button>
+
+    </div>
+
+    <div id="pickupResolvedAddress" class="pickupResolvedAddress">
+        Chiang Mai University
     </div>
 
 
@@ -913,10 +943,17 @@
         <span>🔴</span>
 
         <input id="destination"
-               value="Chiang Mai University"
+               value="Wintree City Resort Chiang Mai"
                data-i18n-placeholder="transport_destination_placeholder"
                placeholder="Enter destination">
 
+    </div>
+
+    <button type="button" class="previewRideRoute" id="previewRideRouteButton"
+            onclick="calculateGreenRideRoute()">🗺️ Preview route & fare</button>
+
+    <div id="rideRouteStatus" class="rideRouteStatus" role="status" aria-live="polite">
+        Search both locations, then preview the route.
     </div>
 
 
@@ -946,7 +983,7 @@
 
             </span>
 
-            <strong>
+            <strong id="evCarFare">
                 ฿79
             </strong>
 
@@ -972,7 +1009,7 @@
 
             </span>
 
-            <strong>
+            <strong id="evTaxiFare">
                 ฿59
             </strong>
 
@@ -998,7 +1035,7 @@
 
             </span>
 
-            <strong>
+            <strong id="evBikeFare">
                 ฿39
             </strong>
 
@@ -1027,12 +1064,16 @@
                 CO₂ saved
             </small>
 
-            <strong>
-                ~1.8 kg
+            <strong id="rideCarbonSaved">
+                -- kg
             </strong>
 
         </div>
 
+    </div>
+
+    <div class="rideCalculation" id="rideCalculation">
+        Fare and carbon savings will be calculated from the Google route.
     </div>
 
 
@@ -1677,47 +1718,30 @@
 </div>
 
 
-<h3 data-i18n="cart_promo_title">
-    🏷️ Promo
+<h3 data-i18n="cart_mileage_title">
+    🌱 Use mileage
 </h3>
 
 
-<div class="promoBox">
-
-    <input id="promoInput"
-           data-i18n-placeholder="cart_promo_placeholder"
-           placeholder="Enter promo code">
-
-    <button onclick="applyPromo()" data-i18n="cart_promo_apply">
-        Apply
-    </button>
-
-</div>
-
-
-<div id="promoMessage"
-     class="promoMessage">
-</div>
-
-
-<div class="groupOrderBox">
-
-    <div>
-
-        <b data-i18n="cart_group_order_title">
-            👥 Group Order
-        </b>
-
-        <p data-i18n="cart_group_order_desc">
-            Invite friends to add their own food.
-        </p>
-
+<div class="mileageUseBox">
+    <div class="mileageBalanceLine">
+        <span data-i18n="cart_mileage_available">Available mileage</span>
+        <strong><span id="checkoutMileageBalance">0</span> M</strong>
     </div>
 
-    <button onclick="startGroupOrder()" data-i18n="cart_group_order_start">
-        Start
+    <div class="mileageInputRow">
+
+    <input id="mileageInput" type="number" min="0" step="1"
+           data-i18n-placeholder="cart_mileage_placeholder"
+           placeholder="Mileage to use">
+
+    <button onclick="applyMileage()" data-i18n="cart_mileage_apply">
+        Use
     </button>
 
+    </div>
+    <div id="mileageMessage" class="mileageMessage"
+         data-i18n="cart_mileage_rate">1 mileage = ฿1 discount</div>
 </div>
 
 
@@ -1750,7 +1774,7 @@
     </div>
 
     <div>
-        <span data-i18n="cart_summary_discount">Discount</span>
+        <span data-i18n="cart_summary_mileage">Mileage discount</span>
         <strong class="discountText"
                 id="checkoutDiscount">
             -฿0

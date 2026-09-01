@@ -520,47 +520,183 @@ button:disabled{
 }
 
 .foodBanner{
-    background:linear-gradient(135deg,#0d7c52,#18ad70);
-    color:#fff;
+    background:
+        radial-gradient(circle at 82% 8%,rgba(255,255,255,.7),transparent 24%),
+        linear-gradient(125deg,#fff3d8 0%,#ffd79b 53%,#f6a978 100%);
+    color:#3f2b22;
     border-radius:23px;
-    padding:25px 30px;
-    display:flex;
-    justify-content:space-between;
+    padding:26px 28px;
+    display:grid;
+    grid-template-columns:minmax(260px,1.05fr) minmax(330px,1.25fr) auto;
+    gap:28px;
     align-items:center;
     margin-bottom:30px;
     overflow:hidden;
+    text-decoration:none;
+    position:relative;
+    border:1px solid rgba(198,105,45,.18);
+    box-shadow:0 16px 36px rgba(156,86,40,.16);
+    transition:transform .2s ease,box-shadow .2s ease;
 }
 
-.foodBanner span{
-    background:rgba(255,255,255,.15);
+.foodBanner:hover{
+    transform:translateY(-3px);
+    box-shadow:0 22px 44px rgba(156,86,40,.22);
+}
+
+.foodBanner:focus-visible{
+    outline:3px solid #ef8c51;
+    outline-offset:3px;
+}
+
+.foodRouteCopy>span{
+    background:#3f2b22;
+    color:#fff7e9;
     padding:6px 9px;
     border-radius:999px;
     font-size:11px;
     font-weight:900;
+    letter-spacing:.04em;
 }
 
 .foodBanner h2{
-    font-size:38px;
-    margin:12px 0 4px;
+    max-width:390px;
+    font-size:30px;
+    line-height:1.08;
+    margin:14px 0 9px;
 }
 
 .foodBanner p{
     margin:0;
-    opacity:.9;
+    color:#735345;
+    font-size:13px;
+    line-height:1.55;
 }
 
-.foodBannerIcon{
-    font-size:105px;
-    opacity:.3;
+.foodRouteProof{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-top:14px;
+    font-size:11px;
+    color:#754d37;
 }
+
+.foodRouteProof span{
+    width:18px;
+    height:18px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:#e96f45;
+    color:#fff;
+    font-weight:900;
+}
+
+.foodRouteVisual{
+    height:132px;
+    position:relative;
+    border:1px solid rgba(113,70,42,.14);
+    border-radius:18px;
+    background:rgba(255,250,238,.58);
+}
+
+.foodRouteVisual svg{
+    position:absolute;
+    inset:12px 10px 5px;
+    width:calc(100% - 20px);
+    height:calc(100% - 17px);
+    overflow:visible;
+}
+
+.foodRouteVisual path{fill:none;stroke-linecap:round}
+.routePathShadow{stroke:rgba(120,74,43,.15);stroke-width:9}
+.routePathDash{stroke:#d95f3b;stroke-width:3;stroke-dasharray:7 8}
+
+.routeVisualNode{
+    position:absolute;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    color:#4d3428;
+    font-size:10px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.routeVisualNode i{
+    width:28px;
+    height:28px;
+    display:grid;
+    place-items:center;
+    margin-bottom:5px;
+    border:3px solid #fff8ea;
+    border-radius:50%;
+    background:#d95f3b;
+    box-shadow:0 5px 12px rgba(0,0,0,.18);
+    font-style:normal;
+}
+
+.routeVisualStart{left:4%;bottom:13px}
+.routeVisualEnd{right:2%;top:9px}
+
+.routeVisualStore{
+    left:47%;
+    top:36px;
+    transform:translateX(-50%);
+    padding:8px 11px;
+    border-radius:12px;
+    background:#fffaf0;
+    color:#4d3428;
+    box-shadow:0 8px 20px rgba(0,0,0,.16);
+}
+
+.routeVisualStore i{
+    width:34px;
+    height:34px;
+    margin-top:-25px;
+    background:#fffaf0;
+    border-color:#f4a261;
+    font-size:17px;
+}
+
+.routeVisualStore small{margin-top:2px;color:#6b7d74;font-size:8px}
+
+.foodRouteAction{
+    min-width:170px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:4px 10px;
+    align-items:center;
+    padding:15px 16px;
+    border-radius:15px;
+    background:#3f2b22;
+    color:#fff8ea;
+    box-shadow:0 8px 22px rgba(0,0,0,.12);
+}
+
+.foodRouteDiscount{
+    grid-column:1/-1;
+    color:#ffc276;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+}
+
+.foodRouteAction strong{font-size:13px;white-space:nowrap}
+.foodRouteAction i{font-size:20px;font-style:normal;transition:transform .2s}
+.foodBanner:hover .foodRouteAction i{transform:translateX(4px)}
 
 .restaurantGrid{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:18px;
+    width:100%;
 }
 
 .restaurantCard{
+    min-width:0;
+    width:100%;
     background:#fff;
     border:1px solid var(--line);
     border-radius:22px;
@@ -1089,12 +1225,33 @@ button:disabled{
     margin-top:3px;
 }
 
-.promoBox{
+.mileageUseBox{
+    padding:14px;
+    background:#f5f8f6;
+    border:1px solid var(--line);
+    border-radius:14px;
+}
+
+.mileageBalanceLine{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.mileageBalanceLine strong{
+    color:var(--green2);
+    font-size:15px;
+}
+
+.mileageInputRow{
     display:flex;
     gap:8px;
 }
 
-.promoBox input{
+.mileageInputRow input{
     flex:1;
     border:1px solid var(--line);
     border-radius:11px;
@@ -1102,7 +1259,7 @@ button:disabled{
     outline:none;
 }
 
-.promoBox button{
+.mileageInputRow button{
     background:var(--green2);
     color:#fff;
     border-radius:11px;
@@ -1110,34 +1267,10 @@ button:disabled{
     font-weight:850;
 }
 
-.promoMessage{
+.mileageMessage{
     color:var(--green2);
     font-size:12px;
     margin-top:7px;
-}
-
-.groupOrderBox{
-    margin-top:18px;
-    padding:15px;
-    background:#f5f8f6;
-    border-radius:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.groupOrderBox p{
-    margin:4px 0 0;
-    color:var(--muted);
-    font-size:12px;
-}
-
-.groupOrderBox button{
-    background:var(--green);
-    color:#fff;
-    padding:9px 13px;
-    border-radius:9px;
-    font-weight:800;
 }
 
 .orderNote{
@@ -1436,6 +1569,15 @@ button:disabled{
         #dcefe4;
 }
 
+.googleRideMap{position:absolute;inset:0;z-index:1}
+.rideMap.googleReady::before,
+.rideMap.googleReady .mapRoad,
+.rideMap.googleReady .userLocation,
+.rideMap.googleReady .mapDestination{display:none}
+.rideMap.googleReady .mapETA,
+.rideMap.googleReady .mapControls{z-index:2}
+.rideMap.googleReady .evMarker{display:none}
+
 .rideMap::before{
     content:"";
     position:absolute;
@@ -1628,6 +1770,16 @@ button:disabled{
     outline:0;
     background:transparent;
 }
+
+.locationInput gmp-place-autocomplete{width:100%;border:0;background:transparent}
+.useMyLocationButton{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--mint);color:var(--green2);font-size:20px;font-weight:900}
+.useMyLocationButton:hover{background:#dcefe4}
+.useMyLocationButton:disabled{opacity:.55;cursor:wait}
+.pickupResolvedAddress{margin:5px 4px 0 44px;color:var(--green2);font-size:10px;line-height:1.4}
+.previewRideRoute{width:100%;margin-top:12px;padding:11px 14px;border:1px solid var(--green);border-radius:11px;background:#fff;color:var(--green2);font-weight:850}
+.rideRouteStatus{min-height:18px;margin-top:7px;color:var(--muted);font-size:11px;line-height:1.45}
+.rideRouteStatus.error{color:#b33}
+.rideCalculation{margin-top:9px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-size:10px;line-height:1.5}
 
 .locationLine{
     height:20px;
@@ -1953,8 +2105,17 @@ button:disabled{
         gap:15px;
     }
 
-    .foodBannerIcon{
-        display:none;
+    .foodBanner{
+        grid-template-columns:1fr;
+        gap:18px;
+    }
+
+    .foodRouteVisual{
+        min-width:0;
+    }
+
+    .foodRouteAction{
+        width:100%;
     }
 
     .foodBanner h2{
@@ -2044,4 +2205,71 @@ button:disabled{
     .cartItem{
         flex-wrap:wrap;
     }
+}
+
+.partnerRestaurantImage{
+    height:155px;
+    background:
+        radial-gradient(circle at 75% 22%,rgba(255,255,255,.75),transparent 24%),
+        linear-gradient(135deg,#fff3dc,#ffd9ae);
+    font-size:62px;
+}
+
+.partnerRestaurantImage.hasPhoto{
+    display:block;
+    background:#eee;
+}
+
+.restaurantPhotoLink{
+    position:absolute;
+    inset:0;
+    display:block;
+}
+
+.restaurantPhotoLink img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    transition:transform .25s ease;
+}
+
+.restaurantCard:hover .restaurantPhotoLink img{transform:scale(1.035)}
+
+.restaurantPhotoCredit{
+    position:absolute;
+    right:12px;
+    bottom:10px;
+    z-index:2;
+    max-width:70%;
+    padding:5px 8px;
+    overflow:hidden;
+    border-radius:7px;
+    background:rgba(20,20,20,.72);
+    color:#fff;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px;
+    text-decoration:none;
+}
+
+.restaurantPhotoCredit:hover{background:rgba(20,20,20,.9)}
+
+.partnerRestaurantImage.hasPhoto::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(to bottom,rgba(0,0,0,.12),transparent 45%,rgba(0,0,0,.18));
+}
+
+.partnerRestaurantImage .restaurantDiscount,
+.partnerRestaurantImage .restaurantOpen{z-index:3}
+
+.restaurantLocationText{
+    display:-webkit-box;
+    overflow:hidden;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    min-height:40px;
 }
